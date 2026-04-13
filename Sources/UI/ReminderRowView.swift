@@ -677,84 +677,53 @@ struct EstimatePopover: View {
     let reminder: EKReminder
     @ObservedObject var estimates: EstimateStore.TaskEstimates
     @EnvironmentObject var estimateStore: EstimateStore
-    
+
     @State private var textInput: String = ""
-    
+
     var body: some View {
         VStack(spacing: 8) {
             Text("Set Estimate")
                 .font(.headline)
-            
-            TextField("HH:MM", text: Binding(
-                get: { textInput },
-                set: { newValue in
-                    var processed = newValue.filter { "0123456789:".contains($0) }
-                    let digits = processed.filter { $0.isNumber }
-                    
-                    // Auto-colon logic
-                    // 1. If typing and hit 2 digits -> append :
-                    if !processed.contains(":") && digits.count == 2 && processed.count > textInput.count {
-                        processed += ":"
-                    }
-                    
-                    // 2. If 4 digits "0100" -> "01:00"
-                    if !processed.contains(":") && digits.count == 4 {
-                        let h = String(digits.prefix(2))
-                        let m = String(digits.suffix(2))
-                        processed = "\(h):\(m)"
-                    }
-                    
-                    textInput = processed
-                    parseAndUpdate(processed)
-                }
-            ))
-            .frame(width: 80)
-            .textFieldStyle(.roundedBorder)
-            .multilineTextAlignment(.center)
-            .onAppear {
-                // Init local state from store
-                let totalSeconds = estimates.estimatedDuration
-                if totalSeconds > 0 {
-                    let h = Int(totalSeconds) / 3600
-                    let m = (Int(totalSeconds) % 3600) / 60
-                    textInput = String(format: "%02d:%02d", h, m)
-                }
-            }
+
+            TextField("HH:MM", text: $textInput)
+                .frame(width: 80)
+                .textFieldStyle(.roundedBorder)
+                .multilineTextAlignment(.center)
+                .onSubmit { parseAndUpdate(textInput) }
         }
         .padding()
+        .onAppear {
+            let total = estimates.estimatedDuration
+            if total > 0 {
+                let h = Int(total) / 3600
+                let m = (Int(total) % 3600) / 60
+                textInput = String(format: "%02d:%02d", h, m)
+            }
+        }
+        .onDisappear { parseAndUpdate(textInput) }
     }
-    
+
     private func parseAndUpdate(_ input: String) {
-        // Remove allowed characters to check purely for digits/colon
         let cleaned = input.filter { "0123456789:".contains($0) }
-        
         if cleaned.contains(":") {
             let parts = cleaned.split(separator: ":").map { String($0) }
             if parts.count == 2 {
                 let h = Int(parts[0]) ?? 0
                 let m = Int(parts[1]) ?? 0
-                let seconds = TimeInterval((h * 3600) + (m * 60))
-                estimateStore.updateEstimate(for: reminder.calendarItemIdentifier, duration: seconds)
-            } else if parts.count == 1 {
-                 let h = Int(parts[0]) ?? 0
-                 let seconds = TimeInterval(h * 3600)
-                 estimateStore.updateEstimate(for: reminder.calendarItemIdentifier, duration: seconds)
+                estimateStore.updateEstimate(for: reminder.calendarItemIdentifier,
+                                             duration: TimeInterval(h * 3600 + m * 60))
             }
         } else {
-            // No colon -> check digits
             let digits = cleaned.filter { $0.isNumber }
             if digits.count >= 3 {
-                // Formatting for parsing safety anyway, though visual should handle it
-                let mStr = String(digits.suffix(2))
-                let hStr = String(digits.dropLast(2))
-                let h = Int(hStr) ?? 0
-                let m = Int(mStr) ?? 0
-                let seconds = TimeInterval((h * 3600) + (m * 60))
-                estimateStore.updateEstimate(for: reminder.calendarItemIdentifier, duration: seconds)
-            } else {
+                let h = Int(String(digits.dropLast(2))) ?? 0
+                let m = Int(String(digits.suffix(2))) ?? 0
+                estimateStore.updateEstimate(for: reminder.calendarItemIdentifier,
+                                             duration: TimeInterval(h * 3600 + m * 60))
+            } else if !digits.isEmpty {
                 let m = Int(digits) ?? 0
-                let seconds = TimeInterval(m * 60)
-                estimateStore.updateEstimate(for: reminder.calendarItemIdentifier, duration: seconds)
+                estimateStore.updateEstimate(for: reminder.calendarItemIdentifier,
+                                             duration: TimeInterval(m * 60))
             }
         }
     }
@@ -765,82 +734,53 @@ struct TimeSpentPopover: View {
     let reminder: EKReminder
     @ObservedObject var estimates: EstimateStore.TaskEstimates
     @EnvironmentObject var estimateStore: EstimateStore
-    
+
     @State private var textInput: String = ""
-    
+
     var body: some View {
         VStack(spacing: 8) {
             Text("Set Time Spent")
                 .font(.headline)
-            
-            TextField("HH:MM", text: Binding(
-                get: { textInput },
-                set: { newValue in
-                    var processed = newValue.filter { "0123456789:".contains($0) }
-                    let digits = processed.filter { $0.isNumber }
-                    
-                    // Auto-colon logic
-                    // 1. If typing and hit 2 digits -> append :
-                    if !processed.contains(":") && digits.count == 2 && processed.count > textInput.count {
-                        processed += ":"
-                    }
-                    
-                    // 2. If 4 digits "0100" -> "01:00"
-                    if !processed.contains(":") && digits.count == 4 {
-                        let h = String(digits.prefix(2))
-                        let m = String(digits.suffix(2))
-                        processed = "\(h):\(m)"
-                    }
-                    
-                    textInput = processed
-                    parseAndUpdate(processed)
-                }
-            ))
-            .frame(width: 80)
-            .textFieldStyle(.roundedBorder)
-            .multilineTextAlignment(.center)
-            .onAppear {
-                 let totalSeconds = estimates.timeSpent
-                 if totalSeconds > 0 {
-                     let h = Int(totalSeconds) / 3600
-                     let m = (Int(totalSeconds) % 3600) / 60
-                     textInput = String(format: "%02d:%02d", h, m)
-                 }
-            }
+
+            TextField("HH:MM", text: $textInput)
+                .frame(width: 80)
+                .textFieldStyle(.roundedBorder)
+                .multilineTextAlignment(.center)
+                .onSubmit { parseAndUpdate(textInput) }
         }
         .padding()
+        .onAppear {
+            let total = estimates.timeSpent
+            if total > 0 {
+                let h = Int(total) / 3600
+                let m = (Int(total) % 3600) / 60
+                textInput = String(format: "%02d:%02d", h, m)
+            }
+        }
+        .onDisappear { parseAndUpdate(textInput) }
     }
-    
+
     private func parseAndUpdate(_ input: String) {
         let cleaned = input.filter { "0123456789:".contains($0) }
-        
         if cleaned.contains(":") {
             let parts = cleaned.split(separator: ":").map { String($0) }
             if parts.count == 2 {
                 let h = Int(parts[0]) ?? 0
                 let m = Int(parts[1]) ?? 0
-                let seconds = TimeInterval((h * 3600) + (m * 60))
-                estimateStore.setTimeSpent(for: reminder.calendarItemIdentifier, seconds: seconds)
-            } else if parts.count == 1 {
-                 let h = Int(parts[0]) ?? 0
-                 let seconds = TimeInterval(h * 3600)
-                 estimateStore.setTimeSpent(for: reminder.calendarItemIdentifier, seconds: seconds)
+                estimateStore.setTimeSpent(for: reminder.calendarItemIdentifier,
+                                           seconds: TimeInterval(h * 3600 + m * 60))
             }
         } else {
             let digits = cleaned.filter { $0.isNumber }
             if digits.count >= 3 {
-                // HHMM
-                let mStr = String(digits.suffix(2))
-                let hStr = String(digits.dropLast(2))
-                let h = Int(hStr) ?? 0
-                let m = Int(mStr) ?? 0
-                let seconds = TimeInterval((h * 3600) + (m * 60))
-                estimateStore.setTimeSpent(for: reminder.calendarItemIdentifier, seconds: seconds)
-            } else {
-                // Minutes
+                let h = Int(String(digits.dropLast(2))) ?? 0
+                let m = Int(String(digits.suffix(2))) ?? 0
+                estimateStore.setTimeSpent(for: reminder.calendarItemIdentifier,
+                                           seconds: TimeInterval(h * 3600 + m * 60))
+            } else if !digits.isEmpty {
                 let m = Int(digits) ?? 0
-                let seconds = TimeInterval(m * 60)
-                estimateStore.setTimeSpent(for: reminder.calendarItemIdentifier, seconds: seconds)
+                estimateStore.setTimeSpent(for: reminder.calendarItemIdentifier,
+                                           seconds: TimeInterval(m * 60))
             }
         }
     }
