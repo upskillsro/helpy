@@ -28,6 +28,7 @@ struct HelpyApp: App {
     @StateObject var estimateStore = EstimateStore()
     @StateObject var timerService = TimerService()
     @StateObject var windowCoordinator = AppWindowCoordinator()
+    @StateObject var subtaskStore = SubtaskStore()
     @State private var panelPositionObserver: NSObjectProtocol?
     @State private var appearanceObserver: NSObjectProtocol?
     @State private var lastAppliedDarkIconState: Bool?
@@ -48,6 +49,7 @@ struct HelpyApp: App {
                 .environmentObject(timerService)
                 .environmentObject(estimateStore)
                 .environmentObject(windowCoordinator)
+                .environmentObject(subtaskStore)
                 .frame(minWidth: 300, maxWidth: 350)
                 .onAppear {
                     // Link Dependencies
@@ -122,6 +124,7 @@ struct HelpyApp: App {
                     .environmentObject(remindersService)
                     .environmentObject(estimateStore)
                     .environmentObject(windowCoordinator)
+                    .environmentObject(subtaskStore)
             }
         }
         .windowStyle(.hiddenTitleBar)
