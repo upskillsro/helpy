@@ -23,6 +23,7 @@ class SettingsStore: ObservableObject {
     
     // Appearance
     @AppStorage("appTheme") var appTheme: AppTheme = .glass
+    @AppStorage("pillDisplayMode") var pillDisplayMode: PillDisplayMode = .floatingPill
     
     // App lifecycle
     @AppStorage("quitOnClose") var quitOnClose: Bool = true
@@ -41,9 +42,9 @@ class SettingsStore: ObservableObject {
     }
 
     func applyRecommendedAssistantDefaultsIfNeeded() {
-        let defaultTranscriptionCommand = "/opt/homebrew/bin/whisper-cli"
+        let defaultTranscriptionCommand = AssistantBundledAssets.transcriptionCommandPath ?? "/opt/homebrew/bin/whisper-cli"
         let defaultTranscriptionArgs = "-m {model} -f {input} -nt"
-        let defaultTranscriptionModelPath = InstalledTranscriptionModels.recommendedDefaultModelPath
+        let defaultTranscriptionModelPath = AssistantBundledAssets.transcriptionModelPath ?? InstalledTranscriptionModels.recommendedDefaultModelPath
 
         if assistantTranscriptionCommand.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
            FileManager.default.isExecutableFile(atPath: defaultTranscriptionCommand) {
@@ -65,4 +66,9 @@ enum AppTheme: String, CaseIterable {
     case glass
     case dark
     case white
+}
+
+enum PillDisplayMode: String, CaseIterable {
+    case floatingPill
+    case menuBarIcon
 }
