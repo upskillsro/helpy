@@ -31,6 +31,7 @@ struct HelpyApp: App {
     @State private var panelPositionObserver: NSObjectProtocol?
     @State private var appearanceObserver: NSObjectProtocol?
     @State private var lastAppliedDarkIconState: Bool?
+    @AppStorage("pillDisplayMode") private var pillDisplayMode: PillDisplayMode = .floatingPill
     
     init() {
         // Link services
@@ -85,6 +86,16 @@ struct HelpyApp: App {
                     }
                     
                     setupAppearanceObserver()
+
+                    // Apply initial display mode
+                    windowCoordinator.applyDisplayMode(pillDisplayMode)
+                }
+                .onChange(of: pillDisplayMode) { _, mode in
+                    windowCoordinator.applyDisplayMode(mode)
+                }
+                .onChange(of: timerService.ticker.remainingTime) { _, _ in
+                    guard pillDisplayMode == .menuBarIcon, timerService.isFocusMode else { return }
+                    windowCoordinator.updateMenuBarTitle(timerService.formattedTime())
                 }
                 .onDisappear {
                     if let observer = panelPositionObserver {
@@ -103,7 +114,9 @@ struct HelpyApp: App {
         
         // Floating Pill - Single Instance Window
         Window("Timer", id: "timer-pill") {
-            if timerService.isFocusMode && (timerService.activeReminderId != nil || timerService.isOnBreak) {
+            if timerService.isFocusMode &&
+               (timerService.activeReminderId != nil || timerService.isOnBreak) &&
+               pillDisplayMode == .floatingPill {
                 FloatingPillView()
                     .environmentObject(timerService)
                     .environmentObject(remindersService)
