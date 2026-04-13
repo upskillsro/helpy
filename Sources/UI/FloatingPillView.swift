@@ -299,7 +299,6 @@ struct PillInfoView: View {
                 // Use Equatable view to prevent redraws on timer tick
                 PillTitleView(title: activeTask.title)
                     .equatable()
-                    .frame(maxWidth: 180)
                 
                 Divider().frame(height: 16).background(dividerColor)
                 
