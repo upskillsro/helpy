@@ -488,14 +488,18 @@ struct ReminderRowView: View, Equatable {
     
     @ViewBuilder
     private func glassOverlayBase(grainOpacity: Double) -> some View {
-        ZStack {
-            VisualEffectView(material: .popover, blendingMode: .withinWindow)
-            GrainOverlay(opacity: grainOpacity)
-            LinearGradient(
-                colors: [.white.opacity(0.14), .clear],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+        if #available(macOS 26.0, *) {
+            Color.clear.glassEffect(.regular, in: Rectangle())
+        } else {
+            ZStack {
+                VisualEffectView(material: .popover, blendingMode: .withinWindow)
+                GrainOverlay(opacity: grainOpacity)
+                LinearGradient(
+                    colors: [.white.opacity(0.14), .clear],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
         }
     }
     

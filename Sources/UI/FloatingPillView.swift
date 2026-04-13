@@ -77,8 +77,12 @@ struct FloatingPillView: View {
         .animation(.easeInOut(duration: 0.2), value: showSubtasks)
         .background(
             ZStack(alignment: .bottom) {
-                VisualEffectView(material: .hudWindow, blendingMode: .behindWindow)
-                overlayBaseColor
+                if appTheme == .glass {
+                    liquidGlassBackground(cornerRadius: 30)
+                } else {
+                    VisualEffectView(material: .hudWindow, blendingMode: .behindWindow)
+                    overlayBaseColor
+                }
 
                 // Pulse Effect for Time's Up
                 if timerService.timesUpTriggered {
@@ -122,15 +126,26 @@ struct FloatingPillView: View {
         )
         .cornerRadius(30)
         .overlay(
-            RoundedRectangle(cornerRadius: 30)
-                .stroke(
-                    LinearGradient(
-                        colors: borderGradientColors,
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
+            Group {
+                if appTheme == .glass {
+                    if #available(macOS 26.0, *) {
+                        // glassEffect provides its own edge treatment — no stroke needed
+                        EmptyView()
+                    } else {
+                        IceGlassStroke(cornerRadius: 30)
+                    }
+                } else {
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(
+                            LinearGradient(
+                                colors: borderGradientColors,
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                }
+            }
         )
         .preferredColorScheme(isWhiteTheme ? .light : .dark)
         .onHover { hover in

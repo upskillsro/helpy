@@ -478,22 +478,25 @@ struct PositionPreviewCard: View {
 
 struct GlassyBackground: View {
     let theme: AppTheme
-    
+
     var body: some View {
-        ZStack {
-            if theme == .white {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.white.opacity(0.95))
-            } else {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.black.opacity(0.4))
-                
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(.thinMaterial)
-                    .opacity(0.5)
+        if theme == .glass {
+            liquidGlassBackground(cornerRadius: 8)
+        } else {
+            ZStack {
+                if theme == .white {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.white.opacity(0.95))
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black.opacity(0.4))
+
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.thinMaterial)
+                        .opacity(0.5)
+                }
             }
-        }
-        .overlay(
+            .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(
                     theme == .white
@@ -515,6 +518,7 @@ struct GlassyBackground: View {
                     ),
                     lineWidth: 1
                 )
-        )
+            )
+        }
     }
 }
