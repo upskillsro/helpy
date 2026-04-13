@@ -45,17 +45,40 @@ struct EmbeddedSettingsView: View {
                             ThemePreviewCard(theme: .glass, isSelected: settings.appTheme == .glass) {
                                 settings.appTheme = .glass
                             }
-                            
+
                             ThemePreviewCard(theme: .dark, isSelected: settings.appTheme == .dark) {
                                 settings.appTheme = .dark
                             }
-                            
+
                             ThemePreviewCard(theme: .white, isSelected: settings.appTheme == .white) {
                                 settings.appTheme = .white
                             }
                         }
+
+                        HStack {
+                            Text("Show Timer As")
+                                .foregroundColor(.primary)
+                            Spacer()
+
+                            Menu {
+                                Button("Floating Pill") { settings.pillDisplayMode = .floatingPill }
+                                Button("Menu Bar Icon") { settings.pillDisplayMode = .menuBarIcon }
+                            } label: {
+                                HStack {
+                                    Text(settings.pillDisplayMode == .floatingPill ? "Floating Pill" : "Menu Bar Icon")
+                                        .foregroundColor(menuTextColor)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .frame(width: 160)
+                                .background(GlassyBackground(theme: settings.appTheme))
+                            }
+                            .menuStyle(.borderlessButton)
+                        }
                     }
-                    
+
                     Divider().background(dividerColor)
                     
                     // PANEL POSITION
