@@ -1,0 +1,35 @@
+[     319ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://sf-saas.cdn-apple.com/latest/colors/default.css:0
+[    1368ms] [LOG] 💡 IndexedDB logging is disabled. To enable: __enableDevForumsIndexedDB(true) @ https://developer.apple.com/forums/build04112026/public/compiled/Logger.js:0
+[    1371ms] [LOG] [Logger] IndexedDB logging disabled. Enable via DevForums Observability extension or run: __enableDevForumsIndexedDB(true) @ https://developer.apple.com/forums/build04112026/public/compiled/Logger.js:0
+[    1372ms] [LOG] %c[Logger] Console config loaded from: localStorage-fallback color: #2196F3; font-weight: bold {enabled: true, levels: Array(6)} @ https://developer.apple.com/forums/build04112026/public/compiled/Logger.js:0
+[    1649ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/preload-helper.js:0
+[    1658ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/vendor-lodash.js:0
+[    1658ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/vendor-react.js:0
+[    1665ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/vendor-redux.js:0
+[    1665ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/test-otel-export.js:0
+[    1670ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/objectWithoutProperties.js:0
+[    1870ms] [LOG] [OTEL Test] Test utilities available: @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    1871ms] [LOG]   - window.testOTELSpanExport() @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    1871ms] [LOG]   - window.testErrorSpanExport() @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    1871ms] [LOG]   - window.testInfoSpanExport() @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    1871ms] [LOG]   - window.checkOTELStatus() @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    1871ms] [LOG] [Thread Page] ========== OTEL DEBUG TEST ========== @ https://developer.apple.com/forums/build04112026/public/compiled/pages/thread.js:67
+[    1871ms] [LOG] [OTEL Test] ========== CHECKING OTEL STATUS ========== @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    2037ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/store.js:0
+[    2484ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/load-resource.js:0
+[    2486ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/Logger.js:0
+[    2486ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/pages/welcome/participated.js:0
+[    2490ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/push-subscription-banner.js:0
+[    2516ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/userTypeQueryParam.js:0
+[    2626ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://developer.apple.com/public/compiled/otel-initializer.js:0
+[    2727ms] [LOG] [OTEL Test] Instance exists: false @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    2727ms] [LOG] [OTEL Test] Is initialized: undefined @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    2727ms] [LOG] [OTEL Test] Has tracer: false @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    2727ms] [LOG] [OTEL Test] Has meter: false @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    2727ms] [LOG] [OTEL Test] Has context: false @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    2727ms] [LOG] [OTEL Test] Has trace: false @ https://developer.apple.com/forums/build04112026/public/compiled/test-otel-export.js:1
+[    2739ms] [LOG] {contentPosts: NodeList(1)} @ https://developer.apple.com/forums/build04112026/public/compiled/pages/thread.js:1
+[    2873ms] [LOG] styles loaded:  https://developer.apple.com/forums/build04112026/public/scripts/highlightjs/xcode.css @ https://developer.apple.com/forums/build04112026/public/compiled/load-resource.js:2
+[    3029ms] [LOG] script loaded:  /forums/public/scripts/highlightjs/highlight.min.11.6.0.js @ https://developer.apple.com/forums/build04112026/public/compiled/load-resource.js:2
+[    3083ms] [LOG] script loaded:  /forums/public/scripts/highlightjs/highlightjs-line-numbers.min.js @ https://developer.apple.com/forums/build04112026/public/compiled/load-resource.js:2
+[    3084ms] [LOG] loaded both scripts:  {highlight: , highlightAuto: , highlightAll: , highlightElement: , highlightBlock: } function(e){"interactive"===o.readyState||"complete"===o.readyState?n(e):r.addEventListener("DOMContentLoaded",function(){n(e)})} @ https://developer.apple.com/forums/build04112026/public/compiled/main2.js:0

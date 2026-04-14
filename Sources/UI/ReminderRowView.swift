@@ -38,7 +38,7 @@ struct ReminderRowView: View, Equatable {
     private var rowFillColor: Color {
         switch appTheme {
         case .glass:
-            return Color(red: 0.11, green: 0.11, blue: 0.12).opacity(0.18)
+            return Color.white.opacity(0.08)
         case .dark:
             return Color(red: 0.11, green: 0.11, blue: 0.12)
         case .white:
@@ -422,7 +422,7 @@ struct ReminderRowView: View, Equatable {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(rowFillColor)
-                .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 3)
+                .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
                 // Hover Glow Effect (Colored based on priority)
                 .shadow(color: effectiveHover ? priorityColor(for: reminder.priority).opacity(0.25) : Color.clear, radius: 8, x: 0, y: 0)
                 .drawingGroup() // Optimization: Offload shadow rendering to GPU

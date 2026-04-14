@@ -1,0 +1,107 @@
+<h2>Expanded Pill Layout</h2>
+<p class="subtitle">How should the pill expand when you toggle it open? Pick the layout that feels right.</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a1f;padding:20px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <!-- Collapsed pill -->
+      <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border-radius:30px;padding:8px 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.15);width:260px;">
+        <span style="color:#fff;font-size:12px;font-weight:500;flex:1;">Write quarterly report</span>
+        <div style="width:1px;height:14px;background:rgba(255,255,255,0.2);"></div>
+        <span style="color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">24:13</span>
+        <span style="color:rgba(255,255,255,0.5);font-size:11px;cursor:pointer;">⌄</span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;">▲ collapsed</div>
+
+      <!-- Expanded pill -->
+      <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border-radius:20px;border:1px solid rgba(255,255,255,0.15);width:260px;overflow:hidden;">
+        <!-- Header row -->
+        <div style="padding:8px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <span style="color:#fff;font-size:12px;font-weight:500;flex:1;">Write quarterly report</span>
+          <div style="width:1px;height:14px;background:rgba(255,255,255,0.2);"></div>
+          <span style="color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">24:13</span>
+          <span style="color:rgba(255,255,255,0.5);font-size:11px;cursor:pointer;">⌃</span>
+        </div>
+        <!-- Notes section -->
+        <div style="padding:10px 14px;">
+          <div style="color:rgba(255,255,255,0.45);font-size:10px;letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase;">Notes</div>
+          <div style="color:rgba(255,255,255,0.7);font-size:11px;margin-bottom:8px;">Prepare slides and financial breakdown</div>
+          <!-- Subtask checkboxes -->
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div style="width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.08);flex-shrink:0;"></div>
+              <span style="color:rgba(255,255,255,0.75);font-size:11px;">Draft executive summary</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div style="width:12px;height:12px;border-radius:50%;background:rgba(100,220,120,0.8);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                <span style="color:#000;font-size:7px;font-weight:bold;">✓</span>
+              </div>
+              <span style="color:rgba(255,255,255,0.35);font-size:11px;text-decoration:line-through;">Gather Q3 data</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div style="width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.08);flex-shrink:0;"></div>
+              <span style="color:rgba(255,255,255,0.75);font-size:11px;">Review with manager</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;">▲ expanded</div>
+    </div>
+    <div class="card-body">
+      <h3>A — Toggle chevron</h3>
+      <p>A small chevron (↓/↑) at the right of the pill toggles expansion. Collapsed = current compact pill. Expanded = grows down to show notes text + subtask checkboxes parsed from markdown lines (<code>- [ ] task</code>). Clean, minimal.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a1f;padding:20px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <!-- Collapsed -->
+      <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border-radius:30px;padding:8px 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.15);width:260px;">
+        <span style="color:#fff;font-size:12px;font-weight:500;flex:1;">Write quarterly report</span>
+        <div style="width:1px;height:14px;background:rgba(255,255,255,0.2);"></div>
+        <span style="color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">24:13</span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.35);">▲ collapsed (click title to expand)</div>
+
+      <!-- Expanded: side panel floats below -->
+      <div style="position:relative;width:260px;">
+        <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border-radius:30px;padding:8px 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.15);">
+          <span style="color:#4ea8ff;font-size:12px;font-weight:500;flex:1;text-decoration:underline;text-underline-offset:2px;">Write quarterly report</span>
+          <div style="width:1px;height:14px;background:rgba(255,255,255,0.2);"></div>
+          <span style="color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">24:13</span>
+        </div>
+        <!-- Detached card below -->
+        <div style="margin-top:6px;background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);border-radius:16px;border:1px solid rgba(255,255,255,0.15);padding:12px 14px;">
+          <div style="color:rgba(255,255,255,0.45);font-size:10px;letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase;">Notes</div>
+          <div style="color:rgba(255,255,255,0.7);font-size:11px;margin-bottom:8px;">Prepare slides and financial breakdown</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div style="width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.08);flex-shrink:0;"></div>
+              <span style="color:rgba(255,255,255,0.75);font-size:11px;">Draft executive summary</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div style="width:12px;height:12px;border-radius:50%;background:rgba(100,220,120,0.8);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                <span style="color:#000;font-size:7px;font-weight:bold;">✓</span>
+              </div>
+              <span style="color:rgba(255,255,255,0.35);font-size:11px;text-decoration:line-through;">Gather Q3 data</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.35);">▲ expanded (separate card below)</div>
+    </div>
+    <div class="card-body">
+      <h3>B — Click title, detached card</h3>
+      <p>Click the task title to open a detached notes card that floats below the pill (separate element). The pill itself stays compact. Notes card can be dismissed by clicking elsewhere. Good for keeping the pill small.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>Subtask format</h3>
+  <p class="subtitle">Both options parse subtask checkboxes from the existing <strong>notes</strong> field using markdown syntax — no separate field needed. Lines starting with <code>- [ ]</code> become unchecked, <code>- [x]</code> become checked. Toggling a checkbox updates the notes text in place.</p>
+</div>

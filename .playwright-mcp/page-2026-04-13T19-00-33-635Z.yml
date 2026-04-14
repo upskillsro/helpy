@@ -1,0 +1,338 @@
+- generic [active] [ref=e1]:
+  - navigation "Global" [ref=e2]:
+    - list [ref=e4]:
+      - listitem [ref=e5]:
+        - link "Apple Developer" [ref=e6] [cursor=pointer]:
+          - /url: https://developer.apple.com/
+          - generic [ref=e7]: Apple Developer
+  - navigation "Local" [ref=e8]:
+    - generic [ref=e11]:
+      - link "Forums" [ref=e13] [cursor=pointer]:
+        - /url: /forums/
+      - search "Developer Forums" [ref=e17]:
+        - generic [ref=e18]: Search for a topic, subtopic, or tag
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - textbox "Search" [ref=e21]:
+              - /placeholder: Search for a topic, subtopic, or tag
+            - button "Submit search" [ref=e22] [cursor=pointer]
+          - status [ref=e23]
+      - generic [ref=e24]:
+        - generic:
+          - list
+        - generic [ref=e25]:
+          - link "Post (opens in a new window)" [ref=e27] [cursor=pointer]:
+            - /url: /forums/post/question
+          - button "Profile menu" [ref=e30] [cursor=pointer]:
+            - img "Profile" [ref=e32]
+  - main [ref=e34]:
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - heading "glassEffect() in SwiftUI always renders as white – even with latest Beta 2 on macOS 15" [level=1] [ref=e38]
+          - generic [ref=e41]:
+            - link "Design" [ref=e43] [cursor=pointer]:
+              - /url: /forums/topics/design-topic
+            - link "General" [ref=e45] [cursor=pointer]:
+              - /url: /forums/topics/design-topic/design-topic-general
+          - text:  
+        - article "Thread post" [ref=e47]:
+          - text: 
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - link [ref=e50] [cursor=pointer]:
+                - /url: /forums/profile/Max584
+                - img [ref=e52]
+              - link "Max584" [ref=e55] [cursor=pointer]:
+                - /url: /forums/profile/Max584
+            - generic [ref=e57]:
+              - generic [ref=e58]:
+                - generic [ref=e59]: Created
+                - generic [ref=e60]: Jun ’25
+              - generic [ref=e61]:
+                - generic [ref=e62]: Replies
+                - generic [ref=e63]: "0"
+              - generic [ref=e64]:
+                - generic [ref=e65]: Boosts
+                - generic [ref=e66]: "0"
+              - generic [ref=e67]:
+                - generic [ref=e68]: Views
+                - generic [ref=e69]: "138"
+              - generic [ref=e70]:
+                - generic [ref=e71]: Participants
+                - generic [ref=e72]: "1"
+          - generic [ref=e73]:
+            - generic [ref=e75]:
+              - paragraph [ref=e76]: Hi everyone,
+              - paragraph [ref=e77]: I’m having trouble getting the new glassEffect() modifier to render correctly in SwiftUI.
+              - paragraph [ref=e78]: No matter what I try, it just appears as a solid white background (instead of translucent glass). This happens both in Beta 1 and Beta 2.
+              - paragraph [ref=e79]: "My setup: • Mac mini (M4 chip) • macOS 15 Beta 2 (Tahoe) • Xcode 16 Beta 2 • Samsung Odyssey G9 57” monitor (super ultrawide) • Using Preview in SwiftUI (not the Simulator)"
+              - paragraph [ref=e80]: "Even when I use Apple’s default demo code like:"
+              - paragraph [ref=e81]: Text("Hello World") .padding() .glassEffect()
+            - generic [ref=e83]:
+              - link "Boost" [ref=e85] [cursor=pointer]:
+                - /url: /forums/login
+                - text: Boost
+              - link "Reply" [ref=e87] [cursor=pointer]:
+                - /url: /forums/login
+              - button "Copy Max584 question" [ref=e239] [cursor=pointer]:
+                - generic [ref=e240]:
+                  - img [ref=e241]
+                  - generic [ref=e249]: 􀈂
+                - generic [ref=e92]: Copy Max584 question
+      - generic [ref=e93]:
+        - text:  
+        - generic [ref=e250]: Jun 2025
+        - generic [ref=e95] [cursor=pointer]:
+          - generic [ref=e252]:
+            - generic [ref=e253]: "1"
+            - text: /
+            - generic [ref=e254]: "1"
+          - generic [ref=e255]: Jun 2025
+        - generic [ref=e256]: Jun 2025
+        - link "Reply" [ref=e98] [cursor=pointer]:
+          - /url: /forums/login
+      - text:  
+  - contentinfo "Developer Footer" [ref=e100]:
+    - generic [ref=e101]:
+      - heading "Developer Footer" [level=2] [ref=e102]
+      - generic [ref=e103]:
+        - text: This site contains user submitted content, comments and opinions and is for informational purposes only. Apple disclaims any and all liability for the acts, omissions and conduct of any third parties in connection with or related to your use of the site. All postings and use of the content on this site are subject to the
+        - link "Apple Developer Forums Participation Agreement (Opens in new window)" [ref=e104] [cursor=pointer]:
+          - /url: https://developer.apple.com/support/downloads/terms/apple-developer-forums/Apple-Developer-Forums-Agreement-20250602-English.pdf
+          - text: Apple Developer Forums Participation Agreement (opens in a new window)
+        - text: and Apple provided code is subject to the
+        - link "Apple Sample Code License" [ref=e105] [cursor=pointer]:
+          - /url: https://developer.apple.com/support/downloads/terms/apple-sample-code/Apple-Sample-Code-License.pdf
+          - text: Apple Sample Code License (opens in a new window)
+        - text: .
+      - navigation "Apple Developer Directory" [ref=e106]:
+        - generic [ref=e107]:
+          - generic:
+            - generic:
+              - heading "Platforms" [level=3]
+            - list:
+              - listitem [ref=e108]:
+                - link "iOS" [ref=e109] [cursor=pointer]:
+                  - /url: https://developer.apple.com/ios/
+              - listitem [ref=e110]:
+                - link "iPadOS" [ref=e111] [cursor=pointer]:
+                  - /url: https://developer.apple.com/ipados/
+              - listitem [ref=e112]:
+                - link "macOS" [ref=e113] [cursor=pointer]:
+                  - /url: https://developer.apple.com/macos/
+              - listitem [ref=e114]:
+                - link "tvOS" [ref=e115] [cursor=pointer]:
+                  - /url: https://developer.apple.com/tvos/
+              - listitem [ref=e116]:
+                - link "watchOS" [ref=e117] [cursor=pointer]:
+                  - /url: https://developer.apple.com/watchos/
+              - listitem [ref=e118]:
+                - link "visionOS" [ref=e119] [cursor=pointer]:
+                  - /url: https://developer.apple.com/visionos/
+          - generic:
+            - generic:
+              - heading "Tools" [level=3]
+            - list:
+              - listitem [ref=e120]:
+                - link "Swift" [ref=e121] [cursor=pointer]:
+                  - /url: https://developer.apple.com/swift/
+              - listitem [ref=e122]:
+                - link "SwiftUI" [ref=e123] [cursor=pointer]:
+                  - /url: https://developer.apple.com/swiftui/
+              - listitem [ref=e124]:
+                - link "SF Symbols" [ref=e125] [cursor=pointer]:
+                  - /url: https://developer.apple.com/sf-symbols/
+              - listitem [ref=e126]:
+                - link "Swift Playground" [ref=e127] [cursor=pointer]:
+                  - /url: https://developer.apple.com/swift-playground/
+              - listitem [ref=e128]:
+                - link "TestFlight" [ref=e129] [cursor=pointer]:
+                  - /url: https://developer.apple.com/testflight/
+              - listitem [ref=e130]:
+                - link "Xcode" [ref=e131] [cursor=pointer]:
+                  - /url: https://developer.apple.com/xcode/
+              - listitem [ref=e132]:
+                - link "Xcode Cloud" [ref=e133] [cursor=pointer]:
+                  - /url: https://developer.apple.com/xcode-cloud/
+        - generic [ref=e134]:
+          - generic:
+            - generic:
+              - heading "Topics & Technologies" [level=3]
+            - list:
+              - listitem [ref=e135]:
+                - link "Accessibility" [ref=e136] [cursor=pointer]:
+                  - /url: https://developer.apple.com/accessibility/
+              - listitem [ref=e137]:
+                - link "Accessories" [ref=e138] [cursor=pointer]:
+                  - /url: https://developer.apple.com/accessories/
+              - listitem [ref=e139]:
+                - link "App Extensions" [ref=e140] [cursor=pointer]:
+                  - /url: https://developer.apple.com/app-extensions/
+              - listitem [ref=e141]:
+                - link "App Store" [ref=e142] [cursor=pointer]:
+                  - /url: https://developer.apple.com/app-store/
+              - listitem [ref=e143]:
+                - link "Audio & Video" [ref=e144] [cursor=pointer]:
+                  - /url: https://developer.apple.com/audio/
+              - listitem [ref=e145]:
+                - link "Augmented Reality" [ref=e146] [cursor=pointer]:
+                  - /url: https://developer.apple.com/augmented-reality/
+              - listitem [ref=e147]:
+                - link "Design" [ref=e148] [cursor=pointer]:
+                  - /url: https://developer.apple.com/design/
+              - listitem [ref=e149]:
+                - link "Distribution" [ref=e150] [cursor=pointer]:
+                  - /url: https://developer.apple.com/distribute/
+              - listitem [ref=e151]:
+                - link "Education" [ref=e152] [cursor=pointer]:
+                  - /url: https://developer.apple.com/education/
+              - listitem [ref=e153]:
+                - link "Fonts" [ref=e154] [cursor=pointer]:
+                  - /url: https://developer.apple.com/fonts/
+              - listitem [ref=e155]:
+                - link "Games" [ref=e156] [cursor=pointer]:
+                  - /url: https://developer.apple.com/games/
+              - listitem [ref=e157]:
+                - link "Health & Fitness" [ref=e158] [cursor=pointer]:
+                  - /url: https://developer.apple.com/health-fitness/
+              - listitem [ref=e159]:
+                - link "In-App Purchase" [ref=e160] [cursor=pointer]:
+                  - /url: https://developer.apple.com/in-app-purchase/
+              - listitem [ref=e161]:
+                - link "Localization" [ref=e162] [cursor=pointer]:
+                  - /url: https://developer.apple.com/localization/
+              - listitem [ref=e163]:
+                - link "Maps & Location" [ref=e164] [cursor=pointer]:
+                  - /url: https://developer.apple.com/maps/
+              - listitem [ref=e165]:
+                - link "Machine Learning" [ref=e166] [cursor=pointer]:
+                  - /url: https://developer.apple.com/machine-learning/
+              - listitem [ref=e167]:
+                - link "Open Source" [ref=e168] [cursor=pointer]:
+                  - /url: https://opensource.apple.com
+              - listitem [ref=e169]:
+                - link "Security" [ref=e170] [cursor=pointer]:
+                  - /url: https://developer.apple.com/security/
+              - listitem [ref=e171]:
+                - link "Safari & Web" [ref=e172] [cursor=pointer]:
+                  - /url: https://developer.apple.com/safari/
+        - generic [ref=e173]:
+          - generic:
+            - generic:
+              - heading "Resources" [level=3]
+            - list:
+              - listitem [ref=e174]:
+                - link "Documentation" [ref=e175] [cursor=pointer]:
+                  - /url: https://developer.apple.com/documentation/
+              - listitem [ref=e176]:
+                - link "Tutorials" [ref=e177] [cursor=pointer]:
+                  - /url: https://developer.apple.com/learn/
+              - listitem [ref=e178]:
+                - link "Downloads" [ref=e179] [cursor=pointer]:
+                  - /url: https://developer.apple.com/download/
+              - listitem [ref=e180]:
+                - link "Forums" [ref=e181] [cursor=pointer]:
+                  - /url: https://developer.apple.com/forums/
+              - listitem [ref=e182]:
+                - link "Videos" [ref=e183] [cursor=pointer]:
+                  - /url: https://developer.apple.com/videos/
+          - generic:
+            - generic:
+              - heading "Support" [level=3]
+            - list:
+              - listitem [ref=e184]:
+                - link "Support Articles" [ref=e185] [cursor=pointer]:
+                  - /url: https://developer.apple.com/support/articles/
+              - listitem [ref=e186]:
+                - link "Contact Us" [ref=e187] [cursor=pointer]:
+                  - /url: https://developer.apple.com/contact/
+              - listitem [ref=e188]:
+                - link "Bug Reporting" [ref=e189] [cursor=pointer]:
+                  - /url: https://developer.apple.com/bug-reporting/
+              - listitem [ref=e190]:
+                - link "System Status" [ref=e191] [cursor=pointer]:
+                  - /url: https://developer.apple.com/system-status/
+          - generic:
+            - generic:
+              - heading "Account" [level=3]
+            - list:
+              - listitem [ref=e192]:
+                - link "Apple Developer" [ref=e193] [cursor=pointer]:
+                  - /url: https://developer.apple.com/account/
+              - listitem [ref=e194]:
+                - link "App Store Connect" [ref=e195] [cursor=pointer]:
+                  - /url: https://appstoreconnect.apple.com/
+              - listitem [ref=e196]:
+                - link "Certificates, IDs, & Profiles" [ref=e197] [cursor=pointer]:
+                  - /url: https://developer.apple.com/account/ios/certificate/
+              - listitem [ref=e198]:
+                - link "Feedback Assistant" [ref=e199] [cursor=pointer]:
+                  - /url: https://feedbackassistant.apple.com/
+        - generic [ref=e200]:
+          - generic:
+            - generic:
+              - heading "Programs" [level=3]
+            - list:
+              - listitem [ref=e201]:
+                - link "Apple Developer Program" [ref=e202] [cursor=pointer]:
+                  - /url: https://developer.apple.com/programs/
+              - listitem [ref=e203]:
+                - link "Apple Developer Enterprise Program" [ref=e204] [cursor=pointer]:
+                  - /url: https://developer.apple.com/programs/enterprise/
+              - listitem [ref=e205]:
+                - link "App Store Small Business Program" [ref=e206] [cursor=pointer]:
+                  - /url: https://developer.apple.com/app-store/small-business-program/
+              - listitem [ref=e207]:
+                - link "MFi Program" [ref=e208] [cursor=pointer]:
+                  - /url: https://mfi.apple.com/
+              - listitem [ref=e209]:
+                - link "News Partner Program" [ref=e210] [cursor=pointer]:
+                  - /url: https://developer.apple.com/programs/news-partner/
+              - listitem [ref=e211]:
+                - link "Video Partner Program" [ref=e212] [cursor=pointer]:
+                  - /url: https://developer.apple.com/programs/video-partner/
+              - listitem [ref=e213]:
+                - link "Security Bounty Program" [ref=e214] [cursor=pointer]:
+                  - /url: https://developer.apple.com/security-bounty/
+              - listitem [ref=e215]:
+                - link "Security Research Device Program" [ref=e216] [cursor=pointer]:
+                  - /url: https://developer.apple.com/programs/security-research-device/
+          - generic:
+            - generic:
+              - heading "Events" [level=3]
+            - list:
+              - listitem [ref=e217]:
+                - link "Meet with Apple" [ref=e218] [cursor=pointer]:
+                  - /url: https://developer.apple.com/events/
+              - listitem [ref=e219]:
+                - link "Apple Developer Centers" [ref=e220] [cursor=pointer]:
+                  - /url: https://developer.apple.com/events/developer-centers/
+              - listitem [ref=e221]:
+                - link "App Store Awards" [ref=e222] [cursor=pointer]:
+                  - /url: https://developer.apple.com/app-store/app-store-awards/
+              - listitem [ref=e223]:
+                - link "Apple Design Awards" [ref=e224] [cursor=pointer]:
+                  - /url: https://developer.apple.com/design/awards/
+              - listitem [ref=e225]:
+                - link "Apple Developer Academies" [ref=e226] [cursor=pointer]:
+                  - /url: https://developer.apple.com/learn/experts/#academies
+              - listitem [ref=e227]:
+                - link "WWDC" [ref=e228] [cursor=pointer]:
+                  - /url: https://developer.apple.com/wwdc/
+      - generic [ref=e229]:
+        - generic [ref=e230]:
+          - text: To view the latest developer news, visit
+          - link "News and Updates" [ref=e231] [cursor=pointer]:
+            - /url: https://developer.apple.com/news/
+          - text: .
+        - generic [ref=e232]:
+          - generic [ref=e233]: Copyright © 2026 Apple Inc. All rights reserved.
+          - generic [ref=e234]:
+            - link "Terms of Use" [ref=e235] [cursor=pointer]:
+              - /url: https://www.apple.com/legal/internet-services/terms/site.html
+            - link "Privacy Policy" [ref=e236] [cursor=pointer]:
+              - /url: https://www.apple.com/legal/privacy/en-ww/
+            - link "License Agreements" [ref=e237] [cursor=pointer]:
+              - /url: https://developer.apple.com/terms/
+  - status [ref=e238]

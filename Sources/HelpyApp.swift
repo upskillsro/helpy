@@ -54,6 +54,14 @@ struct HelpyApp: App {
                 .onAppear {
                     // Link Dependencies
                     timerService.estimateStore = estimateStore
+
+                    // Provide service refs to coordinator for menu bar panel
+                    windowCoordinator.timerService = timerService
+                    windowCoordinator.remindersService = remindersService
+                    windowCoordinator.subtaskStore = subtaskStore
+
+                    // Always show the Helpy menu bar icon
+                    windowCoordinator.setupStatusItem()
                     
                     // Ensure Dock icon
                     NSApp.setActivationPolicy(.regular)

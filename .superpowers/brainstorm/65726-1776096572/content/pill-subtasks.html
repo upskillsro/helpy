@@ -1,0 +1,87 @@
+<h2>Floating Pill — Subtask Expansion</h2>
+<p class="subtitle">On hover, a <strong>+</strong> icon appears. Clicking it extends the pill inline to reveal subtasks + an input field.</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">Idle → Hover state</div>
+    <div class="mockup-body" style="background:#111118;padding:30px;display:flex;flex-direction:column;align-items:center;gap:24px;">
+      <!-- Idle pill -->
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);text-align:center;margin-bottom:6px;letter-spacing:0.5px;">IDLE</div>
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(24px);border-radius:30px;padding:9px 18px;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,0.13);width:280px;">
+          <span style="color:#fff;font-size:12px;font-weight:500;flex:1;">Write quarterly report</span>
+          <div style="width:1px;height:14px;background:rgba(255,255,255,0.18);"></div>
+          <span style="color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">24:13</span>
+        </div>
+      </div>
+      <!-- Hover pill -->
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);text-align:center;margin-bottom:6px;letter-spacing:0.5px;">ON HOVER</div>
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(24px);border-radius:30px;padding:9px 18px;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,0.18);width:280px;">
+          <span style="color:#fff;font-size:12px;font-weight:500;flex:1;">Write quarterly report</span>
+          <div style="width:1px;height:14px;background:rgba(255,255,255,0.18);"></div>
+          <span style="color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">24:13</span>
+          <!-- + subtask icon -->
+          <div style="width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.7;">
+            <span style="color:#fff;font-size:11px;line-height:1;">+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Expanded state (subtasks)</div>
+    <div class="mockup-body" style="background:#111118;padding:30px;display:flex;flex-direction:column;align-items:center;">
+      <!-- Expanded pill -->
+      <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(24px);border-radius:20px;border:1px solid rgba(255,255,255,0.16);width:280px;overflow:hidden;">
+        <!-- Header row stays -->
+        <div style="padding:9px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <span style="color:#fff;font-size:12px;font-weight:500;flex:1;">Write quarterly report</span>
+          <div style="width:1px;height:14px;background:rgba(255,255,255,0.18);"></div>
+          <span style="color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">24:13</span>
+          <!-- ✕ to collapse -->
+          <span style="color:rgba(255,255,255,0.35);font-size:10px;cursor:pointer;">✕</span>
+        </div>
+        <!-- Subtasks section -->
+        <div style="padding:10px 16px 12px;">
+          <div style="color:rgba(255,255,255,0.35);font-size:10px;letter-spacing:0.6px;text-transform:uppercase;margin-bottom:8px;">Subtasks</div>
+          <!-- Subtask items -->
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:13px;height:13px;border-radius:50%;background:rgba(100,220,120,0.85);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                <span style="color:#000;font-size:7px;font-weight:bold;">✓</span>
+              </div>
+              <span style="color:rgba(255,255,255,0.3);font-size:11.5px;text-decoration:line-through;">Research competitors</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.35);background:transparent;flex-shrink:0;"></div>
+              <span style="color:rgba(255,255,255,0.8);font-size:11.5px;">Draft executive summary</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.35);background:transparent;flex-shrink:0;"></div>
+              <span style="color:rgba(255,255,255,0.8);font-size:11.5px;">Review with manager</span>
+            </div>
+          </div>
+          <!-- New subtask input -->
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,0.06);border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+            <span style="color:rgba(255,255,255,0.25);font-size:12px;">+</span>
+            <span style="color:rgba(255,255,255,0.3);font-size:11.5px;font-style:italic;">Add subtask…</span>
+          </div>
+        </div>
+        <!-- Progress bar at bottom -->
+        <div style="height:3px;background:rgba(255,255,255,0.08);position:relative;">
+          <div style="height:3px;width:45%;background:linear-gradient(90deg,#4ade80,#22c55e);box-shadow:0 0 6px rgba(74,222,128,0.6);"></div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:10px;">1 of 3 subtasks done · pill shrinks back on ✕ or click-away</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:28px;">
+  <h3>Data model</h3>
+  <p class="subtitle">
+    Subtasks are stored in a new <strong>SubtaskStore</strong> — a lightweight <code>UserDefaults</code>-backed store keyed by <code>calendarItemIdentifier</code>. Each item has an <code>id</code>, <code>title</code>, and <code>isCompleted</code> flag. Completely independent from Reminders — app-only data.
+  </p>
+</div>

@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \":*)",
+      "Bash(find ~/.claude/skills ~/.agents/skills -name *.md)",
+      "Bash(echo 'No top Resources dir' ls /Users/lungusebi/Desktop/AI/Apps/Helpy/*.png)",
+      "Bash(echo 'No PNG at root' find /Users/lungusebi/Desktop/AI/Apps/Helpy -name MenuBarIcon* -o -name helpy* -o -name Helpy*.png)",
+      "Bash(find /Users/lungusebi/Desktop/AI/Apps/Helpy -name MenuBarIcon* 2)",
+      "Bash(/dev/null ls:*)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
+      "Bash(screencapture -x /tmp/helpy_sidebar.png)",
+      "Bash(pkill -x Helpy)",
+      "Bash(open /Users/lungusebi/Desktop/AI/Apps/Helpy/.build/debug/Helpy)",
+      "Bash(screencapture -x /tmp/helpy_glass.png)",
+      "mcp__plugin_playwright_playwright__browser_tabs",
+      "mcp__plugin_playwright_playwright__browser_close",
+      "Bash(pkill -f \"mcp-chrome\")",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "Bash(grep -n \"foregroundColor.*\\\\.white\" /Users/lungusebi/Desktop/AI/Apps/Helpy/Sources/UI/Assistant/*.swift)"
+    ],
+    "additionalDirectories": [
+      "/Users/lungusebi/.claude/skills"
+    ]
+  }
+}

@@ -12,6 +12,7 @@ CUSTOM_LIGHT_ICNS_SOURCE="CustomIcons/AppIcon.icns"
 CUSTOM_DARK_ICNS_SOURCE="CustomIcons/AppIconDark.icns"
 OUTPUT_DMG="Helpy.dmg"
 BUILD_ARCH_DIR=".build/release"
+BUNDLED_ASSISTANT_DIR="BundledAssistant"
 
 echo "🚀 Starting Packaging Process..."
 
@@ -120,6 +121,16 @@ if [ -d "$BUILD_ARCH_DIR" ]; then
     fi
 else
     echo "⚠️  Build output directory not found: $BUILD_ARCH_DIR"
+fi
+
+if [ -d "$BUNDLED_ASSISTANT_DIR" ]; then
+    echo "🤖 Embedding bundled assistant payload..."
+    cp -R "$BUNDLED_ASSISTANT_DIR" "$APP_NAME.app/Contents/Resources/"
+    if [ -d "$APP_NAME.app/Contents/Resources/BundledAssistant/bin" ]; then
+        find "$APP_NAME.app/Contents/Resources/BundledAssistant/bin" -type f -exec chmod +x {} +
+    fi
+else
+    echo "ℹ️  No BundledAssistant payload found. Assistant runtime will use system-installed tools."
 fi
 
 # Create Info.plist (ensure icon name matches)

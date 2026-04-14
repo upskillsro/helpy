@@ -1,0 +1,777 @@
+- generic [ref=e2]:
+  - link "Skip Navigation" [ref=e3] [cursor=pointer]:
+    - /url: "#app-main"
+  - navigation "Global" [ref=e4]:
+    - list [ref=e6]:
+      - listitem [ref=e7]:
+        - link "Apple Developer" [ref=e8] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=e9]:
+        - generic [ref=e11]:
+          - list [ref=e13]:
+            - listitem [ref=e14]:
+              - link "Get Started" [ref=e15] [cursor=pointer]:
+                - /url: /get-started/
+                - generic [ref=e16]:
+                  - generic: Get Started
+            - listitem:
+              - button "Get Started menu":
+                - generic:
+                  - img
+          - list [ref=e18]:
+            - listitem [ref=e19]:
+              - link "Platforms" [ref=e20] [cursor=pointer]:
+                - /url: /platforms/
+                - generic [ref=e21]:
+                  - generic: Platforms
+            - listitem:
+              - button "Platforms menu":
+                - generic:
+                  - img
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "Technologies" [ref=e25] [cursor=pointer]:
+                - /url: /technologies/
+                - generic [ref=e26]:
+                  - generic: Technologies
+            - listitem:
+              - button "Technologies menu":
+                - generic:
+                  - img
+          - list [ref=e28]:
+            - listitem [ref=e29]:
+              - link "Community" [ref=e30] [cursor=pointer]:
+                - /url: /community/
+                - generic [ref=e31]:
+                  - generic: Community
+            - listitem:
+              - button "Community menu":
+                - generic:
+                  - img
+          - list [ref=e33]:
+            - listitem [ref=e34]:
+              - link "Documentation" [ref=e35] [cursor=pointer]:
+                - /url: /documentation/
+                - generic [ref=e36]:
+                  - generic: Documentation
+            - listitem:
+              - button "Documentation menu":
+                - generic:
+                  - img
+          - list [ref=e38]:
+            - listitem [ref=e39]:
+              - link "Downloads" [ref=e40] [cursor=pointer]:
+                - /url: /download/
+                - generic [ref=e41]:
+                  - generic: Downloads
+            - listitem:
+              - button "Downloads menu":
+                - generic:
+                  - img
+          - list [ref=e43]:
+            - listitem [ref=e44]:
+              - link "Support" [ref=e45] [cursor=pointer]:
+                - /url: /support/
+                - generic [ref=e46]:
+                  - generic: Support
+            - listitem:
+              - button "Support menu":
+                - generic:
+                  - img
+      - listitem [ref=e47]:
+        - button "Search" [ref=e48] [cursor=pointer]:
+          - generic:
+            - img
+      - listitem [ref=e49]:
+        - link "Account" [ref=e51] [cursor=pointer]:
+          - /url: /account/
+          - generic:
+            - img
+  - generic [ref=e248]:
+    - navigation "API Reference" [ref=e249]:
+      - generic [ref=e252]:
+        - button "Open Documentation Navigator" [ref=e255] [cursor=pointer]:
+          - img [ref=e257]
+        - link "Documentation" [ref=e260] [cursor=pointer]:
+          - /url: /documentation
+        - list [ref=e263]:
+          - listitem [ref=e264]:
+            - generic [ref=e265]:
+              - combobox
+              - generic [ref=e266]: "Language:"
+              - text: Swift
+    - generic [ref=e267]:
+      - navigation "SwiftUI" [ref=e271]:
+        - generic [ref=e274]:
+          - button "All Technologies" [ref=e276] [cursor=pointer]:
+            - img [ref=e277]
+            - text: All Technologies
+          - generic [ref=e279]:
+            - link "SwiftUI" [ref=e280] [cursor=pointer]:
+              - /url: /documentation/swiftui
+              - heading "SwiftUI" [level=2] [ref=e281]
+            - generic "Documentation Navigator" [ref=e282]:
+              - generic [ref=e283]:
+                - generic [ref=e287]:
+                  - button [ref=e289] [cursor=pointer]:
+                    - img [ref=e290]
+                  - img [ref=e294]
+                  - link [ref=e298] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-search
+                    - paragraph [ref=e299]: Search modifiers
+                - generic [ref=e303]:
+                  - button [ref=e305] [cursor=pointer]:
+                    - img [ref=e306]
+                  - img [ref=e310]
+                  - link [ref=e314] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-input-and-events
+                    - paragraph [ref=e315]: Input and event modifiers
+                - generic [ref=e319]:
+                  - button "Environment values" [ref=e321] [cursor=pointer]:
+                    - img [ref=e322]
+                  - img [ref=e326]
+                  - link "Environment values" [ref=e330] [cursor=pointer]:
+                    - /url: /documentation/swiftui/environment-values
+                    - paragraph [ref=e331]: Environment values
+                - generic [ref=e335]:
+                  - button "Preferences" [ref=e337] [cursor=pointer]:
+                    - img [ref=e338]
+                  - img [ref=e342]
+                  - link "Preferences" [ref=e346] [cursor=pointer]:
+                    - /url: /documentation/swiftui/preferences
+                    - paragraph [ref=e347]: Preferences
+                - generic [ref=e351]:
+                  - button "Persistent storage" [ref=e353] [cursor=pointer]:
+                    - img [ref=e354]
+                  - img [ref=e358]
+                  - link "Persistent storage" [ref=e362] [cursor=pointer]:
+                    - /url: /documentation/swiftui/persistent-storage
+                    - paragraph [ref=e363]: Persistent storage
+                - heading "Views" [level=3] [ref=e370]:
+                  - paragraph [ref=e371]: Views
+                - generic [ref=e375]:
+                  - button "View fundamentals" [expanded] [ref=e377] [cursor=pointer]:
+                    - img [ref=e378]
+                  - img [ref=e382]
+                  - link "View fundamentals" [ref=e386] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-fundamentals
+                    - paragraph [ref=e387]: View fundamentals
+                - heading "Creating a view" [level=3] [ref=e394]:
+                  - paragraph [ref=e395]: Creating a view
+                - generic [ref=e399]:
+                  - img [ref=e403]
+                  - link "Declaring a custom view" [ref=e407] [cursor=pointer]:
+                    - /url: /documentation/swiftui/declaring-a-custom-view
+                    - paragraph [ref=e408]: Declaring a custom view
+                - generic [ref=e412]:
+                  - button "View" [expanded] [ref=e414] [cursor=pointer]:
+                    - img [ref=e415]
+                  - img [ref=e419]:
+                    - generic [ref=e421]:
+                      - generic [ref=e423]: r
+                      - generic [ref=e424]: P
+                  - link "View" [ref=e426] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view
+                    - paragraph [ref=e427]: View
+                - heading "Implementing a custom view" [level=3] [ref=e434]:
+                  - paragraph [ref=e435]: Implementing a custom view
+                - generic [ref=e439]:
+                  - img [ref=e443]:
+                    - generic [ref=e446]: P
+                  - 'link "var body: Self.Body" [ref=e448] [cursor=pointer]':
+                    - /url: /documentation/swiftui/view/body-8kl5o
+                    - paragraph [ref=e449]: "var body: Self.Body"
+                - generic [ref=e453]:
+                  - img [ref=e457]
+                  - link "Body" [ref=e461] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/body-swift.associatedtype
+                    - paragraph [ref=e462]: Body
+                - generic [ref=e466]:
+                  - img [ref=e470]:
+                    - generic [ref=e473]: M
+                  - link "func modifier<T>(T) -> ModifiedContent<Self, T>" [ref=e475] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/modifier(_:)
+                    - paragraph [ref=e476]: func modifier<T>(T) -> ModifiedContent<Self, T>
+                - generic [ref=e480]:
+                  - button "Previews in Xcode" [ref=e482] [cursor=pointer]:
+                    - img [ref=e483]
+                  - img [ref=e487]
+                  - link "Previews in Xcode" [ref=e491] [cursor=pointer]:
+                    - /url: /documentation/swiftui/previews-in-xcode
+                    - paragraph [ref=e492]: Previews in Xcode
+                - heading "Configuring view elements" [level=3] [ref=e499]:
+                  - paragraph [ref=e500]: Configuring view elements
+                - generic [ref=e504]:
+                  - button "Accessibility modifiers" [ref=e506] [cursor=pointer]:
+                    - img [ref=e507]
+                  - img [ref=e511]
+                  - link "Accessibility modifiers" [ref=e515] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-accessibility
+                    - paragraph [ref=e516]: Accessibility modifiers
+                - generic [ref=e520]:
+                  - button "Appearance modifiers" [ref=e522] [cursor=pointer]:
+                    - img [ref=e523]
+                  - img [ref=e527]
+                  - link "Appearance modifiers" [ref=e531] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-appearance
+                    - paragraph [ref=e532]: Appearance modifiers
+                - generic [ref=e536]:
+                  - button "Text and symbol modifiers" [ref=e538] [cursor=pointer]:
+                    - img [ref=e539]
+                  - img [ref=e543]
+                  - link "Text and symbol modifiers" [ref=e547] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-text-and-symbols
+                    - paragraph [ref=e548]: Text and symbol modifiers
+                - generic [ref=e552]:
+                  - button "Auxiliary view modifiers" [ref=e554] [cursor=pointer]:
+                    - img [ref=e555]
+                  - img [ref=e559]
+                  - link "Auxiliary view modifiers" [ref=e563] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-auxiliary-views
+                    - paragraph [ref=e564]: Auxiliary view modifiers
+                - generic [ref=e568]:
+                  - button "Chart view modifiers" [ref=e570] [cursor=pointer]:
+                    - img [ref=e571]
+                  - img [ref=e575]
+                  - link "Chart view modifiers" [ref=e579] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-chart-view
+                    - paragraph [ref=e580]: Chart view modifiers
+                - heading "Drawing views" [level=3] [ref=e587]:
+                  - paragraph [ref=e588]: Drawing views
+                - generic [ref=e592]:
+                  - button "Style modifiers" [ref=e594] [cursor=pointer]:
+                    - img [ref=e595]
+                  - img [ref=e599]
+                  - link "Style modifiers" [ref=e603] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-style-modifiers
+                    - paragraph [ref=e604]: Style modifiers
+                - generic [ref=e608]:
+                  - button "Layout modifiers" [ref=e610] [cursor=pointer]:
+                    - img [ref=e611]
+                  - img [ref=e615]
+                  - link "Layout modifiers" [ref=e619] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-layout
+                    - paragraph [ref=e620]: Layout modifiers
+                - generic [ref=e624]:
+                  - button "Graphics and rendering modifiers" [ref=e626] [cursor=pointer]:
+                    - img [ref=e627]
+                  - img [ref=e631]
+                  - link "Graphics and rendering modifiers" [ref=e635] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-graphics-and-rendering
+                    - paragraph [ref=e636]: Graphics and rendering modifiers
+                - heading "Providing interactivity" [level=3] [ref=e643]:
+                  - paragraph [ref=e644]: Providing interactivity
+                - generic [ref=e648]:
+                  - button "Input and event modifiers" [ref=e650] [cursor=pointer]:
+                    - img [ref=e651]
+                  - img [ref=e655]
+                  - link "Input and event modifiers" [ref=e659] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-input-and-events
+                    - paragraph [ref=e660]: Input and event modifiers
+                - generic [ref=e664]:
+                  - button "Search modifiers" [ref=e666] [cursor=pointer]:
+                    - img [ref=e667]
+                  - img [ref=e671]
+                  - link "Search modifiers" [ref=e675] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-search
+                    - paragraph [ref=e676]: Search modifiers
+                - generic [ref=e680]:
+                  - button "Presentation modifiers" [ref=e682] [cursor=pointer]:
+                    - img [ref=e683]
+                  - img [ref=e687]
+                  - link "Presentation modifiers" [ref=e691] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-presentation
+                    - paragraph [ref=e692]: Presentation modifiers
+                - generic [ref=e696]:
+                  - button "State modifiers" [ref=e698] [cursor=pointer]:
+                    - img [ref=e699]
+                  - img [ref=e703]
+                  - link "State modifiers" [ref=e707] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-state
+                    - paragraph [ref=e708]: State modifiers
+                - heading "Deprecated modifiers" [level=3] [ref=e715]:
+                  - paragraph [ref=e716]: Deprecated modifiers
+                - generic [ref=e720]:
+                  - button "Deprecated modifiers" [ref=e722] [cursor=pointer]:
+                    - img [ref=e723]
+                  - img [ref=e727]
+                  - link "Deprecated modifiers" [ref=e731] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-deprecated
+                    - paragraph [ref=e732]: Deprecated modifiers
+            - generic [ref=e733]: 353 items were found. Tab back to navigate through them.
+            - generic:
+              - paragraph
+          - generic [ref=e735]:
+            - search [ref=e737]:
+              - generic [ref=e739]:
+                - button [ref=e740]:
+                  - img [ref=e741]
+                - generic "Filter" [ref=e744]:
+                  - combobox "Filter" [ref=e745]
+            - button "Open Quick Navigation" [ref=e747] [cursor=pointer]: /
+        - generic [ref=e748]: Navigator is ready
+      - generic [ref=e751]:
+        - main [ref=e752]:
+          - generic [ref=e755]:
+            - list "Breadcrumbs" [ref=e756]:
+              - listitem [ref=e757]:
+                - link "SwiftUI" [ref=e758] [cursor=pointer]:
+                  - /url: /documentation/swiftui
+              - listitem [ref=e759]:
+                - text: /
+                - link "View" [ref=e760] [cursor=pointer]:
+                  - /url: /documentation/swiftui/view
+              - listitem [ref=e761]:
+                - text: /
+                - generic [ref=e762]: glassBackgroundEffect(in:displayMode:)
+            - generic [ref=e763]:
+              - generic [ref=e764]: Instance Method
+              - heading "glassBackgroundEffect(in:displayMode:)" [level=1] [ref=e765]:
+                - generic [ref=e766]:
+                  - text: glass
+                  - text: Background
+                  - text: "Effect(in:"
+                  - text: display
+                  - text: Mode:)
+            - generic [ref=e767]: Fills the view’s background with an automatic glass background effect and a shape that you specify.
+            - complementary "Availability" [ref=e768]:
+              - generic "visionOS 1.0+, Available on visionOS 1.0 and later" [ref=e770]: visionOS 1.0+
+            - code [ref=e778]:
+              - text: "start of code block nonisolated func glassBackgroundEffect<S>( in shape:"
+              - generic [ref=e779]: S
+              - text: ", displayMode:"
+              - link "GlassBackgroundDisplayMode" [ref=e780] [cursor=pointer]:
+                - /url: /documentation/swiftui/glassbackgrounddisplaymode
+                - code [ref=e781]:
+                  - generic [ref=e782]:
+                    - text: Glass
+                    - text: Background
+                    - text: Display
+                    - text: Mode
+              - text: = .always ) -> some
+              - link "View" [ref=e783] [cursor=pointer]:
+                - /url: /documentation/swiftui/view
+                - code [ref=e784]: View
+              - text: where
+              - generic [ref=e785]: S
+              - text: ":"
+              - link "InsettableShape" [ref=e786] [cursor=pointer]:
+                - /url: /documentation/swiftui/insettableshape
+                - code [ref=e787]:
+                  - generic [ref=e788]:
+                    - text: Insettable
+                    - text: Shape
+              - text: end of code block
+          - generic [ref=e790]:
+            - generic [ref=e792]:
+              - generic [ref=e793]:
+                - heading "Parameters in page link" [level=2] [ref=e794]:
+                  - link "Parameters in page link" [ref=e795] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/View/glassBackgroundEffect(in:displayMode:)#parameters
+                - generic [ref=e796]:
+                  - term [ref=e797]:
+                    - code [ref=e798]: shape
+                  - definition [ref=e799]:
+                    - paragraph [ref=e801]:
+                      - text: An
+                      - link "InsettableShape" [ref=e802] [cursor=pointer]:
+                        - /url: /documentation/swiftui/insettableshape
+                        - code [ref=e803]:
+                          - text: Insettable
+                          - text: Shape
+                      - text: instance that SwiftUI draws behind the view.
+                  - term [ref=e804]:
+                    - code [ref=e805]: displayMode
+                  - definition [ref=e806]:
+                    - paragraph [ref=e808]:
+                      - text: When to display the glass background. The default is
+                      - link "GlassBackgroundDisplayMode.always" [ref=e809] [cursor=pointer]:
+                        - /url: /documentation/swiftui/glassbackgrounddisplaymode/always
+                        - code [ref=e810]:
+                          - text: Glass
+                          - text: Background
+                          - text: Display
+                          - text: Mode
+                          - text: .always
+                      - text: .
+              - generic [ref=e811]:
+                - heading "Return Value in page link" [level=2] [ref=e812]:
+                  - link "Return Value in page link" [ref=e813] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/View/glassBackgroundEffect(in:displayMode:)#return-value
+                - paragraph [ref=e814]: A view with a glass background.
+              - generic [ref=e815]:
+                - heading "Discussion in page link" [level=2] [ref=e816]:
+                  - link "Discussion in page link" [ref=e817] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/View/glassBackgroundEffect(in:displayMode:)#discussion
+                - paragraph [ref=e818]: Use this modifier to add a 3D glass background material that includes thickness, specularity, glass blur, shadows, and other effects. Because of its physical depth, the glass background influences z-axis layout.
+                - paragraph [ref=e819]:
+                  - text: To ensure that the effect renders properly when you add it to a collection of views in a
+                  - link "ZStack" [ref=e820] [cursor=pointer]:
+                    - /url: /documentation/swiftui/zstack
+                    - code [ref=e821]: ZStack
+                  - text: ", add the modifier to the stack rather to one of the views in the stack. This includes when you create an implicit stack with view modifiers like"
+                  - link "overlay(alignment:content:)" [ref=e822] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/overlay(alignment:content:)
+                    - code [ref=e823]:
+                      - text: "overlay(alignment:"
+                      - text: content:)
+                  - text: or
+                  - link "background(alignment:content:)" [ref=e824] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/background(alignment:content:)
+                    - code [ref=e825]:
+                      - text: "background(alignment:"
+                      - text: content:)
+                  - text: . In those cases, you might need to create an explicit
+                  - link "ZStack" [ref=e826] [cursor=pointer]:
+                    - /url: /documentation/swiftui/zstack
+                    - code [ref=e827]: ZStack
+                  - text: inside the
+                  - code [ref=e828]: content
+                  - text: closure to have a place to add the glass background modifier.
+                - paragraph [ref=e829]: Non closed shapes will be rendered as their convex hull.
+            - generic [ref=e831]:
+              - heading "See Also in page link" [level=2] [ref=e832]:
+                - link "See Also in page link" [ref=e833] [cursor=pointer]:
+                  - /url: /documentation/SwiftUI/View/glassBackgroundEffect(in:displayMode:)#see-also
+              - generic [ref=e834]:
+                - heading "Adding a glass background on views in visionOS in page link" [level=3] [ref=e836]:
+                  - link "Adding a glass background on views in visionOS in page link" [ref=e837] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/View/glassBackgroundEffect(in:displayMode:)#Adding-a-glass-background-on-views-in-visionOS
+                - generic [ref=e838]:
+                  - generic [ref=e839]:
+                    - 'link "func glassBackgroundEffect(displayMode: GlassBackgroundDisplayMode) -> some View" [ref=e840] [cursor=pointer]':
+                      - /url: /documentation/swiftui/view/glassbackgroundeffect(displaymode:)
+                      - code [ref=e841]:
+                        - text: func
+                        - generic [ref=e842]:
+                          - text: glass
+                          - text: Background
+                          - text: Effect
+                        - text: (
+                        - generic [ref=e843]:
+                          - text: display
+                          - text: Mode
+                        - text: ":"
+                        - generic [ref=e844]:
+                          - text: Glass
+                          - text: Background
+                          - text: Display
+                          - text: Mode
+                        - text: ) ->
+                        - text: some
+                        - text: View
+                    - generic [ref=e846]: Fills the view’s background with an automatic glass background effect and container-relative rounded rectangle shape.
+                  - generic [ref=e847]:
+                    - link "enum GlassBackgroundDisplayMode" [ref=e848] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glassbackgrounddisplaymode
+                      - code [ref=e849]:
+                        - text: enum
+                        - generic [ref=e850]:
+                          - text: Glass
+                          - text: Background
+                          - text: Display
+                          - text: Mode
+                    - generic [ref=e852]: The display mode of a glass background.
+                  - generic [ref=e853]:
+                    - link "protocol GlassBackgroundEffect" [ref=e854] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glassbackgroundeffect
+                      - code [ref=e855]:
+                        - text: protocol
+                        - generic [ref=e856]:
+                          - text: Glass
+                          - text: Background
+                          - text: Effect
+                    - generic [ref=e858]: A specification for the appearance of a glass background.
+                  - generic [ref=e859]:
+                    - link "struct AutomaticGlassBackgroundEffect" [ref=e860] [cursor=pointer]:
+                      - /url: /documentation/swiftui/automaticglassbackgroundeffect
+                      - code [ref=e861]:
+                        - text: struct
+                        - generic [ref=e862]:
+                          - text: Automatic
+                          - text: Glass
+                          - text: Background
+                          - text: Effect
+                    - generic [ref=e864]: The automatic glass background effect.
+                  - generic [ref=e865]:
+                    - link "struct GlassBackgroundEffectConfiguration" [ref=e866] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glassbackgroundeffectconfiguration
+                      - code [ref=e867]:
+                        - text: struct
+                        - generic [ref=e868]:
+                          - text: Glass
+                          - text: Background
+                          - text: Effect
+                          - text: Configuration
+                    - generic [ref=e870]: A configuration used to build a custom effect.
+                  - link "struct FeatheredGlassBackgroundEffect" [ref=e872] [cursor=pointer]:
+                    - /url: /documentation/swiftui/featheredglassbackgroundeffect
+                    - code [ref=e873]:
+                      - text: struct
+                      - generic [ref=e874]:
+                        - text: Feathered
+                        - text: Glass
+                        - text: Background
+                        - text: Effect
+                  - generic [ref=e875]:
+                    - link "struct PlateGlassBackgroundEffect" [ref=e876] [cursor=pointer]:
+                      - /url: /documentation/swiftui/plateglassbackgroundeffect
+                      - code [ref=e877]:
+                        - text: struct
+                        - generic [ref=e878]:
+                          - text: Plate
+                          - text: Glass
+                          - text: Background
+                          - text: Effect
+                    - generic [ref=e880]: The plate glass background effect.
+        - generic [ref=e881]: Current page is glassBackgroundEffect(in:displayMode:)
+  - contentinfo [ref=e67]:
+    - navigation [ref=e68]:
+      - link "Apple" [ref=e69] [cursor=pointer]:
+        - /url: https://www.apple.com
+        - text: 
+        - generic [ref=e70]: Apple
+      - list [ref=e72]:
+        - listitem [ref=e73]:
+          - link "Developer" [ref=e74] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e75]:
+          - link "Documentation" [ref=e76] [cursor=pointer]:
+            - /url: /documentation/
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - heading "Platforms" [level=3] [ref=e80]
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - link "iOS" [ref=e83] [cursor=pointer]:
+                  - /url: /ios/
+              - listitem [ref=e84]:
+                - link "iPadOS" [ref=e85] [cursor=pointer]:
+                  - /url: /ipados/
+              - listitem [ref=e86]:
+                - link "macOS" [ref=e87] [cursor=pointer]:
+                  - /url: /macos/
+              - listitem [ref=e88]:
+                - link "tvOS" [ref=e89] [cursor=pointer]:
+                  - /url: /tvos/
+              - listitem [ref=e90]:
+                - link "visionOS" [ref=e91] [cursor=pointer]:
+                  - /url: /visionos/
+              - listitem [ref=e92]:
+                - link "watchOS" [ref=e93] [cursor=pointer]:
+                  - /url: /watchos/
+          - generic [ref=e94]:
+            - heading "Tools" [level=3] [ref=e95]
+            - list [ref=e96]:
+              - listitem [ref=e97]:
+                - link "Swift" [ref=e98] [cursor=pointer]:
+                  - /url: /swift/
+              - listitem [ref=e99]:
+                - link "SwiftUI" [ref=e100] [cursor=pointer]:
+                  - /url: /swiftui/
+              - listitem [ref=e101]:
+                - link "Swift Playground" [ref=e102] [cursor=pointer]:
+                  - /url: /swift-playground/
+              - listitem [ref=e103]:
+                - link "TestFlight" [ref=e104] [cursor=pointer]:
+                  - /url: /testflight/
+              - listitem [ref=e105]:
+                - link "Xcode" [ref=e106] [cursor=pointer]:
+                  - /url: /xcode/
+              - listitem [ref=e107]:
+                - link "Xcode Cloud" [ref=e108] [cursor=pointer]:
+                  - /url: /xcode-cloud/
+              - listitem [ref=e109]:
+                - link "SF Symbols" [ref=e110] [cursor=pointer]:
+                  - /url: /sf-symbols/
+        - generic [ref=e112]:
+          - heading "Topics & Technologies" [level=3] [ref=e113]
+          - list [ref=e114]:
+            - listitem [ref=e115]:
+              - link "Accessibility" [ref=e116] [cursor=pointer]:
+                - /url: /accessibility/
+            - listitem [ref=e117]:
+              - link "Accessories" [ref=e118] [cursor=pointer]:
+                - /url: /accessories/
+            - listitem [ref=e119]:
+              - link "App Extension" [ref=e120] [cursor=pointer]:
+                - /url: /app-extensions/
+            - listitem [ref=e121]:
+              - link "App Store" [ref=e122] [cursor=pointer]:
+                - /url: /app-store/
+            - listitem [ref=e123]:
+              - link "Audio & Video" [ref=e124] [cursor=pointer]:
+                - /url: /audio/
+            - listitem [ref=e125]:
+              - link "Augmented Reality" [ref=e126] [cursor=pointer]:
+                - /url: /augmented-reality/
+            - listitem [ref=e127]:
+              - link "Design" [ref=e128] [cursor=pointer]:
+                - /url: /design/
+            - listitem [ref=e129]:
+              - link "Distribution" [ref=e130] [cursor=pointer]:
+                - /url: /distribute/
+            - listitem [ref=e131]:
+              - link "Education" [ref=e132] [cursor=pointer]:
+                - /url: /education/
+            - listitem [ref=e133]:
+              - link "Fonts" [ref=e134] [cursor=pointer]:
+                - /url: /fonts/
+            - listitem [ref=e135]:
+              - link "Games" [ref=e136] [cursor=pointer]:
+                - /url: /games/
+            - listitem [ref=e137]:
+              - link "Health & Fitness" [ref=e138] [cursor=pointer]:
+                - /url: /health-fitness/
+            - listitem [ref=e139]:
+              - link "In-App Purchase" [ref=e140] [cursor=pointer]:
+                - /url: /in-app-purchase/
+            - listitem [ref=e141]:
+              - link "Localization" [ref=e142] [cursor=pointer]:
+                - /url: /localization/
+            - listitem [ref=e143]:
+              - link "Maps & Location" [ref=e144] [cursor=pointer]:
+                - /url: /maps/
+            - listitem [ref=e145]:
+              - link "Machine Learning & AI" [ref=e146] [cursor=pointer]:
+                - /url: /machine-learning/
+            - listitem [ref=e147]:
+              - link "Open Source" [ref=e148] [cursor=pointer]:
+                - /url: https://opensource.apple.com/
+            - listitem [ref=e149]:
+              - link "Security" [ref=e150] [cursor=pointer]:
+                - /url: /security/
+            - listitem [ref=e151]:
+              - link "Safari & Web" [ref=e152] [cursor=pointer]:
+                - /url: /safari/
+        - generic [ref=e153]:
+          - generic [ref=e154]:
+            - heading "Resources" [level=3] [ref=e155]
+            - list [ref=e156]:
+              - listitem
+              - listitem [ref=e157]:
+                - link "Documentation" [ref=e158] [cursor=pointer]:
+                  - /url: /documentation/
+              - listitem [ref=e159]:
+                - link "Tutorials" [ref=e160] [cursor=pointer]:
+                  - /url: /learn/
+              - listitem [ref=e161]:
+                - link "Downloads" [ref=e162] [cursor=pointer]:
+                  - /url: /download/
+              - listitem [ref=e163]:
+                - link "Forums" [ref=e164] [cursor=pointer]:
+                  - /url: /forums/
+              - listitem [ref=e165]:
+                - link "Videos" [ref=e166] [cursor=pointer]:
+                  - /url: /videos/
+          - generic [ref=e167]:
+            - heading "Support" [level=3] [ref=e168]
+            - list [ref=e169]:
+              - listitem [ref=e170]:
+                - link "Support Articles" [ref=e171] [cursor=pointer]:
+                  - /url: /support/articles/
+              - listitem [ref=e172]:
+                - link "Contact Us" [ref=e173] [cursor=pointer]:
+                  - /url: /contact/
+              - listitem [ref=e174]:
+                - link "Bug Reporting" [ref=e175] [cursor=pointer]:
+                  - /url: /bug-reporting/
+              - listitem [ref=e176]:
+                - link "System Status" [ref=e177] [cursor=pointer]:
+                  - /url: /system-status/
+          - generic [ref=e178]:
+            - heading "Account" [level=3] [ref=e179]
+            - list [ref=e180]:
+              - listitem [ref=e181]:
+                - link "Apple Developer" [ref=e182] [cursor=pointer]:
+                  - /url: /account/
+              - listitem [ref=e183]:
+                - link "App Store Connect" [ref=e184] [cursor=pointer]:
+                  - /url: https://appstoreconnect.apple.com/
+              - listitem [ref=e185]:
+                - link "Certificates, IDs, & Profiles" [ref=e186] [cursor=pointer]:
+                  - /url: /account/ios/certificate/
+              - listitem [ref=e187]:
+                - link "Feedback Assistant" [ref=e188] [cursor=pointer]:
+                  - /url: https://feedbackassistant.apple.com/
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - heading "Programs" [level=3] [ref=e191]
+            - list [ref=e192]:
+              - listitem [ref=e193]:
+                - link "Apple Developer Program" [ref=e194] [cursor=pointer]:
+                  - /url: /programs/
+              - listitem [ref=e195]:
+                - link "Apple Developer Enterprise Program" [ref=e196] [cursor=pointer]:
+                  - /url: /programs/enterprise/
+              - listitem [ref=e197]:
+                - link "App Store Small Business Program" [ref=e198] [cursor=pointer]:
+                  - /url: /app-store/small-business-program/
+              - listitem [ref=e199]:
+                - link "MFi Program" [ref=e200] [cursor=pointer]:
+                  - /url: https://mfi.apple.com/
+              - listitem [ref=e201]:
+                - link "News Partner Program" [ref=e202] [cursor=pointer]:
+                  - /url: /programs/news-partner/
+              - listitem [ref=e203]:
+                - link "Video Partner Program" [ref=e204] [cursor=pointer]:
+                  - /url: /programs/video-partner/
+              - listitem [ref=e205]:
+                - link "Security Bounty Program" [ref=e206] [cursor=pointer]:
+                  - /url: /security-bounty/
+              - listitem [ref=e207]:
+                - link "Security Research Device Program" [ref=e208] [cursor=pointer]:
+                  - /url: /programs/security-research-device/
+          - generic [ref=e209]:
+            - heading "Events" [level=3] [ref=e210]
+            - list [ref=e211]:
+              - listitem [ref=e212]:
+                - link "Meet with Apple" [ref=e213] [cursor=pointer]:
+                  - /url: /events/
+              - listitem [ref=e214]:
+                - link "Apple Developer Centers" [ref=e215] [cursor=pointer]:
+                  - /url: /events/developer-centers/
+              - listitem [ref=e216]:
+                - link "App Store Awards" [ref=e217] [cursor=pointer]:
+                  - /url: /app-store/app-store-awards/
+              - listitem [ref=e218]:
+                - link "Apple Design Awards" [ref=e219] [cursor=pointer]:
+                  - /url: /design/awards/
+              - listitem [ref=e220]:
+                - link "Apple Developer Academies" [ref=e221] [cursor=pointer]:
+                  - /url: /academies/
+              - listitem [ref=e222]:
+                - link "WWDC" [ref=e223] [cursor=pointer]:
+                  - /url: /wwdc/
+    - generic [ref=e224]:
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - text: To submit feedback on documentation, visit
+          - link "Feedback Assistant" [ref=e227] [cursor=pointer]:
+            - /url: applefeedback://new?form_identifier=developertools.fba&answers%5B%3Aarea%5D=seedADC%3Adevpubs&answers%5B%3Adoc_type_req%5D=Technology%20Documentation&answers%5B%3Adocumentation_link_req%5D=https%3A%2F%2Fdeveloper.apple.com%2Fdocumentation%2FSwiftUI%2FView%2FglassBackgroundEffect(in%3AdisplayMode%3A)
+          - text: .
+        - radiogroup "Select a color scheme preference" [ref=e229]:
+          - generic [ref=e230]: Select a color scheme preference
+          - generic [ref=e231]:
+            - radio "Light" [ref=e232]
+            - generic [ref=e233]: Light
+          - generic [ref=e234]:
+            - radio "Dark" [ref=e235]
+            - generic [ref=e236]: Dark
+          - generic [ref=e237]:
+            - radio "Auto" [checked] [ref=e238]
+            - generic [ref=e239]: Auto
+      - generic [ref=e240]:
+        - generic [ref=e241]:
+          - text: Copyright © 2026
+          - link "Apple Inc." [ref=e242] [cursor=pointer]:
+            - /url: https://www.apple.com
+          - text: All rights reserved.
+        - generic [ref=e243]:
+          - link "Terms of Use" [ref=e244] [cursor=pointer]:
+            - /url: https://www.apple.com/legal/internet-services/terms/site.html
+          - link "Privacy Policy" [ref=e245] [cursor=pointer]:
+            - /url: https://www.apple.com/legal/privacy/
+          - link "Agreements and Guidelines" [ref=e246] [cursor=pointer]:
+            - /url: /support/terms/

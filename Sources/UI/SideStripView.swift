@@ -2,6 +2,29 @@ import SwiftUI
 import EventKit
 import AppKit
 
+/// Applies `.glassEffect(.regular, in: Rectangle())` to the sidebar container on macOS 26+.
+/// Applying to the container (not to a nested Color.clear) lets the glass propagate an adaptive
+/// colorScheme to all children based on sampled background brightness.
+private struct GlassSidebarModifier: ViewModifier {
+    let isGlass: Bool
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if isGlass {
+            if #available(macOS 26.0, *) {
+                content.glassEffect(.regular, in: Rectangle())
+            } else {
+                content.background(
+                    VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
+                        .ignoresSafeArea()
+                )
+            }
+        } else {
+            content
+        }
+    }
+}
+
 struct SideStripView: View {
     @EnvironmentObject var remindersService: RemindersService
     @EnvironmentObject var timerService: TimerService
@@ -39,7 +62,7 @@ struct SideStripView: View {
     private var sessionCardFillColor: Color {
         switch appTheme {
         case .glass:
-            return Color(red: 0.11, green: 0.11, blue: 0.12).opacity(0.25)
+            return Color.primary.opacity(0.06)
         case .dark:
             return Color(red: 0.11, green: 0.11, blue: 0.12)
         case .white:
@@ -51,14 +74,14 @@ struct SideStripView: View {
     private var controlDividerColor: Color { isWhiteTheme ? Color.black.opacity(0.2) : Color.white.opacity(0.2) }
     private var quickAddFillColor: Color {
         switch appTheme {
-        case .glass: return Color.black.opacity(0.16)
+        case .glass: return Color.white.opacity(0.06)
         case .dark: return Color.black.opacity(0.3)
         case .white: return Color.white.opacity(0.94)
         }
     }
     private var quickAddMaterialOpacity: Double {
         switch appTheme {
-        case .glass: return 0.45
+        case .glass: return 0.0
         case .dark: return 0.3
         case .white: return 0.2
         }
@@ -79,8 +102,14 @@ struct SideStripView: View {
         GeometryReader { proxy in
             ZStack {
                 if appTheme == .glass {
-                    VisualEffectView(material: .hudWindow, blendingMode: .behindWindow)
-                        .ignoresSafeArea()
+                    if #available(macOS 26.0, *) {
+                        Color.clear
+                            .glassEffect(.regular, in: Rectangle())
+                            .ignoresSafeArea()
+                    } else {
+                        VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
+                            .ignoresSafeArea()
+                    }
                 } else {
                     (isWhiteTheme ? Color.white : Color(nsColor: .windowBackgroundColor))
                         .ignoresSafeArea()
@@ -142,7 +171,7 @@ struct SideStripView: View {
                 }
             }
             .background(MainWindowAccessor(windowCoordinator: windowCoordinator))
-            .preferredColorScheme(isWhiteTheme ? .light : .dark)
+            .preferredColorScheme(isWhiteTheme ? .light : appTheme == .dark ? .dark : nil)
             .frame(minWidth: 300, maxWidth: 350, maxHeight: .infinity)
             .onAppear {
                 assistantCoordinator.remindersService = remindersService
@@ -945,7 +974,7 @@ struct TimerDisplayView: View {
     @ObservedObject var ticker: TimeTicker
     @ObservedObject var service: TimerService // To access isOvertime/active state for formatting
     @AppStorage("appTheme") private var appTheme: AppTheme = .glass
-    
+
     var body: some View {
         // Optimization: Do not render/update if app is in Focus Mode (Pill is active) to save CPU
         if !service.isFocusMode {
@@ -958,9 +987,11 @@ struct TimerDisplayView: View {
                 .fixedSize()
         }
     }
-    
+
     private var timerColor: Color {
         if service.isOvertime { return .orange }
-        return appTheme == .white ? Color.black.opacity(0.85) : .white
+        if appTheme == .white { return Color.black.opacity(0.85) }
+        if appTheme == .dark { return .white }
+        return .primary  // glass: adapts to system appearance (dark mode = white, light mode = dark)
     }
 }

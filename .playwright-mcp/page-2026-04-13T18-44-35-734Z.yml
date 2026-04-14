@@ -1,0 +1,1014 @@
+- generic [ref=e2]:
+  - link "Skip Navigation" [ref=e3] [cursor=pointer]:
+    - /url: "#app-main"
+  - navigation "Global" [ref=e4]:
+    - list [ref=e6]:
+      - listitem [ref=e7]:
+        - link "Apple Developer" [ref=e8] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=e9]:
+        - generic [ref=e11]:
+          - list [ref=e13]:
+            - listitem [ref=e14]:
+              - link "Get Started" [ref=e15] [cursor=pointer]:
+                - /url: /get-started/
+                - generic [ref=e16]:
+                  - generic: Get Started
+            - listitem:
+              - button "Get Started menu":
+                - generic:
+                  - img
+          - list [ref=e18]:
+            - listitem [ref=e19]:
+              - link "Platforms" [ref=e20] [cursor=pointer]:
+                - /url: /platforms/
+                - generic [ref=e21]:
+                  - generic: Platforms
+            - listitem:
+              - button "Platforms menu":
+                - generic:
+                  - img
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "Technologies" [ref=e25] [cursor=pointer]:
+                - /url: /technologies/
+                - generic [ref=e26]:
+                  - generic: Technologies
+            - listitem:
+              - button "Technologies menu":
+                - generic:
+                  - img
+          - list [ref=e28]:
+            - listitem [ref=e29]:
+              - link "Community" [ref=e30] [cursor=pointer]:
+                - /url: /community/
+                - generic [ref=e31]:
+                  - generic: Community
+            - listitem:
+              - button "Community menu":
+                - generic:
+                  - img
+          - list [ref=e33]:
+            - listitem [ref=e34]:
+              - link "Documentation" [ref=e35] [cursor=pointer]:
+                - /url: /documentation/
+                - generic [ref=e36]:
+                  - generic: Documentation
+            - listitem:
+              - button "Documentation menu":
+                - generic:
+                  - img
+          - list [ref=e38]:
+            - listitem [ref=e39]:
+              - link "Downloads" [ref=e40] [cursor=pointer]:
+                - /url: /download/
+                - generic [ref=e41]:
+                  - generic: Downloads
+            - listitem:
+              - button "Downloads menu":
+                - generic:
+                  - img
+          - list [ref=e43]:
+            - listitem [ref=e44]:
+              - link "Support" [ref=e45] [cursor=pointer]:
+                - /url: /support/
+                - generic [ref=e46]:
+                  - generic: Support
+            - listitem:
+              - button "Support menu":
+                - generic:
+                  - img
+      - listitem [ref=e47]:
+        - button "Search" [ref=e48] [cursor=pointer]:
+          - generic:
+            - img
+      - listitem [ref=e49]:
+        - link "Account" [ref=e51] [cursor=pointer]:
+          - /url: /account/
+          - generic:
+            - img
+  - generic [ref=e248]:
+    - navigation "API Reference" [ref=e249]:
+      - generic [ref=e252]:
+        - button "Open Documentation Navigator" [ref=e255] [cursor=pointer]:
+          - img [ref=e257]
+        - link "Documentation" [ref=e260] [cursor=pointer]:
+          - /url: /documentation
+        - list [ref=e263]:
+          - listitem [ref=e264]:
+            - generic [ref=e265]:
+              - combobox
+              - generic [ref=e266]: "Language:"
+              - text: Swift
+    - generic [ref=e267]:
+      - navigation "SwiftUI" [ref=e271]:
+        - generic [ref=e274]:
+          - button "All Technologies" [ref=e276] [cursor=pointer]:
+            - img [ref=e277]
+            - text: All Technologies
+          - generic [ref=e279]:
+            - link "SwiftUI" [ref=e280] [cursor=pointer]:
+              - /url: /documentation/swiftui
+              - heading "SwiftUI" [level=2] [ref=e281]
+            - generic "Documentation Navigator" [ref=e282]:
+              - generic [ref=e283]:
+                - generic [ref=e287]:
+                  - button [ref=e289] [cursor=pointer]:
+                    - img [ref=e290]
+                  - img [ref=e294]:
+                    - generic [ref=e296]:
+                      - generic [ref=e298]: r
+                      - generic [ref=e299]: P
+                  - link [ref=e301] [cursor=pointer]:
+                    - /url: /documentation/swiftui/pickerstyle
+                    - paragraph [ref=e302]: PickerStyle
+                - generic [ref=e306]:
+                  - img [ref=e310]:
+                    - generic [ref=e313]: M
+                  - link [ref=e315] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/pickerstyle(_:)
+                    - paragraph [ref=e316]: func pickerStyle<S>(S) -> some View
+                - generic [ref=e320]:
+                  - button "Preferences" [ref=e322] [cursor=pointer]:
+                    - img [ref=e323]
+                  - img [ref=e327]
+                  - link "Preferences" [ref=e331] [cursor=pointer]:
+                    - /url: /documentation/swiftui/preferences
+                    - paragraph [ref=e332]: Preferences
+                - generic [ref=e336]:
+                  - button "Persistent storage" [ref=e338] [cursor=pointer]:
+                    - img [ref=e339]
+                  - img [ref=e343]
+                  - link "Persistent storage" [ref=e347] [cursor=pointer]:
+                    - /url: /documentation/swiftui/persistent-storage
+                    - paragraph [ref=e348]: Persistent storage
+                - heading "Views" [level=3] [ref=e355]:
+                  - paragraph [ref=e356]: Views
+                - generic [ref=e360]:
+                  - button "View fundamentals" [ref=e362] [cursor=pointer]:
+                    - img [ref=e363]
+                  - img [ref=e367]
+                  - link "View fundamentals" [ref=e371] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-fundamentals
+                    - paragraph [ref=e372]: View fundamentals
+                - generic [ref=e376]:
+                  - button "View configuration" [ref=e378] [cursor=pointer]:
+                    - img [ref=e379]
+                  - img [ref=e383]
+                  - link "View configuration" [ref=e387] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-configuration
+                    - paragraph [ref=e388]: View configuration
+                - generic [ref=e392]:
+                  - button "View styles" [expanded] [ref=e394] [cursor=pointer]:
+                    - img [ref=e395]
+                  - img [ref=e399]
+                  - link "View styles" [ref=e403] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-styles
+                    - paragraph [ref=e404]: View styles
+                - heading "Styling views with Liquid Glass" [level=3] [ref=e411]:
+                  - paragraph [ref=e412]: Styling views with Liquid Glass
+                - generic [ref=e416]:
+                  - img [ref=e420]
+                  - link "Applying Liquid Glass to custom views" [ref=e424] [cursor=pointer]:
+                    - /url: /documentation/swiftui/applying-liquid-glass-to-custom-views
+                    - paragraph [ref=e425]: Applying Liquid Glass to custom views
+                - generic [ref=e429]:
+                  - 'button "Landmarks: Building an app with Liquid Glass" [ref=e431] [cursor=pointer]':
+                    - img [ref=e432]
+                  - img [ref=e436]
+                  - 'link "Landmarks: Building an app with Liquid Glass" [ref=e441] [cursor=pointer]':
+                    - /url: /documentation/swiftui/landmarks-building-an-app-with-liquid-glass
+                    - paragraph [ref=e442]: "Landmarks: Building an app with Liquid Glass"
+                - generic [ref=e446]:
+                  - img [ref=e450]:
+                    - generic [ref=e453]: M
+                  - 'link "func glassEffect(Glass, in: some Shape) -> some View" [ref=e455] [cursor=pointer]':
+                    - /url: /documentation/swiftui/view/glasseffect(_:in:)
+                    - paragraph [ref=e456]: "func glassEffect(Glass, in: some Shape) -> some View"
+                - generic [ref=e460]:
+                  - img [ref=e464]:
+                    - generic [ref=e467]: M
+                  - link "func interactive(Bool) -> Glass" [ref=e469] [cursor=pointer]:
+                    - /url: /documentation/swiftui/glass/interactive(_:)
+                    - paragraph [ref=e470]: func interactive(Bool) -> Glass
+                - generic [ref=e474]:
+                  - button "GlassEffectContainer" [ref=e476] [cursor=pointer]:
+                    - img [ref=e477]
+                  - img [ref=e481]:
+                    - generic [ref=e484]: S
+                  - link "GlassEffectContainer" [ref=e486] [cursor=pointer]:
+                    - /url: /documentation/swiftui/glasseffectcontainer
+                    - paragraph [ref=e487]: GlassEffectContainer
+                - generic [ref=e491]:
+                  - button "GlassEffectTransition" [ref=e493] [cursor=pointer]:
+                    - img [ref=e494]
+                  - img [ref=e498]:
+                    - generic [ref=e501]: S
+                  - link "GlassEffectTransition" [ref=e503] [cursor=pointer]:
+                    - /url: /documentation/swiftui/glasseffecttransition
+                    - paragraph [ref=e504]: GlassEffectTransition
+                - generic [ref=e508]:
+                  - button "GlassButtonStyle" [ref=e510] [cursor=pointer]:
+                    - img [ref=e511]
+                  - img [ref=e515]:
+                    - generic [ref=e518]: S
+                  - link "GlassButtonStyle" [ref=e520] [cursor=pointer]:
+                    - /url: /documentation/swiftui/glassbuttonstyle
+                    - paragraph [ref=e521]: GlassButtonStyle
+                - generic [ref=e525]:
+                  - button "GlassProminentButtonStyle" [ref=e527] [cursor=pointer]:
+                    - img [ref=e528]
+                  - img [ref=e532]:
+                    - generic [ref=e535]: S
+                  - link "GlassProminentButtonStyle" [ref=e537] [cursor=pointer]:
+                    - /url: /documentation/swiftui/glassprominentbuttonstyle
+                    - paragraph [ref=e538]: GlassProminentButtonStyle
+                - generic [ref=e542]:
+                  - button "DefaultGlassEffectShape" [ref=e544] [cursor=pointer]:
+                    - img [ref=e545]
+                  - img [ref=e549]:
+                    - generic [ref=e552]: S
+                  - link "DefaultGlassEffectShape" [ref=e554] [cursor=pointer]:
+                    - /url: /documentation/swiftui/defaultglasseffectshape
+                    - paragraph [ref=e555]: DefaultGlassEffectShape
+                - heading "Styling buttons" [level=3] [ref=e562]:
+                  - paragraph [ref=e563]: Styling buttons
+                - generic [ref=e567]:
+                  - img [ref=e571]:
+                    - generic [ref=e574]: M
+                  - link "func buttonStyle(_:)" [ref=e576] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/buttonstyle(_:)
+                    - paragraph [ref=e577]: func buttonStyle(_:)
+                - generic [ref=e581]:
+                  - button "ButtonStyle" [ref=e583] [cursor=pointer]:
+                    - img [ref=e584]
+                  - img [ref=e588]:
+                    - generic [ref=e590]:
+                      - generic [ref=e592]: r
+                      - generic [ref=e593]: P
+                  - link "ButtonStyle" [ref=e595] [cursor=pointer]:
+                    - /url: /documentation/swiftui/buttonstyle
+                    - paragraph [ref=e596]: ButtonStyle
+                - generic [ref=e600]:
+                  - button "ButtonStyleConfiguration" [ref=e602] [cursor=pointer]:
+                    - img [ref=e603]
+                  - img [ref=e607]:
+                    - generic [ref=e610]: S
+                  - link "ButtonStyleConfiguration" [ref=e612] [cursor=pointer]:
+                    - /url: /documentation/swiftui/buttonstyleconfiguration
+                    - paragraph [ref=e613]: ButtonStyleConfiguration
+                - generic [ref=e617]:
+                  - button "PrimitiveButtonStyle" [ref=e619] [cursor=pointer]:
+                    - img [ref=e620]
+                  - img [ref=e624]:
+                    - generic [ref=e626]:
+                      - generic [ref=e628]: r
+                      - generic [ref=e629]: P
+                  - link "PrimitiveButtonStyle" [ref=e631] [cursor=pointer]:
+                    - /url: /documentation/swiftui/primitivebuttonstyle
+                    - paragraph [ref=e632]: PrimitiveButtonStyle
+                - generic [ref=e636]:
+                  - button "PrimitiveButtonStyleConfiguration" [ref=e638] [cursor=pointer]:
+                    - img [ref=e639]
+                  - img [ref=e643]:
+                    - generic [ref=e646]: S
+                  - link "PrimitiveButtonStyleConfiguration" [ref=e648] [cursor=pointer]:
+                    - /url: /documentation/swiftui/primitivebuttonstyleconfiguration
+                    - paragraph [ref=e649]: PrimitiveButtonStyleConfiguration
+                - generic [ref=e653]:
+                  - img [ref=e657]:
+                    - generic [ref=e660]: M
+                  - link "func signInWithAppleButtonStyle(SignInWithAppleButton.Style) -> some View" [ref=e662] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/signinwithapplebuttonstyle(_:)
+                    - paragraph [ref=e663]: func signInWithAppleButtonStyle(SignInWithAppleButton.Style) -> some View
+                - heading "Styling pickers" [level=3] [ref=e670]:
+                  - paragraph [ref=e671]: Styling pickers
+                - generic [ref=e675]:
+                  - img [ref=e679]:
+                    - generic [ref=e682]: M
+                  - link "func pickerStyle<S>(S) -> some View" [ref=e684] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/pickerstyle(_:)
+                    - paragraph [ref=e685]: func pickerStyle<S>(S) -> some View
+                - generic [ref=e689]:
+                  - button "PickerStyle" [ref=e691] [cursor=pointer]:
+                    - img [ref=e692]
+                  - img [ref=e696]:
+                    - generic [ref=e698]:
+                      - generic [ref=e700]: r
+                      - generic [ref=e701]: P
+                  - link "PickerStyle" [ref=e703] [cursor=pointer]:
+                    - /url: /documentation/swiftui/pickerstyle
+                    - paragraph [ref=e704]: PickerStyle
+                - generic [ref=e708]:
+                  - img [ref=e712]:
+                    - generic [ref=e715]: M
+                  - link "func datePickerStyle<S>(S) -> some View" [ref=e717] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/datepickerstyle(_:)
+                    - paragraph [ref=e718]: func datePickerStyle<S>(S) -> some View
+                - generic [ref=e722]:
+                  - button "DatePickerStyle" [ref=e724] [cursor=pointer]:
+                    - img [ref=e725]
+                  - img [ref=e729]:
+                    - generic [ref=e731]:
+                      - generic [ref=e733]: r
+                      - generic [ref=e734]: P
+                  - link "DatePickerStyle" [ref=e736] [cursor=pointer]:
+                    - /url: /documentation/swiftui/datepickerstyle
+                    - paragraph [ref=e737]: DatePickerStyle
+                - heading "Styling menus" [level=3] [ref=e744]:
+                  - paragraph [ref=e745]: Styling menus
+                - generic [ref=e749]:
+                  - img [ref=e753]:
+                    - generic [ref=e756]: M
+                  - link "func menuStyle<S>(S) -> some View" [ref=e758] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view/menustyle(_:)
+                    - paragraph [ref=e759]: func menuStyle<S>(S) -> some View
+            - generic [ref=e760]: 149 items were found. Tab back to navigate through them.
+            - generic:
+              - paragraph
+          - generic [ref=e762]:
+            - search [ref=e764]:
+              - generic [ref=e766]:
+                - button [ref=e767]:
+                  - img [ref=e768]
+                - generic "Filter" [ref=e771]:
+                  - combobox "Filter" [ref=e772]
+            - button "Open Quick Navigation" [ref=e774] [cursor=pointer]: /
+        - generic [ref=e775]: Navigator is ready
+      - generic [ref=e778]:
+        - main [ref=e779]:
+          - generic [ref=e780]:
+            - img [ref=e783]
+            - generic [ref=e786]:
+              - list "Breadcrumbs" [ref=e787]:
+                - listitem [ref=e788]:
+                  - link "SwiftUI" [ref=e789] [cursor=pointer]:
+                    - /url: /documentation/swiftui
+                - listitem [ref=e790]:
+                  - text: /
+                  - link "View styles" [ref=e791] [cursor=pointer]:
+                    - /url: /documentation/swiftui/view-styles
+                - listitem [ref=e792]:
+                  - text: /
+                  - generic [ref=e793]: Applying Liquid Glass to custom views
+              - generic [ref=e794]:
+                - generic [ref=e795]: Article
+                - heading "Applying Liquid Glass to custom views" [level=1] [ref=e796]
+              - generic [ref=e797]: Configure, combine, and morph views using Liquid Glass effects.
+          - generic [ref=e799]:
+            - generic [ref=e802]:
+              - heading "Overview in page link" [level=2] [ref=e803]:
+                - link "Overview in page link" [ref=e804] [cursor=pointer]:
+                  - /url: /documentation/swiftui/applying-liquid-glass-to-custom-views#Overview
+              - paragraph [ref=e805]: Interfaces across Apple platforms feature a new dynamic material called Liquid Glass, which combines the optical properties of glass with a sense of fluidity. Liquid Glass is a material that blurs content behind it, reflects color and light of surrounding content, and reacts to touch and pointer interactions in real time. Standard components in SwiftUI use Liquid Glass. Adopt Liquid Glass on custom components to move, combine, and morph them into one another with unique animations and transitions.
+              - paragraph [ref=e806]:
+                - img "An image of the Landmarks sample code on iPad, in landscape, showing the Mount Fuji landmark." [ref=e810]
+              - paragraph [ref=e811]:
+                - text: To learn about Liquid Glass and more, see
+                - 'link "Landmarks: Building an app with Liquid Glass" [ref=e812] [cursor=pointer]':
+                  - /url: /documentation/swiftui/landmarks-building-an-app-with-liquid-glass
+                - text: .
+              - heading "Apply and configure Liquid Glass effects in page link" [level=2] [ref=e813]:
+                - link "Apply and configure Liquid Glass effects in page link" [ref=e814] [cursor=pointer]:
+                  - /url: /documentation/swiftui/applying-liquid-glass-to-custom-views#Apply-and-configure-Liquid-Glass-effects
+              - paragraph [ref=e815]:
+                - text: Use the
+                - link "glassEffect(_:in:)" [ref=e816] [cursor=pointer]:
+                  - /url: /documentation/swiftui/view/glasseffect(_:in:)
+                  - code [ref=e817]:
+                    - text: glass
+                    - text: "Effect(_:"
+                    - text: in:)
+                - text: modifier to add Liquid Glass effects to a view. By default, the modifier uses the
+                - link "regular" [ref=e818] [cursor=pointer]:
+                  - /url: /documentation/swiftui/glass/regular
+                  - code [ref=e819]: regular
+                - text: variant of
+                - link "Glass" [ref=e820] [cursor=pointer]:
+                  - /url: /documentation/swiftui/glass
+                  - code [ref=e821]: Glass
+                - text: and applies the given effect within a
+                - link "Capsule" [ref=e822] [cursor=pointer]:
+                  - /url: /documentation/swiftui/capsule
+                  - code [ref=e823]: Capsule
+                - text: shape behind the view’s content.
+              - paragraph [ref=e824]: "Configure the effect to customize your components in a variety of ways:"
+              - list [ref=e825]:
+                - listitem [ref=e826]:
+                  - paragraph [ref=e827]:
+                    - text: Use different shapes to have a consistent look and feel across custom components in your app. For example, use a rounded rectangle if you’re applying the effect to larger components that would look odd as a
+                    - code [ref=e828]: Capsule
+                    - text: or
+                    - link "Circle" [ref=e829] [cursor=pointer]:
+                      - /url: /documentation/swiftui/circle
+                      - code [ref=e830]: Circle
+                    - text: .
+                - listitem [ref=e831]:
+                  - paragraph [ref=e832]: Assign a tint color to suggest prominence.
+                - listitem [ref=e833]:
+                  - paragraph [ref=e834]:
+                    - text: Add
+                    - link "interactive(_:)" [ref=e835] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glass/interactive(_:)
+                      - code [ref=e836]: interactive(_:)
+                    - text: to custom components to make them react to touch and pointer interactions. This applies the same responsive and fluid reactions that
+                    - link "glass" [ref=e837] [cursor=pointer]:
+                      - /url: /documentation/swiftui/primitivebuttonstyle/glass
+                      - code [ref=e838]: glass
+                    - text: provides to standard buttons.
+              - paragraph [ref=e839]: "In the examples below, observe how to apply Liquid Glass effects to a view, use an alternate shape with a specific corner radius, and create a tinted view that responds to interactivity:"
+              - 'group "Video with custom controls. Content description: A video showing examples including a Text view with Liquid Glass effects applied, a Text view with a custom shape, corner radius effect, and Liquid Glass effects applied, and a Text view with an orange tint color effect that responds to interactivity, with Liquid Glass effects applied." [ref=e841]':
+                - link "Play" [ref=e844] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Play
+                  - img [ref=e845]
+              - code [ref=e852]:
+                - text: start of code block
+                - generic [ref=e854]: Text("Hello, World!")
+                - generic [ref=e855]: .font(.title)
+                - generic [ref=e856]: .padding()
+                - generic [ref=e857]: .glassEffect()
+                - generic [ref=e860]: Text("Hello, World!")
+                - generic [ref=e861]: .font(.title)
+                - generic [ref=e862]: .padding()
+                - generic [ref=e864]: ".glassEffect(in: .rect(cornerRadius: 16.0))"
+                - generic [ref=e867]: Text("Hello, World!")
+                - generic [ref=e868]: .font(.title)
+                - generic [ref=e869]: .padding()
+                - generic [ref=e870]: .glassEffect(.regular.tint(.orange).interactive())
+                - text: end of code block
+              - heading "Combine multiple views with Liquid Glass containers in page link" [level=2] [ref=e871]:
+                - link "Combine multiple views with Liquid Glass containers in page link" [ref=e872] [cursor=pointer]:
+                  - /url: /documentation/swiftui/applying-liquid-glass-to-custom-views#Combine-multiple-views-with-Liquid-Glass-containers
+              - paragraph [ref=e873]:
+                - text: Use
+                - link "GlassEffectContainer" [ref=e874] [cursor=pointer]:
+                  - /url: /documentation/swiftui/glasseffectcontainer
+                  - code [ref=e875]:
+                    - text: Glass
+                    - text: Effect
+                    - text: Container
+                - text: when applying Liquid Glass effects on multiple views to achieve the best rendering performance. A container also allows views with Liquid Glass effects to blend their shapes together and to morph in and out of each other during transitions. Inside a container, each view with the
+                - link "glassEffect(_:in:)" [ref=e876] [cursor=pointer]:
+                  - /url: /documentation/swiftui/view/glasseffect(_:in:)
+                  - code [ref=e877]:
+                    - text: glass
+                    - text: "Effect(_:"
+                    - text: in:)
+                - text: modifier renders with the effects behind it.
+              - paragraph [ref=e878]:
+                - text: Customize the spacing on the container to control how the Liquid Glass effects behind views interact with one another. The larger the spacing value on the container, the sooner the Liquid Glass effects behind views blend together and merge the shapes during a transition. A spacing value on the container that’s larger than the spacing of an interior
+                - link "HStack" [ref=e879] [cursor=pointer]:
+                  - /url: /documentation/swiftui/hstack
+                  - code [ref=e880]: HStack
+                - text: ","
+                - link "VStack" [ref=e881] [cursor=pointer]:
+                  - /url: /documentation/swiftui/vstack
+                  - code [ref=e882]: VStack
+                - text: ", or other layout container causes Liquid Glass effects to blend together at rest because the views are too close to each other. Animating views in or out causes the shapes to morph apart or together as the space in the container changes."
+              - paragraph [ref=e883]:
+                - text: The
+                - code [ref=e884]:
+                  - text: glass
+                  - text: "Effect(_:"
+                  - text: in:)
+                - text: modifier captures the content to send to the container to render. Apply the
+                - code [ref=e885]:
+                  - text: glass
+                  - text: "Effect(_:"
+                  - text: in:)
+                - text: modifier after other modifiers that affect the appearance of the view.
+              - paragraph [ref=e886]: "In the example below, two images are placed close to each other and the Liquid Glass effects begin to blend their shapes together. This creates a fluid animation as components move around each other within a container:"
+              - paragraph:
+                - generic:
+                  - img "Two Image views representing a scribble symbol on the left, and an eraser symbol on the right. The views are close to each other, which causes the Liquid Glass effects to merge the views."
+              - code [ref=e890]:
+                - text: start of code block
+                - generic [ref=e892]: "GlassEffectContainer(spacing: 40.0) {"
+                - generic [ref=e894]: "HStack(spacing: 40.0) {"
+                - generic [ref=e896]: "Image(systemName: \"scribble.variable\")"
+                - generic [ref=e898]: ".frame(width: 80.0, height: 80.0)"
+                - generic [ref=e900]: ".font(.system(size: 36))"
+                - generic [ref=e901]: .glassEffect()
+                - generic [ref=e904]: "Image(systemName: \"eraser.fill\")"
+                - generic [ref=e906]: ".frame(width: 80.0, height: 80.0)"
+                - generic [ref=e908]: ".font(.system(size: 36))"
+                - generic [ref=e909]: .glassEffect()
+                - generic [ref=e912]: "// An `offset` shows how Liquid Glass effects react to each other in a container."
+                - generic [ref=e914]: // Use animations and components appearing and disappearing to obtain effects that look purposeful.
+                - generic [ref=e916]: ".offset(x: -40.0, y: 0.0)"
+                - generic [ref=e917]: "}"
+                - generic [ref=e918]: "}"
+                - text: end of code block
+              - paragraph [ref=e919]:
+                - text: In some cases, you want the geometries of multiple views to contribute to a single Liquid Glass effect capsule, even when your content is at rest. Use the
+                - link "glassEffectUnion(id:namespace:)" [ref=e920] [cursor=pointer]:
+                  - /url: /documentation/swiftui/view/glasseffectunion(id:namespace:)
+                  - code [ref=e921]:
+                    - text: glass
+                    - text: Effect
+                    - text: "Union(id:"
+                    - text: namespace:)
+                - text: modifier to specify that a view contributes to a unified effect with a particular ID. This combines all effects with a similar shape, Liquid Glass effect, and ID into a single shape with the applied Liquid Glass material. This is especially useful when creating views dynamically, or with views that live outside of a layout container, like an
+                - code [ref=e922]: HStack
+                - text: or
+                - code [ref=e923]: VStack
+                - text: .
+              - paragraph:
+                - generic:
+                  - img "Four Image views that have Liquid Glass effects applied. A rain cloud with lightning symbol and a sun with rain symbol have a unified Liquid Glass effect encapsulating both of them, followed by a unified Liquid Glass effect of a moon with stars symbol and a moon symbol."
+              - code [ref=e927]:
+                - text: start of code block
+                - generic [ref=e929]: "let symbolSet: [String] = [\"cloud.bolt.rain.fill\", \"sun.rain.fill\", \"moon.stars.fill\", \"moon.fill\"]"
+                - generic [ref=e932]: "GlassEffectContainer(spacing: 20.0) {"
+                - generic [ref=e934]: "HStack(spacing: 20.0) {"
+                - generic [ref=e936]: "ForEach(symbolSet.indices, id: \\.self) { item in"
+                - generic [ref=e938]: "Image(systemName: symbolSet[item])"
+                - generic [ref=e940]: ".frame(width: 80.0, height: 80.0)"
+                - generic [ref=e942]: ".font(.system(size: 36))"
+                - generic [ref=e943]: .glassEffect()
+                - generic [ref=e945]: ".glassEffectUnion(id: item < 2 ? \"1\" : \"2\", namespace: namespace)"
+                - generic [ref=e946]: "}"
+                - generic [ref=e947]: "}"
+                - generic [ref=e948]: "}"
+                - text: end of code block
+              - heading "Morph Liquid Glass effects during transitions in page link" [level=2] [ref=e949]:
+                - link "Morph Liquid Glass effects during transitions in page link" [ref=e950] [cursor=pointer]:
+                  - /url: /documentation/swiftui/applying-liquid-glass-to-custom-views#Morph-Liquid-Glass-effects-during-transitions
+              - paragraph [ref=e951]:
+                - text: Morphing effects occur during transitions or animations between views with Liquid Glass effects. Coordinate transitions between views with effects in a container by using the
+                - link "glassEffectID(_:in:)" [ref=e952] [cursor=pointer]:
+                  - /url: /documentation/swiftui/view/glasseffectid(_:in:)
+                  - code [ref=e953]:
+                    - text: glass
+                    - text: Effect
+                    - text: "ID(_:"
+                    - text: in:)
+                - text: modifier.
+                - link "GlassEffectTransition" [ref=e954] [cursor=pointer]:
+                  - /url: /documentation/swiftui/glasseffecttransition
+                  - code [ref=e955]:
+                    - text: Glass
+                    - text: Effect
+                    - text: Transition
+                - text: allows you to specify the type of transition to use when you want to add or remove effects within a container. For effects you want to add or remove that are positioned within the container’s assigned spacing, the default transition type is
+                - link "matchedGeometry" [ref=e956] [cursor=pointer]:
+                  - /url: /documentation/swiftui/glasseffecttransition/matchedgeometry
+                  - code [ref=e957]:
+                    - text: matched
+                    - text: Geometry
+                - text: .
+              - paragraph [ref=e958]:
+                - text: If you prefer to have a simpler transition or to create a custom transition, use the
+                - link "materialize" [ref=e959] [cursor=pointer]:
+                  - /url: /documentation/swiftui/glasseffecttransition/materialize
+                  - code [ref=e960]: materialize
+                - text: transition and
+                - link "withAnimation(_:_:)" [ref=e961] [cursor=pointer]:
+                  - /url: /documentation/swiftui/withanimation(_:_:)
+                  - code [ref=e962]:
+                    - text: with
+                    - text: "Animation(_:"
+                    - text: _:)
+                - text: . Use the
+                - code [ref=e963]: materialize
+                - text: transition for effects you want to add or remove that are farther from each other than the container’s assigned spacing. To provide people with a consistent experience, use
+                - code [ref=e964]:
+                  - text: matched
+                  - text: Geometry
+                - text: and
+                - code [ref=e965]: materialize
+                - text: transitions across your apps. The system applies more than opacity changes with the available transition types.
+              - paragraph [ref=e966]:
+                - text: Associate each Liquid Glass effect with a unique identifier within a namespace that the
+                - link "Namespace" [ref=e967] [cursor=pointer]:
+                  - /url: /documentation/swiftui/namespace
+                  - code [ref=e968]: Namespace
+                - text: property wrapper provides. These IDs ensure SwiftUI animates the same shapes correctly when a shape appears or disappears due to view hierarchy changes. SwiftUI uses the spacing provided to the effect container along with the geometry of the shapes themselves to determine when and which appropriate shapes to morph into and out of.
+              - paragraph [ref=e969]:
+                - text: The
+                - code [ref=e970]:
+                  - text: glass
+                  - text: Effect
+                  - text: "ID(_:"
+                  - text: in:)
+                - text: and
+                - code [ref=e971]:
+                  - text: glass
+                  - text: Effect
+                  - text: Transition(_:)
+                - text: modifiers only affect their content during view hierarchy transitions or animations.
+              - paragraph [ref=e972]:
+                - text: In the example below, the eraser image transitions into and out of the pencil image when the
+                - code [ref=e973]:
+                  - text: is
+                  - text: Expanded
+                - text: variable changes. The
+                - code [ref=e974]:
+                  - text: Glass
+                  - text: Effect
+                  - text: Container
+                - text: has a spacing value of
+                - code [ref=e975]:
+                  - text: "40"
+                  - text: ".0"
+                - text: ", and the"
+                - code [ref=e976]: HStack
+                - text: within it has a spacing of
+                - code [ref=e977]:
+                  - text: "40"
+                  - text: ".0"
+                - text: . This morphs the eraser image into the pencil image when the eraser’s nearest edge is less than or equal to the container’s spacing.
+              - 'group "Video with custom controls. Content description: A video which shows two views, a scribble symbol on the left and a eraser symbol on the right, with Liquid Glass effects morphing in and out of each other as a button below them is pressed." [ref=e979]':
+                - link "Play" [ref=e982] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Play
+                  - img [ref=e983]
+              - code [ref=e990]:
+                - text: start of code block
+                - generic [ref=e992]: "@State private var isExpanded: Bool = false"
+                - generic [ref=e994]: "@Namespace private var namespace"
+                - generic [ref=e997]: "var body: some View {"
+                - generic [ref=e999]: "GlassEffectContainer(spacing: 40.0) {"
+                - generic [ref=e1001]: "HStack(spacing: 40.0) {"
+                - generic [ref=e1003]: "Image(systemName: \"scribble.variable\")"
+                - generic [ref=e1005]: ".frame(width: 80.0, height: 80.0)"
+                - generic [ref=e1007]: ".font(.system(size: 36))"
+                - generic [ref=e1008]: .glassEffect()
+                - generic [ref=e1010]: ".glassEffectID(\"pencil\", in: namespace)"
+                - generic [ref=e1013]: "if isExpanded {"
+                - generic [ref=e1015]: "Image(systemName: \"eraser.fill\")"
+                - generic [ref=e1017]: ".frame(width: 80.0, height: 80.0)"
+                - generic [ref=e1019]: ".font(.system(size: 36))"
+                - generic [ref=e1020]: .glassEffect()
+                - generic [ref=e1022]: ".glassEffectID(\"eraser\", in: namespace)"
+                - generic [ref=e1023]: "}"
+                - generic [ref=e1024]: "}"
+                - generic [ref=e1025]: "}"
+                - generic [ref=e1028]: "Button(\"Toggle\") {"
+                - generic [ref=e1029]: "withAnimation {"
+                - generic [ref=e1030]: isExpanded.toggle()
+                - generic [ref=e1031]: "}"
+                - generic [ref=e1032]: "}"
+                - generic [ref=e1033]: .buttonStyle(.glass)
+                - generic [ref=e1034]: "}"
+                - text: end of code block
+              - heading "Optimize performance when using Liquid Glass effects in page link" [level=2] [ref=e1035]:
+                - link "Optimize performance when using Liquid Glass effects in page link" [ref=e1036] [cursor=pointer]:
+                  - /url: /documentation/swiftui/applying-liquid-glass-to-custom-views#Optimize-performance-when-using-Liquid-Glass-effects
+              - paragraph [ref=e1037]:
+                - text: Creating too many Liquid Glass effect containers and applying too many effects to views outside of containers can degrade performance. Limit the use of Liquid Glass effects onscreen at the same time. Additionally, optimize how your app spends rendering time as people use it. To learn how to improve the performance of your UI, see
+                - link "Explore UI animation hitches and the render loop" [ref=e1038] [cursor=pointer]:
+                  - /url: https://developer.apple.com/videos/play/tech-talks/10855/
+                - text: and
+                - link "Optimize SwiftUI performance with Instruments" [ref=e1039] [cursor=pointer]:
+                  - /url: https://developer.apple.com/videos/play/wwdc2025/306/
+                - text: .
+            - generic [ref=e1041]:
+              - heading "See Also in page link" [level=2] [ref=e1042]:
+                - link "See Also in page link" [ref=e1043] [cursor=pointer]:
+                  - /url: /documentation/swiftui/applying-liquid-glass-to-custom-views#see-also
+              - generic [ref=e1044]:
+                - heading "Styling views with Liquid Glass in page link" [level=3] [ref=e1046]:
+                  - link "Styling views with Liquid Glass in page link" [ref=e1047] [cursor=pointer]:
+                    - /url: /documentation/swiftui/applying-liquid-glass-to-custom-views#Styling-views-with-Liquid-Glass
+                - generic [ref=e1048]:
+                  - generic [ref=e1049]:
+                    - 'link "Landmarks: Building an app with Liquid Glass" [ref=e1050] [cursor=pointer]':
+                      - /url: /documentation/swiftui/landmarks-building-an-app-with-liquid-glass
+                      - img [ref=e1052]
+                      - generic [ref=e1056]: "Landmarks: Building an app with Liquid Glass"
+                    - generic [ref=e1058]: Enhance your app experience with system-provided and custom Liquid Glass.
+                  - generic [ref=e1059]:
+                    - 'link "func glassEffect(Glass, in: some Shape) -> some View" [ref=e1060] [cursor=pointer]':
+                      - /url: /documentation/swiftui/view/glasseffect(_:in:)
+                      - code [ref=e1061]:
+                        - text: func
+                        - generic [ref=e1062]:
+                          - text: glass
+                          - text: Effect
+                        - text: (
+                        - text: Glass
+                        - text: ","
+                        - text: in
+                        - text: ":"
+                        - text: some
+                        - text: Shape
+                        - text: ) ->
+                        - text: some
+                        - text: View
+                    - generic [ref=e1064]: Applies the Liquid Glass effect to a view.
+                  - generic [ref=e1065]:
+                    - link "func interactive(Bool) -> Glass" [ref=e1066] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glass/interactive(_:)
+                      - code [ref=e1067]:
+                        - text: func
+                        - text: interactive
+                        - text: (
+                        - text: Bool
+                        - text: ) ->
+                        - text: Glass
+                    - generic [ref=e1069]: Returns a copy of the structure configured to be interactive.
+                  - generic [ref=e1070]:
+                    - link "struct GlassEffectContainer" [ref=e1071] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glasseffectcontainer
+                      - code [ref=e1072]:
+                        - text: struct
+                        - generic [ref=e1073]:
+                          - text: Glass
+                          - text: Effect
+                          - text: Container
+                    - generic [ref=e1075]: A view that combines multiple Liquid Glass shapes into a single shape that can morph individual shapes into one another.
+                  - generic [ref=e1076]:
+                    - link "struct GlassEffectTransition" [ref=e1077] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glasseffecttransition
+                      - code [ref=e1078]:
+                        - text: struct
+                        - generic [ref=e1079]:
+                          - text: Glass
+                          - text: Effect
+                          - text: Transition
+                    - generic [ref=e1081]: A structure that describes changes to apply when a glass effect is added or removed from the view hierarchy.
+                  - generic [ref=e1082]:
+                    - link "struct GlassButtonStyle" [ref=e1083] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glassbuttonstyle
+                      - code [ref=e1084]:
+                        - text: struct
+                        - generic [ref=e1085]:
+                          - text: Glass
+                          - text: Button
+                          - text: Style
+                    - generic [ref=e1087]: A button style that applies glass border artwork based on the button’s context.
+                  - generic [ref=e1088]:
+                    - link "struct GlassProminentButtonStyle" [ref=e1089] [cursor=pointer]:
+                      - /url: /documentation/swiftui/glassprominentbuttonstyle
+                      - code [ref=e1090]:
+                        - text: struct
+                        - generic [ref=e1091]:
+                          - text: Glass
+                          - text: Prominent
+                          - text: Button
+                          - text: Style
+                    - generic [ref=e1093]: A button style that applies prominent glass border artwork based on the button’s context.
+                  - generic [ref=e1094]:
+                    - link "struct DefaultGlassEffectShape" [ref=e1095] [cursor=pointer]:
+                      - /url: /documentation/swiftui/defaultglasseffectshape
+                      - code [ref=e1096]:
+                        - text: struct
+                        - generic [ref=e1097]:
+                          - text: Default
+                          - text: Glass
+                          - text: Effect
+                          - text: Shape
+                    - generic [ref=e1099]: The default shape applied by glass effects, a capsule.
+        - generic [ref=e1100]: Current page is Applying Liquid Glass to custom views
+  - contentinfo [ref=e67]:
+    - navigation [ref=e68]:
+      - link "Apple" [ref=e69] [cursor=pointer]:
+        - /url: https://www.apple.com
+        - text: 
+        - generic [ref=e70]: Apple
+      - list [ref=e72]:
+        - listitem [ref=e73]:
+          - link "Developer" [ref=e74] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e75]:
+          - link "Documentation" [ref=e76] [cursor=pointer]:
+            - /url: /documentation/
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - heading "Platforms" [level=3] [ref=e80]
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - link "iOS" [ref=e83] [cursor=pointer]:
+                  - /url: /ios/
+              - listitem [ref=e84]:
+                - link "iPadOS" [ref=e85] [cursor=pointer]:
+                  - /url: /ipados/
+              - listitem [ref=e86]:
+                - link "macOS" [ref=e87] [cursor=pointer]:
+                  - /url: /macos/
+              - listitem [ref=e88]:
+                - link "tvOS" [ref=e89] [cursor=pointer]:
+                  - /url: /tvos/
+              - listitem [ref=e90]:
+                - link "visionOS" [ref=e91] [cursor=pointer]:
+                  - /url: /visionos/
+              - listitem [ref=e92]:
+                - link "watchOS" [ref=e93] [cursor=pointer]:
+                  - /url: /watchos/
+          - generic [ref=e94]:
+            - heading "Tools" [level=3] [ref=e95]
+            - list [ref=e96]:
+              - listitem [ref=e97]:
+                - link "Swift" [ref=e98] [cursor=pointer]:
+                  - /url: /swift/
+              - listitem [ref=e99]:
+                - link "SwiftUI" [ref=e100] [cursor=pointer]:
+                  - /url: /swiftui/
+              - listitem [ref=e101]:
+                - link "Swift Playground" [ref=e102] [cursor=pointer]:
+                  - /url: /swift-playground/
+              - listitem [ref=e103]:
+                - link "TestFlight" [ref=e104] [cursor=pointer]:
+                  - /url: /testflight/
+              - listitem [ref=e105]:
+                - link "Xcode" [ref=e106] [cursor=pointer]:
+                  - /url: /xcode/
+              - listitem [ref=e107]:
+                - link "Xcode Cloud" [ref=e108] [cursor=pointer]:
+                  - /url: /xcode-cloud/
+              - listitem [ref=e109]:
+                - link "SF Symbols" [ref=e110] [cursor=pointer]:
+                  - /url: /sf-symbols/
+        - generic [ref=e112]:
+          - heading "Topics & Technologies" [level=3] [ref=e113]
+          - list [ref=e114]:
+            - listitem [ref=e115]:
+              - link "Accessibility" [ref=e116] [cursor=pointer]:
+                - /url: /accessibility/
+            - listitem [ref=e117]:
+              - link "Accessories" [ref=e118] [cursor=pointer]:
+                - /url: /accessories/
+            - listitem [ref=e119]:
+              - link "App Extension" [ref=e120] [cursor=pointer]:
+                - /url: /app-extensions/
+            - listitem [ref=e121]:
+              - link "App Store" [ref=e122] [cursor=pointer]:
+                - /url: /app-store/
+            - listitem [ref=e123]:
+              - link "Audio & Video" [ref=e124] [cursor=pointer]:
+                - /url: /audio/
+            - listitem [ref=e125]:
+              - link "Augmented Reality" [ref=e126] [cursor=pointer]:
+                - /url: /augmented-reality/
+            - listitem [ref=e127]:
+              - link "Design" [ref=e128] [cursor=pointer]:
+                - /url: /design/
+            - listitem [ref=e129]:
+              - link "Distribution" [ref=e130] [cursor=pointer]:
+                - /url: /distribute/
+            - listitem [ref=e131]:
+              - link "Education" [ref=e132] [cursor=pointer]:
+                - /url: /education/
+            - listitem [ref=e133]:
+              - link "Fonts" [ref=e134] [cursor=pointer]:
+                - /url: /fonts/
+            - listitem [ref=e135]:
+              - link "Games" [ref=e136] [cursor=pointer]:
+                - /url: /games/
+            - listitem [ref=e137]:
+              - link "Health & Fitness" [ref=e138] [cursor=pointer]:
+                - /url: /health-fitness/
+            - listitem [ref=e139]:
+              - link "In-App Purchase" [ref=e140] [cursor=pointer]:
+                - /url: /in-app-purchase/
+            - listitem [ref=e141]:
+              - link "Localization" [ref=e142] [cursor=pointer]:
+                - /url: /localization/
+            - listitem [ref=e143]:
+              - link "Maps & Location" [ref=e144] [cursor=pointer]:
+                - /url: /maps/
+            - listitem [ref=e145]:
+              - link "Machine Learning & AI" [ref=e146] [cursor=pointer]:
+                - /url: /machine-learning/
+            - listitem [ref=e147]:
+              - link "Open Source" [ref=e148] [cursor=pointer]:
+                - /url: https://opensource.apple.com/
+            - listitem [ref=e149]:
+              - link "Security" [ref=e150] [cursor=pointer]:
+                - /url: /security/
+            - listitem [ref=e151]:
+              - link "Safari & Web" [ref=e152] [cursor=pointer]:
+                - /url: /safari/
+        - generic [ref=e153]:
+          - generic [ref=e154]:
+            - heading "Resources" [level=3] [ref=e155]
+            - list [ref=e156]:
+              - listitem
+              - listitem [ref=e157]:
+                - link "Documentation" [ref=e158] [cursor=pointer]:
+                  - /url: /documentation/
+              - listitem [ref=e159]:
+                - link "Tutorials" [ref=e160] [cursor=pointer]:
+                  - /url: /learn/
+              - listitem [ref=e161]:
+                - link "Downloads" [ref=e162] [cursor=pointer]:
+                  - /url: /download/
+              - listitem [ref=e163]:
+                - link "Forums" [ref=e164] [cursor=pointer]:
+                  - /url: /forums/
+              - listitem [ref=e165]:
+                - link "Videos" [ref=e166] [cursor=pointer]:
+                  - /url: /videos/
+          - generic [ref=e167]:
+            - heading "Support" [level=3] [ref=e168]
+            - list [ref=e169]:
+              - listitem [ref=e170]:
+                - link "Support Articles" [ref=e171] [cursor=pointer]:
+                  - /url: /support/articles/
+              - listitem [ref=e172]:
+                - link "Contact Us" [ref=e173] [cursor=pointer]:
+                  - /url: /contact/
+              - listitem [ref=e174]:
+                - link "Bug Reporting" [ref=e175] [cursor=pointer]:
+                  - /url: /bug-reporting/
+              - listitem [ref=e176]:
+                - link "System Status" [ref=e177] [cursor=pointer]:
+                  - /url: /system-status/
+          - generic [ref=e178]:
+            - heading "Account" [level=3] [ref=e179]
+            - list [ref=e180]:
+              - listitem [ref=e181]:
+                - link "Apple Developer" [ref=e182] [cursor=pointer]:
+                  - /url: /account/
+              - listitem [ref=e183]:
+                - link "App Store Connect" [ref=e184] [cursor=pointer]:
+                  - /url: https://appstoreconnect.apple.com/
+              - listitem [ref=e185]:
+                - link "Certificates, IDs, & Profiles" [ref=e186] [cursor=pointer]:
+                  - /url: /account/ios/certificate/
+              - listitem [ref=e187]:
+                - link "Feedback Assistant" [ref=e188] [cursor=pointer]:
+                  - /url: https://feedbackassistant.apple.com/
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - heading "Programs" [level=3] [ref=e191]
+            - list [ref=e192]:
+              - listitem [ref=e193]:
+                - link "Apple Developer Program" [ref=e194] [cursor=pointer]:
+                  - /url: /programs/
+              - listitem [ref=e195]:
+                - link "Apple Developer Enterprise Program" [ref=e196] [cursor=pointer]:
+                  - /url: /programs/enterprise/
+              - listitem [ref=e197]:
+                - link "App Store Small Business Program" [ref=e198] [cursor=pointer]:
+                  - /url: /app-store/small-business-program/
+              - listitem [ref=e199]:
+                - link "MFi Program" [ref=e200] [cursor=pointer]:
+                  - /url: https://mfi.apple.com/
+              - listitem [ref=e201]:
+                - link "News Partner Program" [ref=e202] [cursor=pointer]:
+                  - /url: /programs/news-partner/
+              - listitem [ref=e203]:
+                - link "Video Partner Program" [ref=e204] [cursor=pointer]:
+                  - /url: /programs/video-partner/
+              - listitem [ref=e205]:
+                - link "Security Bounty Program" [ref=e206] [cursor=pointer]:
+                  - /url: /security-bounty/
+              - listitem [ref=e207]:
+                - link "Security Research Device Program" [ref=e208] [cursor=pointer]:
+                  - /url: /programs/security-research-device/
+          - generic [ref=e209]:
+            - heading "Events" [level=3] [ref=e210]
+            - list [ref=e211]:
+              - listitem [ref=e212]:
+                - link "Meet with Apple" [ref=e213] [cursor=pointer]:
+                  - /url: /events/
+              - listitem [ref=e214]:
+                - link "Apple Developer Centers" [ref=e215] [cursor=pointer]:
+                  - /url: /events/developer-centers/
+              - listitem [ref=e216]:
+                - link "App Store Awards" [ref=e217] [cursor=pointer]:
+                  - /url: /app-store/app-store-awards/
+              - listitem [ref=e218]:
+                - link "Apple Design Awards" [ref=e219] [cursor=pointer]:
+                  - /url: /design/awards/
+              - listitem [ref=e220]:
+                - link "Apple Developer Academies" [ref=e221] [cursor=pointer]:
+                  - /url: /academies/
+              - listitem [ref=e222]:
+                - link "WWDC" [ref=e223] [cursor=pointer]:
+                  - /url: /wwdc/
+    - generic [ref=e224]:
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - text: To submit feedback on documentation, visit
+          - link "Feedback Assistant" [ref=e227] [cursor=pointer]:
+            - /url: applefeedback://new?form_identifier=developertools.fba&answers%5B%3Aarea%5D=seedADC%3Adevpubs&answers%5B%3Adoc_type_req%5D=Technology%20Documentation&answers%5B%3Adocumentation_link_req%5D=https%3A%2F%2Fdeveloper.apple.com%2Fdocumentation%2Fswiftui%2Fapplying-liquid-glass-to-custom-views
+          - text: .
+        - radiogroup "Select a color scheme preference" [ref=e229]:
+          - generic [ref=e230]: Select a color scheme preference
+          - generic [ref=e231]:
+            - radio "Light" [ref=e232]
+            - generic [ref=e233]: Light
+          - generic [ref=e234]:
+            - radio "Dark" [ref=e235]
+            - generic [ref=e236]: Dark
+          - generic [ref=e237]:
+            - radio "Auto" [checked] [ref=e238]
+            - generic [ref=e239]: Auto
+      - generic [ref=e240]:
+        - generic [ref=e241]:
+          - text: Copyright © 2026
+          - link "Apple Inc." [ref=e242] [cursor=pointer]:
+            - /url: https://www.apple.com
+          - text: All rights reserved.
+        - generic [ref=e243]:
+          - link "Terms of Use" [ref=e244] [cursor=pointer]:
+            - /url: https://www.apple.com/legal/internet-services/terms/site.html
+          - link "Privacy Policy" [ref=e245] [cursor=pointer]:
+            - /url: https://www.apple.com/legal/privacy/
+          - link "Agreements and Guidelines" [ref=e246] [cursor=pointer]:
+            - /url: /support/terms/

@@ -1,0 +1,4 @@
+[     170ms] [ERROR] Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR @ https://www.apple.com/wss/fonts?families=SF+Pro,v3|SF+Pro+Icons,v3:0
+[     294ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://sf-saas.cdn-apple.com/2.4.0-beta.0/animations/all.css:0
+[    1008ms] [LOG] [RTC_RA]: Created reporting agent using rtc.js version 0.1.36 @ https://developer.apple.com/videos/scripts/hls/rtc.min.js?17232610030:103
+[    1008ms] [LOG] no bag available! @ https://developer.apple.com/videos/scripts/hls/rtc.min.js?17232610030:103

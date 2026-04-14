@@ -49,6 +49,37 @@ If you run it as a package, Xcode usually handles ad-hoc signing, but you may ne
 - **Ollama**: Optional local task parsing for the assistant panel.
 - **Local Transcription CLI**: Optional external whisper-compatible command for microphone transcription.
 
+## Packaging & Install
+
+To package Helpy the same way as before, including the new Assistant tab, run:
+
+```bash
+chmod +x ./package_dmg.sh
+./package_dmg.sh
+```
+
+That produces `Helpy.app` and `Helpy.dmg` in the project root. Install by opening `Helpy.dmg` and dragging `Helpy.app` into `/Applications`.
+
+The packaged app bundle is self-contained with respect to Helpy itself:
+- the SwiftPM resource bundle is embedded into the `.app`
+- app settings persist in macOS preferences
+- estimate data persists in the app's normal macOS data location
+
+That means you can delete or move the project folder after installing the app and Helpy will still launch normally from `/Applications`.
+
+### Optional bundled assistant payload
+
+If you want the installed app to prefer assistant helper assets shipped inside the `.app`, create a top-level `BundledAssistant/` directory before running `./package_dmg.sh`.
+
+Supported locations:
+- `BundledAssistant/bin/whisper-cli`
+- `BundledAssistant/models/*.bin`
+- `BundledAssistant/models/*.gguf`
+
+`package_dmg.sh` copies that folder into `Helpy.app/Contents/Resources/BundledAssistant`, and Helpy will prefer those bundled transcription assets over `/opt/homebrew` or other shared model folders.
+
+Important: the typed Assistant tab itself is packaged automatically, but Ollama is still a separate local runtime unless you choose to ship and manage it yourself outside this repo.
+
 ## Local Assistant Setup
 
 1. Install Ollama from `https://ollama.com/download`.

@@ -125,6 +125,7 @@ func liquidGlassBackground(cornerRadius: CGFloat) -> some View {
                 in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
             )
     } else {
-        IceGlassSurface(cornerRadius: cornerRadius)
+        VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     }
 }

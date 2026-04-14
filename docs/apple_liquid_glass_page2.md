@@ -1,0 +1,1236 @@
+- generic [ref=e2]:
+  - link "Skip Navigation" [ref=e3] [cursor=pointer]:
+    - /url: "#app-main"
+  - navigation "Global" [ref=e4]:
+    - list [ref=e6]:
+      - listitem [ref=e7]:
+        - link "Apple Developer" [ref=e8] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=e9]:
+        - generic [ref=e11]:
+          - list [ref=e13]:
+            - listitem [ref=e14]:
+              - link "Get Started" [ref=e15] [cursor=pointer]:
+                - /url: /get-started/
+                - generic [ref=e16]:
+                  - generic: Get Started
+            - listitem:
+              - button "Get Started menu":
+                - generic:
+                  - img
+          - list [ref=e18]:
+            - listitem [ref=e19]:
+              - link "Platforms" [ref=e20] [cursor=pointer]:
+                - /url: /platforms/
+                - generic [ref=e21]:
+                  - generic: Platforms
+            - listitem:
+              - button "Platforms menu":
+                - generic:
+                  - img
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "Technologies" [ref=e25] [cursor=pointer]:
+                - /url: /technologies/
+                - generic [ref=e26]:
+                  - generic: Technologies
+            - listitem:
+              - button "Technologies menu":
+                - generic:
+                  - img
+          - list [ref=e28]:
+            - listitem [ref=e29]:
+              - link "Community" [ref=e30] [cursor=pointer]:
+                - /url: /community/
+                - generic [ref=e31]:
+                  - generic: Community
+            - listitem:
+              - button "Community menu":
+                - generic:
+                  - img
+          - list [ref=e33]:
+            - listitem [ref=e34]:
+              - link "Documentation" [ref=e35] [cursor=pointer]:
+                - /url: /documentation/
+                - generic [ref=e36]:
+                  - generic: Documentation
+            - listitem:
+              - button "Documentation menu":
+                - generic:
+                  - img
+          - list [ref=e38]:
+            - listitem [ref=e39]:
+              - link "Downloads" [ref=e40] [cursor=pointer]:
+                - /url: /download/
+                - generic [ref=e41]:
+                  - generic: Downloads
+            - listitem:
+              - button "Downloads menu":
+                - generic:
+                  - img
+          - list [ref=e43]:
+            - listitem [ref=e44]:
+              - link "Support" [ref=e45] [cursor=pointer]:
+                - /url: /support/
+                - generic [ref=e46]:
+                  - generic: Support
+            - listitem:
+              - button "Support menu":
+                - generic:
+                  - img
+      - listitem [ref=e47]:
+        - button "Search" [ref=e48] [cursor=pointer]:
+          - generic:
+            - img
+      - listitem [ref=e49]:
+        - link "Account" [ref=e51] [cursor=pointer]:
+          - /url: /account/
+          - generic:
+            - img
+  - generic [ref=e248]:
+    - navigation "API Reference" [ref=e249]:
+      - generic [ref=e252]:
+        - button "Open Documentation Navigator" [ref=e255] [cursor=pointer]:
+          - img [ref=e257]
+        - link "Documentation" [ref=e260] [cursor=pointer]:
+          - /url: /documentation
+        - list [ref=e263]:
+          - listitem [ref=e264]:
+            - generic [ref=e265]:
+              - combobox
+              - generic [ref=e266]: "Language:"
+              - text: Swift
+    - generic [ref=e267]:
+      - navigation "Technology Overviews" [ref=e271]:
+        - generic [ref=e274]:
+          - button "All Technologies" [ref=e276] [cursor=pointer]:
+            - img [ref=e277]
+            - text: All Technologies
+          - generic [ref=e279]:
+            - link "Technology Overviews" [ref=e280] [cursor=pointer]:
+              - /url: /documentation/technologyoverviews
+              - heading "Technology Overviews" [level=2] [ref=e281]
+            - generic "Documentation Navigator" [ref=e282]:
+              - generic [ref=e283]:
+                - heading "Get started" [level=3] [ref=e290]:
+                  - paragraph [ref=e291]: Get started
+                - generic [ref=e295]:
+                  - button "App design and UI" [expanded] [ref=e297] [cursor=pointer]:
+                    - img [ref=e298]
+                  - img [ref=e302]
+                  - link "App design and UI" [ref=e306] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/app-design-and-ui
+                    - paragraph [ref=e307]: App design and UI
+                - heading "App builder" [level=3] [ref=e314]:
+                  - paragraph [ref=e315]: App builder
+                - generic [ref=e319]:
+                  - img [ref=e323]
+                  - link "SwiftUI apps" [ref=e327] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/swiftui
+                    - paragraph [ref=e328]: SwiftUI apps
+                - generic [ref=e332]:
+                  - img [ref=e336]
+                  - link "UIKit and AppKit apps" [ref=e340] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/uikit-appkit
+                    - paragraph [ref=e341]: UIKit and AppKit apps
+                - heading "Interface" [level=3] [ref=e348]:
+                  - paragraph [ref=e349]: Interface
+                - generic [ref=e353]:
+                  - img [ref=e357]
+                  - link "Interface fundamentals" [ref=e361] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/interface-fundamentals
+                    - paragraph [ref=e362]: Interface fundamentals
+                - generic [ref=e366]:
+                  - button "Liquid Glass" [expanded] [ref=e368] [cursor=pointer]:
+                    - img [ref=e369]
+                  - img [ref=e373]
+                  - link "Liquid Glass" [ref=e377] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/liquid-glass
+                    - paragraph [ref=e378]: Liquid Glass
+                - heading "Essentials" [level=3] [ref=e385]:
+                  - paragraph [ref=e386]: Essentials
+                - generic [ref=e390]:
+                  - img [ref=e394]
+                  - link "Adopting Liquid Glass" [ref=e398] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/adopting-liquid-glass
+                    - paragraph [ref=e399]: Adopting Liquid Glass
+                - generic [ref=e403]:
+                  - button "Games" [ref=e405] [cursor=pointer]:
+                    - img [ref=e406]
+                  - img [ref=e410]
+                  - link "Games" [ref=e414] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/games
+                    - paragraph [ref=e415]: Games
+                - heading "Discover Apple technologies" [level=3] [ref=e422]:
+                  - paragraph [ref=e423]: Discover Apple technologies
+                - generic [ref=e427]:
+                  - button "Data management" [ref=e429] [cursor=pointer]:
+                    - img [ref=e430]
+                  - img [ref=e434]
+                  - link "Data management" [ref=e438] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/data-management
+                    - paragraph [ref=e439]: Data management
+                - generic [ref=e443]:
+                  - button "Core experiences" [ref=e445] [cursor=pointer]:
+                    - img [ref=e446]
+                  - img [ref=e450]
+                  - link "Core experiences" [ref=e454] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/core-experiences
+                    - paragraph [ref=e455]: Core experiences
+                - generic [ref=e459]:
+                  - button "Apple Intelligence and machine learning" [ref=e461] [cursor=pointer]:
+                    - img [ref=e462]
+                  - img [ref=e466]
+                  - link "Apple Intelligence and machine learning" [ref=e470] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/ai-machine-learning
+                    - paragraph [ref=e471]: Apple Intelligence and machine learning
+                - generic [ref=e475]:
+                  - button "Audio and video" [ref=e477] [cursor=pointer]:
+                    - img [ref=e478]
+                  - img [ref=e482]
+                  - link "Audio and video" [ref=e486] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/audio-and-video
+                    - paragraph [ref=e487]: Audio and video
+                - generic [ref=e491]:
+                  - button "Hardware, networking, and sensors" [ref=e493] [cursor=pointer]:
+                    - img [ref=e494]
+                  - img [ref=e498]
+                  - link "Hardware, networking, and sensors" [ref=e502] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/hardware-networking-sensors
+                    - paragraph [ref=e503]: Hardware, networking, and sensors
+            - generic [ref=e504]: 17 items were found. Tab back to navigate through them.
+            - generic:
+              - paragraph
+          - generic [ref=e506]:
+            - search [ref=e508]:
+              - generic [ref=e510]:
+                - button [ref=e511]:
+                  - img [ref=e512]
+                - generic "Filter" [ref=e515]:
+                  - combobox "Filter" [ref=e516]
+            - button "Open Quick Navigation" [ref=e518] [cursor=pointer]: /
+        - generic [ref=e519]: Navigator is ready
+      - generic [ref=e522]:
+        - main [ref=e523]:
+          - generic [ref=e524]:
+            - img [ref=e527]
+            - generic [ref=e530]:
+              - list "Breadcrumbs" [ref=e531]:
+                - listitem [ref=e532]:
+                  - link "Technology Overviews" [ref=e533] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews
+                - text: /
+                - listitem [ref=e534]:
+                  - text: /
+                  - button [ref=e535] [cursor=pointer]:
+                    - img [ref=e537]
+                - listitem [ref=e539]:
+                  - text: /
+                  - link "Liquid Glass" [ref=e540] [cursor=pointer]:
+                    - /url: /documentation/technologyoverviews/liquid-glass
+                - listitem [ref=e541]:
+                  - text: /
+                  - generic [ref=e542]: Adopting Liquid Glass
+              - heading "Adopting Liquid Glass" [level=1] [ref=e544]
+              - generic [ref=e545]: Find out how to bring the new material to your app.
+          - generic [ref=e550]:
+            - heading "Overview in page link" [level=2] [ref=e551]:
+              - link "Overview in page link" [ref=e552] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Overview
+            - paragraph [ref=e553]: If you have an existing app, adopting Liquid Glass doesn’t mean reinventing your app from the ground up. Start by building your app in the latest version of Xcode to see the changes. As you review your app, use the following sections to understand the scope of changes and learn how you can adopt these best practices in your interface.
+            - paragraph [ref=e554]:
+              - img "An image of a Mac, iPad, and iPhone showing the Mount Fuji landmark in the Landmarks app." [ref=e556]
+            - separator [ref=e557]
+            - heading "See your app with Liquid Glass in page link" [level=4] [ref=e558]:
+              - link "See your app with Liquid Glass in page link" [ref=e559] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#See-your-app-with-Liquid-Glass
+            - paragraph [ref=e560]: If your app uses standard components from SwiftUI, UIKit, or AppKit, your interface picks up the latest look and feel on the latest platform releases for iOS, iPadOS, macOS, tvOS, and watchOS. In Xcode, build your app with the latest SDKs, and run it on the latest platform releases to see the changes in your interface.
+            - separator [ref=e561]
+            - heading "Visual refresh in page link" [level=2] [ref=e562]:
+              - link "Visual refresh in page link" [ref=e563] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Visual-refresh
+            - paragraph [ref=e564]:
+              - text: Interfaces across Apple platforms feature a new dynamic
+              - link "material" [ref=e565] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/materials
+              - text: called Liquid Glass, which combines the optical properties of glass with a sense of fluidity. This material forms a distinct functional layer for controls and navigation elements. It affects how the interface looks, feels, and moves, adapting in response to a variety of factors to help bring focus to the underlying content.
+            - paragraph [ref=e566]:
+              - strong [ref=e567]: Leverage system frameworks to adopt Liquid Glass automatically.
+              - text: In system frameworks, standard components like bars, sheets, popovers, and controls automatically adopt this material. System frameworks also dynamically adapt these components in response to factors like element overlap and focus state. Take advantage of this material with minimal code by using standard components from SwiftUI, UIKit, and AppKit.
+            - paragraph [ref=e568]:
+              - strong [ref=e569]: Reduce your use of custom backgrounds in controls and navigation elements.
+              - text: "Any custom backgrounds and appearances you use in these elements might overlay or interfere with Liquid Glass or other effects that the system provides, such as the scroll edge effect. Make sure to check any custom backgrounds in elements like split views, tab bars, and toolbars. Prefer to remove custom effects and let the system determine the background appearance, especially for the following elements:"
+            - generic [ref=e570]:
+              - navigation [ref=e571]:
+                - list [ref=e572]:
+                  - listitem [ref=e573]:
+                    - link "SwiftUI" [ref=e574]:
+                      - /url: "#"
+                  - listitem [ref=e575]:
+                    - link "UIKit" [ref=e576] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e577]:
+                    - link "AppKit" [ref=e578] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e583]:
+                - generic [ref=e584]:
+                  - paragraph [ref=e585]:
+                    - link "NavigationStack" [ref=e586] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/NavigationStack
+                      - code [ref=e587]:
+                        - text: Navigation
+                        - text: Stack
+                  - paragraph [ref=e588]:
+                    - link "NavigationSplitView" [ref=e589] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/NavigationSplitView
+                      - code [ref=e590]:
+                        - text: Navigation
+                        - text: Split
+                        - text: View
+                - generic [ref=e591]:
+                  - paragraph [ref=e592]:
+                    - link "titleBar" [ref=e593] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/WindowStyle/titleBar
+                      - code [ref=e594]:
+                        - text: title
+                        - text: Bar
+                  - paragraph [ref=e595]:
+                    - link "toolbar(content:)" [ref=e596] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/View/toolbar(content:)
+                      - code [ref=e597]: toolbar(content:)
+            - paragraph [ref=e598]:
+              - strong [ref=e599]: Test your interface with a variety of display and accessibility settings.
+              - text: Translucency and fluid morphing animations contribute to the look and feel of Liquid Glass, but can adapt to people’s needs. For example, people can choose a preferred look for Liquid Glass in their device’s settings, or turn on accessibility settings that reduce transparency or motion in the interface. These settings can remove or modify certain effects. If you use standard components from system frameworks, this experience adapts automatically. Ensure you test your app’s custom elements, colors, and animations with different configurations of these settings.
+            - paragraph [ref=e600]:
+              - strong [ref=e601]: Avoid overusing Liquid Glass effects.
+              - text: If you apply Liquid Glass effects to a custom control, do so sparingly. Liquid Glass seeks to bring attention to the underlying content, and overusing this material in multiple custom controls can provide a subpar user experience by distracting from that content. Limit these effects to the most important functional elements in your app. To learn more, read
+              - link "Applying Liquid Glass to custom views" [ref=e602] [cursor=pointer]:
+                - /url: /documentation/SwiftUI/Applying-Liquid-Glass-to-custom-views
+              - text: .
+            - generic [ref=e603]:
+              - navigation [ref=e604]:
+                - list [ref=e605]:
+                  - listitem [ref=e606]:
+                    - link "SwiftUI" [ref=e607]:
+                      - /url: "#"
+                  - listitem [ref=e608]:
+                    - link "UIKit" [ref=e609] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e610]:
+                    - link "AppKit" [ref=e611] [cursor=pointer]:
+                      - /url: "#"
+              - paragraph [ref=e616]:
+                - link "glassEffect(_:in:)" [ref=e617] [cursor=pointer]:
+                  - /url: /documentation/SwiftUI/View/glassEffect(_:in:)
+                  - code [ref=e618]:
+                    - text: glass
+                    - text: "Effect(_:"
+                    - text: in:)
+            - separator [ref=e619]
+            - heading "App icons in page link" [level=2] [ref=e620]:
+              - link "App icons in page link" [ref=e621] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#App-icons
+            - paragraph [ref=e622]:
+              - link "App icons" [ref=e623] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/app-icons
+              - text: take on a design that’s dynamic and expressive. Updates to the icon grid result in a standardized iconography that’s visually consistent across devices and concentric with hardware and other elements across the system. App icons now contain layers, which dynamically respond to lighting and other visual effects the system provides. iOS, iPadOS, and macOS all now offer default (light), dark, clear, and tinted appearance variants, empowering people to personalize the look and feel of their Home Screen.
+            - paragraph:
+              - generic:
+                - 'img "A grid showing the Podcasts app icon in the six style variants: default, dark, clear (light), clear (dark), tinted (light), and tinted (dark)."'
+            - paragraph [ref=e624]:
+              - strong [ref=e625]: Reimagine your app icon for Liquid Glass.
+              - text: "Apply key design principles to help your app icon shine:"
+            - list [ref=e626]:
+              - listitem [ref=e627]:
+                - paragraph [ref=e628]: Provide a visually consistent, optically balanced design across the platforms your app supports.
+              - listitem [ref=e629]:
+                - paragraph [ref=e630]: Consider a simplified design comprised of solid, filled, overlapping semi-transparent shapes.
+              - listitem [ref=e631]:
+                - paragraph [ref=e632]: Let the system handle applying masking, blurring, and other visual effects, rather than factoring them into your design.
+            - generic [ref=e633]:
+              - paragraph [ref=e635]:
+                - figure "Podcasts icon in iOS 18" [ref=e636]:
+                  - generic:
+                    - img "The Podcasts app icon in iOS 18 using the light style."
+                  - generic [ref=e637]: Podcasts icon in iOS 18
+              - paragraph [ref=e639]:
+                - figure "Reimagined layered Podcasts icon" [ref=e640]:
+                  - generic:
+                    - img "The Podcasts app icon in iOS using the default style, shown before applying system effects. The design of the icon uses solid filled shapes instead of outlines, and multiple layers of varying opacity."
+                  - generic [ref=e641]: Reimagined layered Podcasts icon
+              - paragraph [ref=e643]:
+                - figure "Reimagined layered Podcasts icon with system effects applied" [ref=e644]:
+                  - generic:
+                    - img "The Podcasts app icon in iOS using the default style, shown with system effects applied."
+                  - generic [ref=e645]: Reimagined layered Podcasts icon with system effects applied
+            - paragraph [ref=e646]:
+              - strong [ref=e647]: Design using layers.
+              - text: The system automatically applies effects like reflection, refraction, shadow, blur, and highlights to your icon layers. Determine which elements of your design make sense as foreground, middle, and background elements, then define separate layers for them. You can perform this task in the design app of your choice.
+            - paragraph [ref=e648]:
+              - strong [ref=e649]: Compose and preview in Icon Composer.
+              - text: Drag and drop app icon layers that you export from your design app directly into the Icon Composer app. Icon Composer lets you add a background, create layer groupings, adjust layer attributes like opacity, and preview your design with system effects and appearances. Icon Composer is available in the latest version of Xcode and for download from
+              - link "Apple Design Resources" [ref=e650] [cursor=pointer]:
+                - /url: https://developer.apple.com/design/resources/
+              - text: . To learn more, read
+              - link "Creating your app icon using Icon Composer" [ref=e651] [cursor=pointer]:
+                - /url: /documentation/Xcode/creating-your-app-icon-using-icon-composer
+              - text: .
+            - paragraph:
+              - generic:
+                - img "A screenshot of the Icon Composer app showing the Podcasts app icon in the default style."
+            - paragraph [ref=e652]:
+              - strong [ref=e653]: Preview against the updated grids.
+              - text: The system applies masking to produce your final icon shape — rounded rectangle for iOS, iPadOS, and macOS, and circular for watchOS. Keep elements centered to avoid clipping. Irregularly shaped icons receive a system-provided background. See how your app icon looks with the updated grids to determine whether you need to make adjustments. Download these grids from
+              - link "Apple Design Resources" [ref=e654] [cursor=pointer]:
+                - /url: https://developer.apple.com/design/resources/
+              - text: .
+            - separator [ref=e655]
+            - heading "Controls in page link" [level=2] [ref=e656]:
+              - link "Controls in page link" [ref=e657] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Controls
+            - paragraph [ref=e658]:
+              - text: Controls have a refreshed look across platforms, and come to life when a person interacts with them. For controls like sliders and toggles, the knob transforms into Liquid Glass during interaction, and
+              - link "buttons" [ref=e659] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/buttons
+              - text: fluidly morph into menus and popovers. The shape of the hardware informs the curvature of controls, so many controls adopt rounder forms to elegantly nestle into the corners of windows and displays. Controls also feature an option for an extra-large size, allowing more space for labels and accents.
+            - generic [ref=e660]:
+              - figure "Slider" [ref=e662]:
+                - 'group "Video with custom controls. Content description: A video showing a slider as its value changes during interaction." [ref=e664]':
+                  - link "Play" [ref=e667] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Play
+                    - img [ref=e668]
+                - generic [ref=e672]: Slider
+              - figure "Segmented control" [ref=e674]:
+                - 'group "Video with custom controls. Content description: A video showing a segmented control as its selection changes during interaction between two segments: For You and Library." [ref=e676]':
+                  - link "Play" [ref=e679] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Play
+                    - img [ref=e680]
+                - generic [ref=e684]: Segmented control
+            - paragraph [ref=e685]:
+              - strong [ref=e686]: Review updates to control appearance and dimensions.
+              - text: "If you use standard controls from system frameworks and don’t hard-code their layout metrics, your app adopts changes to shapes and sizes automatically when you rebuild your app with the latest version of Xcode. Review changes to the following controls and any others and make sure they continue to look at home with the rest of your interface:"
+            - generic [ref=e687]:
+              - navigation [ref=e688]:
+                - list [ref=e689]:
+                  - listitem [ref=e690]:
+                    - link "SwiftUI" [ref=e691]:
+                      - /url: "#"
+                  - listitem [ref=e692]:
+                    - link "UIKit" [ref=e693] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e694]:
+                    - link "AppKit" [ref=e695] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e700]:
+                - generic [ref=e701]:
+                  - paragraph [ref=e702]:
+                    - link "Button" [ref=e703] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/Button
+                      - code [ref=e704]: Button
+                  - paragraph [ref=e705]:
+                    - link "Toggle" [ref=e706] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/Toggle
+                      - code [ref=e707]: Toggle
+                  - paragraph [ref=e708]:
+                    - link "Slider" [ref=e709] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/Slider
+                      - code [ref=e710]: Slider
+                - generic [ref=e711]:
+                  - paragraph [ref=e712]:
+                    - link "Stepper" [ref=e713] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/Stepper
+                      - code [ref=e714]: Stepper
+                  - paragraph [ref=e715]:
+                    - link "Picker" [ref=e716] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/Picker
+                      - code [ref=e717]: Picker
+                  - paragraph [ref=e718]:
+                    - link "TextField" [ref=e719] [cursor=pointer]:
+                      - /url: /documentation/SwiftUI/TextField
+                      - code [ref=e720]:
+                        - text: Text
+                        - text: Field
+            - paragraph [ref=e721]:
+              - strong [ref=e722]: Review your use of color in controls.
+              - text: Be judicious with your use of
+              - link "color" [ref=e723] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/color
+              - text: in controls and navigation so they stay legible. If you do apply color to these elements, leverage system colors, or define a custom color with light and dark variants, and an increased contrast option for each variant.
+            - paragraph [ref=e724]:
+              - strong [ref=e725]: Check for crowding or overlapping of controls.
+              - text: Prefer to use standard spacing metrics instead of overriding them, and avoid overcrowding or layering Liquid Glass elements on top of each other.
+            - paragraph [ref=e726]:
+              - strong [ref=e727]: Optimize for legibility when content scrolls beneath controls.
+              - text: Scroll views offer a
+              - link "scroll edge effect" [ref=e728] [cursor=pointer]:
+                - /url: /documentation/SwiftUI/View/scrollEdgeEffectStyle(_:for:)
+              - text: "that helps maintain sufficient legibility and contrast for controls by obscuring content that scrolls beneath them. System bars like toolbars adopt this behavior by default. If you use a custom bar with elements like controls, text, or icons that have content scrolling beneath them, you can register those views to use a scroll edge effect with these APIs:"
+            - generic [ref=e729]:
+              - navigation [ref=e730]:
+                - list [ref=e731]:
+                  - listitem [ref=e732]:
+                    - link "SwiftUI" [ref=e733]:
+                      - /url: "#"
+                  - listitem [ref=e734]:
+                    - link "UIKit" [ref=e735] [cursor=pointer]:
+                      - /url: "#"
+              - paragraph [ref=e740]:
+                - link "safeAreaBar(edge:alignment:spacing:content:)" [ref=e741] [cursor=pointer]:
+                  - /url: /documentation/SwiftUI/View/safeAreaBar(edge:alignment:spacing:content:)
+                  - code [ref=e742]:
+                    - text: safe
+                    - text: Area
+                    - text: "Bar(edge:"
+                    - text: "alignment:"
+                    - text: "spacing:"
+                    - text: content:)
+            - paragraph [ref=e743]:
+              - strong [ref=e744]: Consider aligning the shape of controls with other rounded elements throughout the interface.
+              - text: "Across Apple platforms, the shape of the hardware informs the curvature, size, and shape of nested interface elements, including controls, sheets, popovers, windows, and more. Help maintain a sense of visual continuity in your interface by using rounded shapes that are concentric to their containers using these APIs:"
+            - generic [ref=e745]:
+              - navigation [ref=e746]:
+                - list [ref=e747]:
+                  - listitem [ref=e748]:
+                    - link "SwiftUI" [ref=e749]:
+                      - /url: "#"
+                  - listitem [ref=e750]:
+                    - link "UIKit" [ref=e751] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e755]:
+                - paragraph [ref=e756]:
+                  - link "rect(corners:isUniform:)" [ref=e757] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/Shape/rect(corners:isUniform:)
+                    - code [ref=e758]:
+                      - text: "rect(corners:"
+                      - text: is
+                      - text: Uniform:)
+                - paragraph [ref=e759]:
+                  - link "ConcentricRectangle" [ref=e760] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/ConcentricRectangle
+                    - code [ref=e761]:
+                      - text: Concentric
+                      - text: Rectangle
+            - paragraph [ref=e762]:
+              - strong [ref=e763]: Leverage new button styles
+              - text: ". Instead of creating buttons with custom Liquid Glass effects, you can adopt the look and feel of the material with minimal code by using one of the following button style APIs:"
+            - generic [ref=e764]:
+              - navigation [ref=e765]:
+                - list [ref=e766]:
+                  - listitem [ref=e767]:
+                    - link "SwiftUI" [ref=e768]:
+                      - /url: "#"
+                  - listitem [ref=e769]:
+                    - link "UIKit" [ref=e770] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e771]:
+                    - link "AppKit" [ref=e772] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e776]:
+                - paragraph [ref=e777]:
+                  - link "glass" [ref=e778] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/PrimitiveButtonStyle/glass
+                    - code [ref=e779]: glass
+                - paragraph [ref=e780]:
+                  - link "glassProminent" [ref=e781] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/PrimitiveButtonStyle/glassProminent
+                    - code [ref=e782]:
+                      - text: glass
+                      - text: Prominent
+                - paragraph [ref=e783]:
+                  - link "glass(_:)" [ref=e784] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/PrimitiveButtonStyle/glass(_:)
+                    - code [ref=e785]: glass(_:)
+            - separator [ref=e786]
+            - heading "Navigation in page link" [level=2] [ref=e787]:
+              - link "Navigation in page link" [ref=e788] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Navigation
+            - paragraph [ref=e789]:
+              - text: Liquid Glass applies to the topmost layer of the interface, where you define your navigation. Key navigation elements like
+              - link "tab bars" [ref=e790] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/tab-bars
+              - text: and
+              - link "sidebars" [ref=e791] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/sidebars
+              - text: float in this Liquid Glass layer to help people focus on the underlying content.
+            - generic [ref=e792]:
+              - paragraph [ref=e794]:
+                - figure "Before" [ref=e795]:
+                  - img "A screenshot of the bottom half of an iPhone showing a tab bar as it appears in iOS 18 and earlier." [ref=e799]
+                  - generic [ref=e800]: Before
+              - paragraph [ref=e802]:
+                - figure "After" [ref=e803]:
+                  - img "A screenshot of the bottom half of an iPhone showing a tab bar as it appears in the latest version of iOS. The search tab appears in its own section at the trailing end of the tab bar." [ref=e807]
+                  - generic [ref=e808]: After
+            - paragraph [ref=e809]:
+              - strong [ref=e810]: Establish a clear navigation hierarchy.
+              - text: It’s more important than ever for your app to have a clear and consistent navigation structure that’s distinct from the content you provide. Ensure that you clearly separate your content from navigation elements, like tab bars and sidebars, to establish a distinct functional layer above the content layer.
+            - paragraph [ref=e811]:
+              - strong [ref=e812]: Consider adapting your tab bar into a sidebar automatically.
+              - text: "If your app uses a tab-based navigation, you can allow the tab bar to adapt into a sidebar depending on the context by using the following APIs:"
+            - generic [ref=e813]:
+              - navigation [ref=e814]:
+                - list [ref=e815]:
+                  - listitem [ref=e816]:
+                    - link "SwiftUI" [ref=e817]:
+                      - /url: "#"
+                  - listitem [ref=e818]:
+                    - link "UIKit" [ref=e819] [cursor=pointer]:
+                      - /url: "#"
+              - paragraph [ref=e824]:
+                - link "sidebarAdaptable" [ref=e825] [cursor=pointer]:
+                  - /url: /documentation/SwiftUI/TabViewStyle/sidebarAdaptable
+                  - code [ref=e826]:
+                    - text: sidebar
+                    - text: Adaptable
+            - paragraph [ref=e827]:
+              - strong [ref=e828]: Consider using split views to build sidebar layouts with an inspector panel.
+              - link "Split views" [ref=e829] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/split-views
+              - text: "are optimized to create a consistent and familiar experience for sidebar and inspector layouts across platforms. You can use the following standard system APIs for split views to build these types of layouts with minimal code:"
+            - generic [ref=e830]:
+              - navigation [ref=e831]:
+                - list [ref=e832]:
+                  - listitem [ref=e833]:
+                    - link "SwiftUI" [ref=e834]:
+                      - /url: "#"
+                  - listitem [ref=e835]:
+                    - link "UIKit" [ref=e836] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e837]:
+                    - link "AppKit" [ref=e838] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e842]:
+                - paragraph [ref=e843]:
+                  - link "NavigationSplitView" [ref=e844] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/NavigationSplitView
+                    - code [ref=e845]:
+                      - text: Navigation
+                      - text: Split
+                      - text: View
+                - paragraph [ref=e846]:
+                  - link "inspector(isPresented:content:)" [ref=e847] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/View/inspector(isPresented:content:)
+                    - code [ref=e848]:
+                      - text: inspector(is
+                      - text: "Presented:"
+                      - text: content:)
+            - paragraph [ref=e849]:
+              - strong [ref=e850]: Check content safe areas for sidebars and inspectors.
+              - text: If you have these types of components in your app’s navigation structure, audit the safe area compatibility of content next to the sidebar and inspector to help make sure underlying content is peeking through appropriately.
+            - paragraph [ref=e851]:
+              - strong [ref=e852]: Extend content beneath sidebars and inspectors.
+              - text: A background extension effect creates a sense of extending a background under a sidebar or inspector, without actually scrolling or placing content under it. A background extension effect mirrors the adjacent content to give the impression of stretching it under the sidebar, and applies a blur to maintain legibility of the sidebar or inspector. This effect is perfect for creating a full, edge-to-edge content experience in apps that use split views, such as for hero images on product pages.
+            - generic [ref=e853]:
+              - paragraph [ref=e855]:
+                - figure "Without background extension effect" [ref=e856]:
+                  - generic:
+                    - img "A screenshot of the Landmarks app showing the sidebar. The image next to the sidebar doesn't extend beneath it, so the sidebar floats above an empty background."
+                  - generic [ref=e857]: Without background extension effect
+              - paragraph [ref=e859]:
+                - figure "With background extension effect" [ref=e860]:
+                  - generic:
+                    - img "A screenshot of the Landmarks app showing the sidebar. The image next to the sidebar gives the impression of extending beneath it using the background extension effect."
+                  - generic [ref=e861]: With background extension effect
+            - generic [ref=e862]:
+              - navigation [ref=e863]:
+                - list [ref=e864]:
+                  - listitem [ref=e865]:
+                    - link "SwiftUI" [ref=e866]:
+                      - /url: "#"
+                  - listitem [ref=e867]:
+                    - link "UIKit" [ref=e868] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e869]:
+                    - link "AppKit" [ref=e870] [cursor=pointer]:
+                      - /url: "#"
+              - paragraph [ref=e875]:
+                - link "backgroundExtensionEffect()" [ref=e876] [cursor=pointer]:
+                  - /url: /documentation/SwiftUI/View/backgroundExtensionEffect()
+                  - code [ref=e877]:
+                    - text: background
+                    - text: Extension
+                    - text: Effect()
+            - paragraph [ref=e878]:
+              - strong [ref=e879]: Choose whether to automatically minimize your tab bar in iOS.
+              - text: Tab bars can help elevate the underlying content by receding when a person scrolls up or down. You can opt into this behavior and configure the tab bar to minimize when a person scrolls down or up. The tab bar expands when a person scrolls in the opposite direction.
+            - generic [ref=e880]:
+              - navigation [ref=e881]:
+                - list [ref=e882]:
+                  - listitem [ref=e883]:
+                    - link "SwiftUI" [ref=e884]:
+                      - /url: "#"
+                  - listitem [ref=e885]:
+                    - link "UIKit" [ref=e886] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e889]:
+                - code [ref=e894]:
+                  - text: start of code block
+                  - generic [ref=e896]: "TabView {"
+                  - generic [ref=e898]: // ...
+                  - generic [ref=e899]: "}"
+                  - generic [ref=e900]: .tabBarMinimizeBehavior(.onScrollDown)
+                  - text: end of code block
+                - text: start of code block end of code block
+            - separator [ref=e901]
+            - heading "Menus and toolbars in page link" [level=2] [ref=e902]:
+              - link "Menus and toolbars in page link" [ref=e903] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Menus-and-toolbars
+            - paragraph [ref=e904]:
+              - link "Menus" [ref=e905] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/menus
+              - text: have a refreshed look across platforms. They adopt Liquid Glass, and menu items for common actions use icons to help people quickly scan and identify those actions. New to iPadOS, apps also have a
+              - link "menu bar" [ref=e906] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/the-menu-bar
+              - text: for faster access to common commands.
+            - paragraph [ref=e907]:
+              - strong [ref=e908]: Adopt standard icons in menu items.
+              - text: For menu items that perform standard actions like Cut, Copy, and Paste, the system uses the menu item’s selector to determine which icon to apply. To adopt icons in those menu items with minimal code, make sure to use standard selectors.
+            - paragraph [ref=e909]:
+              - strong [ref=e910]: Match top menu actions to swipe actions.
+              - text: For consistency and predictability, make sure the actions you surface at the top of your contextual menu match the swipe actions you provide for the same item.
+            - paragraph [ref=e911]:
+              - link "Toolbars" [ref=e912] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/toolbars
+              - text: take on a Liquid Glass appearance, and provide a grouping mechanism for toolbar items, letting you choose which actions to display together.
+            - generic [ref=e913]:
+              - paragraph [ref=e915]:
+                - figure "Before" [ref=e916]:
+                  - generic:
+                    - img "A screenshot of the bottom half of an iPhone showing a toolbar as it appears in iOS 18 and earlier."
+                  - generic [ref=e917]: Before
+              - paragraph [ref=e919]:
+                - figure "After" [ref=e920]:
+                  - generic:
+                    - img "A screenshot of the bottom half of an iPhone showing a toolbar as it appears in the latest version of iOS."
+                  - generic [ref=e921]: After
+            - paragraph [ref=e922]:
+              - strong [ref=e923]: Determine which toolbar items to group together.
+              - text: Group items that perform similar actions or affect the same part of the interface, and maintain consistent groupings and placement across platforms.
+            - generic [ref=e924]:
+              - paragraph [ref=e926]:
+                - figure "Incorrect" [ref=e927]:
+                  - generic:
+                    - 'img "A graphic that shows a toolbar with four buttons that all share a background: Undo, Redo, Markup, and More."'
+                  - generic [ref=e928]: Incorrect
+              - paragraph [ref=e930]:
+                - figure "Correct" [ref=e931]:
+                  - generic:
+                    - img "A graphic that shows a toolbar with the four buttons split into two groupings according to their functions. The Undo and Redo buttons share a background, and the Markup and More buttons share a background."
+                  - generic [ref=e932]: Correct
+            - paragraph [ref=e933]: "You can create a fixed spacer to separate items that share a background using these APIs:"
+            - generic [ref=e934]:
+              - navigation [ref=e935]:
+                - list [ref=e936]:
+                  - listitem [ref=e937]:
+                    - link "SwiftUI" [ref=e938]:
+                      - /url: "#"
+                  - listitem [ref=e939]:
+                    - link "UIKit" [ref=e940] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e941]:
+                    - link "AppKit" [ref=e942] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e946]:
+                - paragraph [ref=e947]:
+                  - link "fixed" [ref=e948] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/SpacerSizing/fixed
+                    - code [ref=e949]: fixed
+                - paragraph [ref=e950]:
+                  - link "ToolbarSpacer" [ref=e951] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/ToolbarSpacer
+                    - code [ref=e952]:
+                      - text: Toolbar
+                      - text: Spacer
+            - paragraph [ref=e953]:
+              - strong [ref=e954]: Find icons to represent common actions.
+              - text: Consider representing common actions in toolbars with
+              - link "standard icons" [ref=e955] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/icons
+              - text: instead of text. This approach helps declutter the interface and increase the ease of use for common actions. For consistency, don’t mix text and icons across items that share a background.
+            - paragraph [ref=e956]:
+              - strong [ref=e957]: Provide an accessibility label for every icon.
+              - text: Regardless of what you show in the interface, always specify an accessibility label for each icon. This way, people who prefer a text label can opt into this information by turning on accessibility features like VoiceOver or Voice Control.
+            - paragraph [ref=e958]:
+              - strong [ref=e959]: Audit toolbar customizations.
+              - text: Review anything custom you do to display items in your toolbars, like your use of fixed spacers or custom items, as these can appear inconsistent with system behavior.
+            - paragraph [ref=e960]:
+              - strong [ref=e961]: Check how you hide toolbar items.
+              - text: "If you see an empty toolbar item without any content, your app might be hiding the view in the toolbar item instead of the item itself. Instead, hide the entire toolbar item, using these APIs:"
+            - generic [ref=e962]:
+              - navigation [ref=e963]:
+                - list [ref=e964]:
+                  - listitem [ref=e965]:
+                    - link "SwiftUI" [ref=e966]:
+                      - /url: "#"
+                  - listitem [ref=e967]:
+                    - link "UIKit" [ref=e968] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e969]:
+                    - link "AppKit" [ref=e970] [cursor=pointer]:
+                      - /url: "#"
+              - paragraph [ref=e975]:
+                - link "hidden(_:)" [ref=e976] [cursor=pointer]:
+                  - /url: /documentation/SwiftUI/ToolbarContent/hidden(_:)
+                  - code [ref=e977]: hidden(_:)
+            - separator [ref=e978]
+            - heading "Windows and modals in page link" [level=2] [ref=e979]:
+              - link "Windows and modals in page link" [ref=e980] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Windows-and-modals
+            - paragraph [ref=e981]:
+              - link "Windows" [ref=e982] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/windows
+              - text: adopt rounder corners to fit controls and navigation elements. In iPadOS, apps show window controls and support continuous window resizing. Instead of transitioning between specific preset sizes, windows resize fluidly down to a minimum size.
+            - paragraph [ref=e983]:
+              - strong [ref=e984]: Support arbitrary window sizes.
+              - text: Allow people to resize their window to the width and height that works for them, and adjust your content accordingly.
+            - paragraph [ref=e985]:
+              - strong [ref=e986]: Use split views to allow fluid resizing of columns.
+              - text: "To support continuous window resizing, split views automatically reflow content for every size using beautiful, fluid transitions. Make sure to use standard system APIs for split views to get these animations with minimal code:"
+            - generic [ref=e987]:
+              - navigation [ref=e988]:
+                - list [ref=e989]:
+                  - listitem [ref=e990]:
+                    - link "SwiftUI" [ref=e991]:
+                      - /url: "#"
+                  - listitem [ref=e992]:
+                    - link "UIKit" [ref=e993] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e994]:
+                    - link "AppKit" [ref=e995] [cursor=pointer]:
+                      - /url: "#"
+              - paragraph [ref=e1000]:
+                - link "NavigationSplitView" [ref=e1001] [cursor=pointer]:
+                  - /url: /documentation/SwiftUI/NavigationSplitView
+                  - code [ref=e1002]:
+                    - text: Navigation
+                    - text: Split
+                    - text: View
+            - paragraph [ref=e1003]:
+              - strong [ref=e1004]: Use layout guides and safe areas.
+              - text: Make sure you specify safe areas for your content so the system can automatically adjust the window controls and title bar in relation to your content.
+            - paragraph [ref=e1005]:
+              - text: Modal views like sheets and action sheets adopt Liquid Glass.
+              - link "Sheets" [ref=e1006] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/sheets
+              - text: feature an increased corner radius, and half sheets are inset from the edge of the display to allow content to peek through from beneath them. When a half sheet expands to full height, it transitions to a more opaque appearance to help maintain focus on the task.
+            - paragraph [ref=e1007]:
+              - strong [ref=e1008]: Check the content around the edges of sheets.
+              - text: Inside the sheet, check for content and controls that might appear too close to rounder sheet corners. Outside the sheet, check that any content peeking through between the inset sheet and display edge looks as you expect.
+            - paragraph [ref=e1009]:
+              - strong [ref=e1010]: Audit the backgrounds of sheets and popovers.
+              - text: Check whether you add a visual effect view to your popover’s content view, and remove those custom background views to provide a consistent experience with other sheets across the system.
+            - paragraph [ref=e1011]:
+              - text: An
+              - link "action sheet" [ref=e1012] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/action-sheets
+              - text: originates from the element that initiates the action, instead of from the bottom edge of the display. When active, an action sheet also lets people interact with other parts of the interface.
+            - paragraph [ref=e1013]:
+              - strong [ref=e1014]: Specify the source of an action sheet.
+              - text: Position an action sheet’s anchor next to the control it originates from. Make sure to set the source view or item to indicate where to originate the action sheet and create the inline appearance.
+            - generic [ref=e1015]:
+              - navigation [ref=e1016]:
+                - list [ref=e1017]:
+                  - listitem [ref=e1018]:
+                    - link "SwiftUI" [ref=e1019]:
+                      - /url: "#"
+                  - listitem [ref=e1020]:
+                    - link "UIKit" [ref=e1021] [cursor=pointer]:
+                      - /url: "#"
+                  - listitem [ref=e1022]:
+                    - link "AppKit" [ref=e1023] [cursor=pointer]:
+                      - /url: "#"
+              - paragraph [ref=e1028]:
+                - link "confirmationDialog(_:isPresented:titleVisibility:presenting:actions:)" [ref=e1029] [cursor=pointer]:
+                  - /url: /documentation/SwiftUI/View/confirmationDialog(_:isPresented:titleVisibility:presenting:actions:)-9ibgk
+                  - code [ref=e1030]:
+                    - text: confirmation
+                    - text: "Dialog(_:"
+                    - text: is
+                    - text: "Presented:"
+                    - text: title
+                    - text: "Visibility:"
+                    - text: "presenting:"
+                    - text: actions:)
+            - separator [ref=e1031]
+            - heading "Organization and layout in page link" [level=2] [ref=e1032]:
+              - link "Organization and layout in page link" [ref=e1033] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Organization-and-layout
+            - paragraph [ref=e1034]:
+              - text: Style updates to
+              - link "list-based layouts" [ref=e1035] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/lists-and-tables
+              - text: help you organize and showcase your content so it can shine through the Liquid Glass layer. To give content room to breathe, organizational components like lists, tables, and forms have a larger row height and padding. Sections have an increased corner radius to match the curvature of controls across the system.
+            - generic [ref=e1036]:
+              - paragraph [ref=e1038]:
+                - figure "Before" [ref=e1039]:
+                  - img "A screenshot of an iPhone showing a grouped list layout as it appears in iOS 18 and earlier." [ref=e1043]
+                  - generic [ref=e1044]: Before
+              - paragraph [ref=e1046]:
+                - figure "After" [ref=e1047]:
+                  - img "A screenshot of an iPhone showing a grouped list layout as it appears in the latest version of iOS." [ref=e1051]
+                  - generic [ref=e1052]: After
+            - paragraph [ref=e1053]:
+              - strong [ref=e1054]: Check capitalization in section headers.
+              - text: Lists, tables, and forms optimize for legibility by adopting title-style capitalization for
+              - link "section headers" [ref=e1055] [cursor=pointer]:
+                - /url: /documentation/SwiftUI/Section/init(content:header:)
+              - text: . This means section headers no longer render entirely in capital letters regardless of the capitalization you provide. Make sure to update your section headers to title-style capitalization to match your app’s text to this systemwide convention.
+            - paragraph [ref=e1056]:
+              - strong [ref=e1057]: Adopt forms to take advantage of layout metrics across platform.
+              - text: Use SwiftUI forms with the
+              - link "grouped form style" [ref=e1058] [cursor=pointer]:
+                - /url: /documentation/SwiftUI/FormStyle/grouped
+              - text: to automatically update your form layouts.
+            - separator [ref=e1059]
+            - heading "Search in page link" [level=2] [ref=e1060]:
+              - link "Search in page link" [ref=e1061] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Search
+            - paragraph [ref=e1062]:
+              - text: Platform conventions for location and behavior of search optimize the experience for each device and use case. To provide an engaging search experience in your app, review these
+              - link "search" [ref=e1063] [cursor=pointer]:
+                - /url: /design/Human-Interface-Guidelines/search-fields
+              - text: design conventions.
+            - generic [ref=e1064]:
+              - paragraph [ref=e1066]:
+                - figure "Search in a toolbar on iPad" [ref=e1067]:
+                  - generic:
+                    - img "A graphic of an iPad showing search in a toolbar in the upper trailing corner."
+                  - generic [ref=e1068]: Search in a toolbar on iPad
+              - paragraph [ref=e1070]:
+                - figure "Search in a toolbar on iPhone" [ref=e1071]:
+                  - generic:
+                    - img "A graphic of an iPhone showing search in a toolbar at the bottom of the screen."
+                  - generic [ref=e1072]: Search in a toolbar on iPhone
+            - paragraph [ref=e1073]:
+              - strong [ref=e1074]: Check the keyboard layout when activating your search interface.
+              - text: In iOS, when a person taps a search field to give it focus, it slides upwards as the keyboard appears. Test this experience in your app to make sure the search field moves consistently with other apps and system experiences.
+            - paragraph [ref=e1075]:
+              - strong [ref=e1076]: Use semantic search tabs.
+              - text: If your app’s search appears as part of a tab bar, make sure to use the standard system APIs for indicating which tab is the search tab. The system automatically separates the search tab from other tabs and places it at the trailing end to make your search experience consistent with other apps and help people find content faster.
+            - generic [ref=e1077]:
+              - navigation [ref=e1078]:
+                - list [ref=e1079]:
+                  - listitem [ref=e1080]:
+                    - link "SwiftUI" [ref=e1081]:
+                      - /url: "#"
+                  - listitem [ref=e1082]:
+                    - link "UIKit" [ref=e1083] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e1086]:
+                - code [ref=e1091]:
+                  - text: start of code block
+                  - generic [ref=e1093]: "Tab(role: .search) {"
+                  - generic [ref=e1095]: // ...
+                  - generic [ref=e1096]: "}"
+                  - text: end of code block
+                - text: start of code block end of code block
+            - separator [ref=e1097]
+            - heading "Platform considerations in page link" [level=2] [ref=e1098]:
+              - link "Platform considerations in page link" [ref=e1099] [cursor=pointer]:
+                - /url: /documentation/TechnologyOverviews/adopting-liquid-glass#Platform-considerations
+            - paragraph [ref=e1100]: Liquid Glass can have a distinct appearance and behavior across different platforms, contexts, and input methods. Test your app across devices to understand how the material looks and feels across platforms.
+            - paragraph [ref=e1101]:
+              - strong [ref=e1102]: In watchOS, adopt standard button styles and toolbar APIs.
+              - text: Liquid Glass changes are minimal in watchOS, so they appear automatically when you open your app on the latest release even if you don’t build against the latest SDK. However, to make sure your app picks up this appearance, adopt standard toolbar APIs and button styles from watchOS 10.
+            - paragraph [ref=e1103]:
+              - strong [ref=e1104]: In tvOS, adopt standard focus APIs.
+              - text: Across apps and system experiences in tvOS, standard buttons and controls take on a Liquid Glass appearance when focus moves to them. For consistency with the system experience, consider applying these effects to custom controls in your app when they gain focus by adopting the standard focus APIs. Apple TV 4K (2nd generation) and newer models support Liquid Glass effects. On older devices, your app maintains its current appearance.
+            - generic [ref=e1105]:
+              - navigation [ref=e1106]:
+                - list [ref=e1107]:
+                  - listitem [ref=e1108]:
+                    - link "SwiftUI" [ref=e1109]:
+                      - /url: "#"
+                  - listitem [ref=e1110]:
+                    - link "UIKit" [ref=e1111] [cursor=pointer]:
+                      - /url: "#"
+              - generic [ref=e1115]:
+                - paragraph [ref=e1116]:
+                  - link "focusable(_:)" [ref=e1117] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/View/focusable(_:)
+                    - code [ref=e1118]: focusable(_:)
+                - paragraph [ref=e1119]:
+                  - link "isFocused" [ref=e1120] [cursor=pointer]:
+                    - /url: /documentation/SwiftUI/EnvironmentValues/isFocused
+                    - code [ref=e1121]:
+                      - text: is
+                      - text: Focused
+            - paragraph [ref=e1122]:
+              - strong [ref=e1123]: Combine custom Liquid Glass effects to improve rendering performance.
+              - text: If you apply these effects to custom elements, make sure to combine them using a
+              - link "GlassEffectContainer" [ref=e1124] [cursor=pointer]:
+                - /url: /documentation/SwiftUI/GlassEffectContainer
+                - code [ref=e1125]:
+                  - text: Glass
+                  - text: Effect
+                  - text: Container
+              - text: ", which helps optimize performance while fluidly morphing Liquid Glass shapes into each other."
+            - paragraph [ref=e1126]:
+              - strong [ref=e1127]: Performance test your app across platforms.
+              - text: It’s a good idea to regularly assess and improve your app’s performance, and building your app with the latest SDKs provides an opportunity to check in. Profile your app to gather information about its current performance and find any opportunities for improving the user experience. To learn more, read
+              - link "Improving your app’s performance" [ref=e1128] [cursor=pointer]:
+                - /url: /documentation/Xcode/improving-your-app-s-performance
+              - text: .
+            - separator [ref=e1129]
+            - paragraph [ref=e1130]:
+              - text: To update and ship your app with the latest SDKs while keeping your app as it looks when built against previous versions of the SDKs, you can add the
+              - link "UIDesignRequiresCompatibility" [ref=e1131] [cursor=pointer]:
+                - /url: /documentation/BundleResources/Information-Property-List/UIDesignRequiresCompatibility
+                - code [ref=e1132]:
+                  - text: UIDesign
+                  - text: Requires
+                  - text: Compatibility
+              - text: key to your project’s Info pane.
+        - generic [ref=e1133]: Current page is Adopting Liquid Glass
+  - contentinfo [ref=e67]:
+    - navigation [ref=e68]:
+      - link "Apple" [ref=e69] [cursor=pointer]:
+        - /url: https://www.apple.com
+        - text: 
+        - generic [ref=e70]: Apple
+      - list [ref=e72]:
+        - listitem [ref=e73]:
+          - link "Developer" [ref=e74] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e75]:
+          - link "Documentation" [ref=e76] [cursor=pointer]:
+            - /url: /documentation/
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - heading "Platforms" [level=3] [ref=e80]
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - link "iOS" [ref=e83] [cursor=pointer]:
+                  - /url: /ios/
+              - listitem [ref=e84]:
+                - link "iPadOS" [ref=e85] [cursor=pointer]:
+                  - /url: /ipados/
+              - listitem [ref=e86]:
+                - link "macOS" [ref=e87] [cursor=pointer]:
+                  - /url: /macos/
+              - listitem [ref=e88]:
+                - link "tvOS" [ref=e89] [cursor=pointer]:
+                  - /url: /tvos/
+              - listitem [ref=e90]:
+                - link "visionOS" [ref=e91] [cursor=pointer]:
+                  - /url: /visionos/
+              - listitem [ref=e92]:
+                - link "watchOS" [ref=e93] [cursor=pointer]:
+                  - /url: /watchos/
+          - generic [ref=e94]:
+            - heading "Tools" [level=3] [ref=e95]
+            - list [ref=e96]:
+              - listitem [ref=e97]:
+                - link "Swift" [ref=e98] [cursor=pointer]:
+                  - /url: /swift/
+              - listitem [ref=e99]:
+                - link "SwiftUI" [ref=e100] [cursor=pointer]:
+                  - /url: /swiftui/
+              - listitem [ref=e101]:
+                - link "Swift Playground" [ref=e102] [cursor=pointer]:
+                  - /url: /swift-playground/
+              - listitem [ref=e103]:
+                - link "TestFlight" [ref=e104] [cursor=pointer]:
+                  - /url: /testflight/
+              - listitem [ref=e105]:
+                - link "Xcode" [ref=e106] [cursor=pointer]:
+                  - /url: /xcode/
+              - listitem [ref=e107]:
+                - link "Xcode Cloud" [ref=e108] [cursor=pointer]:
+                  - /url: /xcode-cloud/
+              - listitem [ref=e109]:
+                - link "SF Symbols" [ref=e110] [cursor=pointer]:
+                  - /url: /sf-symbols/
+        - generic [ref=e112]:
+          - heading "Topics & Technologies" [level=3] [ref=e113]
+          - list [ref=e114]:
+            - listitem [ref=e115]:
+              - link "Accessibility" [ref=e116] [cursor=pointer]:
+                - /url: /accessibility/
+            - listitem [ref=e117]:
+              - link "Accessories" [ref=e118] [cursor=pointer]:
+                - /url: /accessories/
+            - listitem [ref=e119]:
+              - link "App Extension" [ref=e120] [cursor=pointer]:
+                - /url: /app-extensions/
+            - listitem [ref=e121]:
+              - link "App Store" [ref=e122] [cursor=pointer]:
+                - /url: /app-store/
+            - listitem [ref=e123]:
+              - link "Audio & Video" [ref=e124] [cursor=pointer]:
+                - /url: /audio/
+            - listitem [ref=e125]:
+              - link "Augmented Reality" [ref=e126] [cursor=pointer]:
+                - /url: /augmented-reality/
+            - listitem [ref=e127]:
+              - link "Design" [ref=e128] [cursor=pointer]:
+                - /url: /design/
+            - listitem [ref=e129]:
+              - link "Distribution" [ref=e130] [cursor=pointer]:
+                - /url: /distribute/
+            - listitem [ref=e131]:
+              - link "Education" [ref=e132] [cursor=pointer]:
+                - /url: /education/
+            - listitem [ref=e133]:
+              - link "Fonts" [ref=e134] [cursor=pointer]:
+                - /url: /fonts/
+            - listitem [ref=e135]:
+              - link "Games" [ref=e136] [cursor=pointer]:
+                - /url: /games/
+            - listitem [ref=e137]:
+              - link "Health & Fitness" [ref=e138] [cursor=pointer]:
+                - /url: /health-fitness/
+            - listitem [ref=e139]:
+              - link "In-App Purchase" [ref=e140] [cursor=pointer]:
+                - /url: /in-app-purchase/
+            - listitem [ref=e141]:
+              - link "Localization" [ref=e142] [cursor=pointer]:
+                - /url: /localization/
+            - listitem [ref=e143]:
+              - link "Maps & Location" [ref=e144] [cursor=pointer]:
+                - /url: /maps/
+            - listitem [ref=e145]:
+              - link "Machine Learning & AI" [ref=e146] [cursor=pointer]:
+                - /url: /machine-learning/
+            - listitem [ref=e147]:
+              - link "Open Source" [ref=e148] [cursor=pointer]:
+                - /url: https://opensource.apple.com/
+            - listitem [ref=e149]:
+              - link "Security" [ref=e150] [cursor=pointer]:
+                - /url: /security/
+            - listitem [ref=e151]:
+              - link "Safari & Web" [ref=e152] [cursor=pointer]:
+                - /url: /safari/
+        - generic [ref=e153]:
+          - generic [ref=e154]:
+            - heading "Resources" [level=3] [ref=e155]
+            - list [ref=e156]:
+              - listitem
+              - listitem [ref=e157]:
+                - link "Documentation" [ref=e158] [cursor=pointer]:
+                  - /url: /documentation/
+              - listitem [ref=e159]:
+                - link "Tutorials" [ref=e160] [cursor=pointer]:
+                  - /url: /learn/
+              - listitem [ref=e161]:
+                - link "Downloads" [ref=e162] [cursor=pointer]:
+                  - /url: /download/
+              - listitem [ref=e163]:
+                - link "Forums" [ref=e164] [cursor=pointer]:
+                  - /url: /forums/
+              - listitem [ref=e165]:
+                - link "Videos" [ref=e166] [cursor=pointer]:
+                  - /url: /videos/
+          - generic [ref=e167]:
+            - heading "Support" [level=3] [ref=e168]
+            - list [ref=e169]:
+              - listitem [ref=e170]:
+                - link "Support Articles" [ref=e171] [cursor=pointer]:
+                  - /url: /support/articles/
+              - listitem [ref=e172]:
+                - link "Contact Us" [ref=e173] [cursor=pointer]:
+                  - /url: /contact/
+              - listitem [ref=e174]:
+                - link "Bug Reporting" [ref=e175] [cursor=pointer]:
+                  - /url: /bug-reporting/
+              - listitem [ref=e176]:
+                - link "System Status" [ref=e177] [cursor=pointer]:
+                  - /url: /system-status/
+          - generic [ref=e178]:
+            - heading "Account" [level=3] [ref=e179]
+            - list [ref=e180]:
+              - listitem [ref=e181]:
+                - link "Apple Developer" [ref=e182] [cursor=pointer]:
+                  - /url: /account/
+              - listitem [ref=e183]:
+                - link "App Store Connect" [ref=e184] [cursor=pointer]:
+                  - /url: https://appstoreconnect.apple.com/
+              - listitem [ref=e185]:
+                - link "Certificates, IDs, & Profiles" [ref=e186] [cursor=pointer]:
+                  - /url: /account/ios/certificate/
+              - listitem [ref=e187]:
+                - link "Feedback Assistant" [ref=e188] [cursor=pointer]:
+                  - /url: https://feedbackassistant.apple.com/
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - heading "Programs" [level=3] [ref=e191]
+            - list [ref=e192]:
+              - listitem [ref=e193]:
+                - link "Apple Developer Program" [ref=e194] [cursor=pointer]:
+                  - /url: /programs/
+              - listitem [ref=e195]:
+                - link "Apple Developer Enterprise Program" [ref=e196] [cursor=pointer]:
+                  - /url: /programs/enterprise/
+              - listitem [ref=e197]:
+                - link "App Store Small Business Program" [ref=e198] [cursor=pointer]:
+                  - /url: /app-store/small-business-program/
+              - listitem [ref=e199]:
+                - link "MFi Program" [ref=e200] [cursor=pointer]:
+                  - /url: https://mfi.apple.com/
+              - listitem [ref=e201]:
+                - link "News Partner Program" [ref=e202] [cursor=pointer]:
+                  - /url: /programs/news-partner/
+              - listitem [ref=e203]:
+                - link "Video Partner Program" [ref=e204] [cursor=pointer]:
+                  - /url: /programs/video-partner/
+              - listitem [ref=e205]:
+                - link "Security Bounty Program" [ref=e206] [cursor=pointer]:
+                  - /url: /security-bounty/
+              - listitem [ref=e207]:
+                - link "Security Research Device Program" [ref=e208] [cursor=pointer]:
+                  - /url: /programs/security-research-device/
+          - generic [ref=e209]:
+            - heading "Events" [level=3] [ref=e210]
+            - list [ref=e211]:
+              - listitem [ref=e212]:
+                - link "Meet with Apple" [ref=e213] [cursor=pointer]:
+                  - /url: /events/
+              - listitem [ref=e214]:
+                - link "Apple Developer Centers" [ref=e215] [cursor=pointer]:
+                  - /url: /events/developer-centers/
+              - listitem [ref=e216]:
+                - link "App Store Awards" [ref=e217] [cursor=pointer]:
+                  - /url: /app-store/app-store-awards/
+              - listitem [ref=e218]:
+                - link "Apple Design Awards" [ref=e219] [cursor=pointer]:
+                  - /url: /design/awards/
+              - listitem [ref=e220]:
+                - link "Apple Developer Academies" [ref=e221] [cursor=pointer]:
+                  - /url: /academies/
+              - listitem [ref=e222]:
+                - link "WWDC" [ref=e223] [cursor=pointer]:
+                  - /url: /wwdc/
+    - generic [ref=e224]:
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - text: To submit feedback on documentation, visit
+          - link "Feedback Assistant" [ref=e227] [cursor=pointer]:
+            - /url: applefeedback://new?form_identifier=developertools.fba&answers%5B%3Aarea%5D=seedADC%3Adevpubs&answers%5B%3Adoc_type_req%5D=Technology%20Documentation&answers%5B%3Adocumentation_link_req%5D=https%3A%2F%2Fdeveloper.apple.com%2Fdocumentation%2FTechnologyOverviews%2Fadopting-liquid-glass
+          - text: .
+        - radiogroup "Select a color scheme preference" [ref=e229]:
+          - generic [ref=e230]: Select a color scheme preference
+          - generic [ref=e231]:
+            - radio "Light" [ref=e232]
+            - generic [ref=e233]: Light
+          - generic [ref=e234]:
+            - radio "Dark" [ref=e235]
+            - generic [ref=e236]: Dark
+          - generic [ref=e237]:
+            - radio "Auto" [checked] [ref=e238]
+            - generic [ref=e239]: Auto
+      - generic [ref=e240]:
+        - generic [ref=e241]:
+          - text: Copyright © 2026
+          - link "Apple Inc." [ref=e242] [cursor=pointer]:
+            - /url: https://www.apple.com
+          - text: All rights reserved.
+        - generic [ref=e243]:
+          - link "Terms of Use" [ref=e244] [cursor=pointer]:
+            - /url: https://www.apple.com/legal/internet-services/terms/site.html
+          - link "Privacy Policy" [ref=e245] [cursor=pointer]:
+            - /url: https://www.apple.com/legal/privacy/
+          - link "Agreements and Guidelines" [ref=e246] [cursor=pointer]:
+            - /url: /support/terms/
