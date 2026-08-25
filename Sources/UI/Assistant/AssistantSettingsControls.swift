@@ -6,12 +6,12 @@ struct AssistantSettingsControls: View {
     @State private var assistantStatusMessage: String?
     @State private var showAdvanced = false
 
-    let theme: AppTheme?
+    /// True inside Helpy's own settings pane, false in the standard macOS
+    /// Settings window — the latter keeps AppKit's native control chrome.
+    let isEmbedded: Bool
 
-    private var isEmbedded: Bool { theme != nil }
-    private var currentTheme: AppTheme { theme ?? .glass }
-    private var isWhiteTheme: Bool { currentTheme == .white }
-    private var menuTextColor: Color { isWhiteTheme ? Color.primary : Color.white }
+    @Environment(\.colorScheme) private var colorScheme
+    private var t: HelpyPalette { .forScheme(colorScheme) }
     private var availableModels: [String] {
         let detected = ollamaModels.models.map(\.name)
         let current = settings.assistantOllamaModel.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -22,22 +22,31 @@ struct AssistantSettingsControls: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Toggle("Enable Assistant", isOn: $settings.assistantEnabled)
-                Spacer()
+                if isEmbedded {
+                    Text("Enable Assistant")
+                        .font(.inter(size: 13))
+                        .foregroundColor(t.ink)
+                    Spacer()
+                    Toggle("", isOn: $settings.assistantEnabled)
+                        .toggleStyle(SwitchToggleStyle(tint: t.accent))
+                        .labelsHidden()
+                } else {
+                    Toggle("Enable Assistant", isOn: $settings.assistantEnabled)
+                    Spacer()
+                }
                 Button(showAdvanced ? "Hide advanced" : "Advanced") {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         showAdvanced.toggle()
                     }
                 }
-                .buttonStyle(.borderless)
-                .font(.caption)
+                .buttonStyle(HelpyQuietButtonStyle(palette: t))
             }
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text("Assistant model")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.inter(size: 11))
+                        .foregroundColor(t.muted)
                     Spacer()
                     Button {
                         Task {
@@ -45,9 +54,9 @@ struct AssistantSettingsControls: View {
                         }
                     } label: {
                         Image(systemName: "arrow.clockwise")
-                            .font(.caption)
+                            .font(.system(size: 11, weight: .medium))
                     }
-                    .buttonStyle(.borderless)
+                    .buttonStyle(HelpyQuietButtonStyle(palette: t))
                     .help("Refresh detected Ollama models")
                 }
 
@@ -61,24 +70,24 @@ struct AssistantSettingsControls: View {
                     }
                     .labelsHidden()
                     .pickerStyle(.menu)
-                    .modifier(AssistantFieldChrome(theme: currentTheme, enabled: isEmbedded))
+                    .modifier(AssistantFieldChrome(palette: t, enabled: isEmbedded))
                 }
 
                 if !ollamaModels.models.isEmpty {
                     Text("Detected \(ollamaModels.models.count) local model\(ollamaModels.models.count == 1 ? "" : "s").")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.inter(size: 11))
+                        .foregroundColor(t.muted)
                 }
 
                 if let lastError = ollamaModels.lastError {
                     Text(lastError)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.inter(size: 11))
+                        .foregroundColor(t.muted)
                 }
 
                 Text("Use Handy for dictation if you want voice, then paste the transcript here.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.inter(size: 11))
+                    .foregroundColor(t.muted)
             }
 
             if showAdvanced {
@@ -88,8 +97,8 @@ struct AssistantSettingsControls: View {
 
             if let assistantStatusMessage {
                 Text(assistantStatusMessage)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.inter(size: 11))
+                    .foregroundColor(t.muted)
             }
         }
         .task(id: settings.assistantOllamaBaseURL) {
@@ -102,8 +111,8 @@ struct AssistantSettingsControls: View {
         VStack(alignment: .leading, spacing: 12) {
             assistantField(title: "Ollama Base URL", text: $settings.assistantOllamaBaseURL)
             Text("Advanced settings only affect the local Ollama connection. Helpy's assistant is text-only for now.")
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.inter(size: 11))
+                .foregroundColor(t.muted)
 
             assistantActionButton("Test Ollama") {
                 Task {
@@ -119,8 +128,8 @@ struct AssistantSettingsControls: View {
     private func assistantField(title: String, text: Binding<String>) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.inter(size: 11))
+                .foregroundColor(t.muted)
             assistantTextFieldControl(title, text: text)
         }
     }
@@ -134,7 +143,7 @@ struct AssistantSettingsControls: View {
         if isEmbedded {
             TextField(title, text: text)
                 .textFieldStyle(.plain)
-                .modifier(AssistantFieldChrome(theme: currentTheme, enabled: true))
+                .modifier(AssistantFieldChrome(palette: t, enabled: true))
         } else {
             TextField(title, text: text)
                 .textFieldStyle(.roundedBorder)
@@ -146,25 +155,26 @@ struct AssistantSettingsControls: View {
         if isEmbedded {
             Button(title, action: action)
                 .buttonStyle(.plain)
-                .modifier(AssistantButtonChrome(theme: currentTheme, enabled: true))
+                .modifier(AssistantButtonChrome(palette: t, enabled: true))
         } else {
             Button(title, action: action)
-                .buttonStyle(.bordered)
+                .buttonStyle(.bordered)   // native Settings window keeps AppKit chrome
         }
     }
 }
 
 private struct AssistantFieldChrome: ViewModifier {
-    let theme: AppTheme
+    let palette: HelpyPalette
     let enabled: Bool
 
     func body(content: Content) -> some View {
         if enabled {
             content
+                .font(.inter(size: 12))
                 .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(GlassyBackground(theme: theme))
-                .foregroundColor(theme == .white ? .primary : .white)
+                .padding(.vertical, 9)
+                .foregroundColor(palette.ink)
+                .helpyCard(palette, fill: palette.fieldFill, border: palette.fieldBorder, cornerRadius: 10)
         } else {
             content
         }
@@ -172,18 +182,17 @@ private struct AssistantFieldChrome: ViewModifier {
 }
 
 private struct AssistantButtonChrome: ViewModifier {
-    let theme: AppTheme
+    let palette: HelpyPalette
     let enabled: Bool
 
     func body(content: Content) -> some View {
         if enabled {
             content
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundColor(theme == .white ? .primary : .white)
+                .font(.inter(size: 12, weight: .medium))
+                .foregroundColor(palette.ink2)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(GlassyBackground(theme: theme))
+                .helpyCard(palette, fill: palette.fieldFill, border: palette.fieldBorder, cornerRadius: 10)
         } else {
             content
         }

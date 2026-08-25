@@ -6,58 +6,50 @@ struct EmbeddedSettingsView: View {
     
     let sounds = ["Basso", "Blow", "Bottle", "Frog", "Funk", "Glass", "Hero", "Morse", "Ping", "Pop", "Purr", "Sosumi", "Submarine", "Tink"]
     
-    private var isWhiteTheme: Bool { settings.appTheme == .white }
-    private var dividerColor: Color { isWhiteTheme ? Color.black.opacity(0.12) : Color.white.opacity(0.1) }
-    private var toggleTint: Color { isWhiteTheme ? Color.blue.opacity(0.85) : Color.white.opacity(0.8) }
-    private var menuTextColor: Color { isWhiteTheme ? Color.primary : Color.white }
-    private var sectionHeaderBackground: Color { isWhiteTheme ? Color.black.opacity(0.05) : Color.black.opacity(0.2) }
-    private var sliderAccentColor: Color { isWhiteTheme ? Color.blue : Color.white }
-    private var sliderTrackColor: Color { isWhiteTheme ? Color.black.opacity(0.12) : Color.white.opacity(0.1) }
+    @Environment(\.colorScheme) private var colorScheme
+    private var t: HelpyPalette { .forScheme(colorScheme) }
     
     var body: some View {
         VStack(spacing: 0) {
             // Header
             HStack {
+                HelpyMark(size: 22)
                 Text("Settings")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(.inter(size: 19, weight: .bold))
+                    .foregroundStyle(t.onAccent)
                 Spacer()
                 Button(action: onClose) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(.secondary)
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(t.onAccent)
+                        .frame(width: 26, height: 26)
+                        .background(Circle().fill(Color.white.opacity(0.15)))
                 }
                 .buttonStyle(.plain)
             }
-            .padding()
-            .background(sectionHeaderBackground)
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
+            .padding(.bottom, 16)
+            // Same rule as the sidebar header: bleed up under the title bar,
+            // stop dead at the header's own bottom edge.
+            .background(
+                HelpyHeaderBackground(palette: t)
+                    .ignoresSafeArea(edges: .top)
+            )
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 32) {
                     
                     // APPEARANCE
+                    // No theme or accent picker: Helpy has exactly one look, and
+                    // it follows the system light/dark setting.
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Appearance")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        
-                        HStack(spacing: 20) {
-                            ThemePreviewCard(theme: .glass, isSelected: settings.appTheme == .glass) {
-                                settings.appTheme = .glass
-                            }
-
-                            ThemePreviewCard(theme: .dark, isSelected: settings.appTheme == .dark) {
-                                settings.appTheme = .dark
-                            }
-
-                            ThemePreviewCard(theme: .white, isSelected: settings.appTheme == .white) {
-                                settings.appTheme = .white
-                            }
-                        }
+                        sectionTitle("Appearance")
 
                         HStack {
                             Text("Show Timer As")
-                                .foregroundColor(.primary)
+                                .font(.inter(size: 13))
+                                .foregroundStyle(t.ink)
                             Spacer()
 
                             Menu {
@@ -66,49 +58,72 @@ struct EmbeddedSettingsView: View {
                             } label: {
                                 HStack {
                                     Text(settings.pillDisplayMode == .floatingPill ? "Floating Pill" : "Menu Bar Icon")
-                                        .foregroundColor(menuTextColor)
-                                        .fontWeight(.medium)
+                                        .font(.inter(size: 13, weight: .medium))
+                                        .foregroundStyle(t.ink)
                                     Spacer()
                                 }
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
                                 .frame(width: 160)
-                                .background(GlassyBackground(theme: settings.appTheme))
+                                .background(HelpyChipBackground(palette: t))
                             }
                             .menuStyle(.borderlessButton)
                         }
                     }
 
-                    Divider().background(dividerColor)
+                    Rectangle().fill(t.line).frame(height: 1)
                     
                     // PANEL POSITION
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Panel Position")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
+                        sectionTitle("Panel Position")
                         
                         HStack(spacing: 20) {
-                            PositionPreviewCard(position: .left, theme: settings.appTheme, isSelected: settings.panelPosition == .left) {
+                            PositionPreviewCard(position: .left, palette: t, isSelected: settings.panelPosition == .left) {
                                 updatePosition(.left)
                             }
-                            
-                            PositionPreviewCard(position: .right, theme: settings.appTheme, isSelected: settings.panelPosition == .right) {
+
+                            PositionPreviewCard(position: .right, palette: t, isSelected: settings.panelPosition == .right) {
                                 updatePosition(.right)
                             }
                         }
+
+                        // Height presets — bottom-anchored short / medium / full
+                        HStack {
+                            Text("Panel Height")
+                                .font(.inter(size: 13))
+                                .foregroundStyle(t.ink)
+                            Spacer()
+                            HStack(spacing: 4) {
+                                ForEach(PanelHeightMode.allCases, id: \.self) { mode in
+                                    Button(action: { updateHeight(mode) }) {
+                                        let picked = settings.panelHeightMode == mode
+                                        Text(mode.label)
+                                            .font(.inter(size: 12, weight: picked ? .semibold : .medium))
+                                            .foregroundStyle(picked ? t.onAccent : t.muted)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                Capsule().fill(picked ? t.accent : Color.clear)
+                                            )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            .padding(3)
+                            .background(HelpyChipBackground(palette: t))
+                        }
                     }
                     
-                    Divider().background(dividerColor)
+                    Rectangle().fill(t.line).frame(height: 1)
                     
                     // TIMER SETTINGS
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Timer Defaults")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
+                        sectionTitle("Timer Defaults")
                         
                         HStack {
                             Text("Break Duration")
-                                .foregroundColor(.primary)
+                                .font(.inter(size: 13))
+                                .foregroundStyle(t.ink)
                             Spacer()
                             
                             Menu {
@@ -121,59 +136,54 @@ struct EmbeddedSettingsView: View {
                             } label: {
                                 HStack {
                                     Text(formatDuration(settings.breakDuration))
-                                        .foregroundColor(menuTextColor)
-                                        .fontWeight(.medium)
+                                        .font(.inter(size: 13, weight: .medium))
+                                        .foregroundStyle(t.ink)
                                     Spacer()
                                 }
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
                                 .frame(width: 120) // Fixed width for consistent look
-                                .background(GlassyBackground(theme: settings.appTheme))
+                                .background(HelpyChipBackground(palette: t))
                             }
                             .menuStyle(.borderlessButton)
                         }
                     }
                     
-                    Divider().background(dividerColor)
+                    Rectangle().fill(t.line).frame(height: 1)
                     
                     // APP BEHAVIOR
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("App Behavior")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
+                        sectionTitle("App Behavior")
                         
                         HStack {
                             Text("Quit app when closing main window")
-                                .foregroundColor(.primary)
+                                .font(.inter(size: 13))
+                                .foregroundStyle(t.ink)
                             Spacer()
                             Toggle("", isOn: $settings.quitOnClose)
-                                .toggleStyle(SwitchToggleStyle(tint: toggleTint))
+                                .toggleStyle(SwitchToggleStyle(tint: t.accent))
                                 .labelsHidden()
                         }
                     }
                     
-                    Divider().background(dividerColor)
+                    Rectangle().fill(t.line).frame(height: 1)
 
                     // ASSISTANT
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Assistant")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
+                        sectionTitle("Assistant")
 
-                        AssistantSettingsControls(settings: settings, theme: settings.appTheme)
+                        AssistantSettingsControls(settings: settings, isEmbedded: true)
                     }
                     
-                    Divider().background(dividerColor)
+                    Rectangle().fill(t.line).frame(height: 1)
                     
                     // TASK ALERTS
                     VStack(alignment: .leading, spacing: 20) {
                         HStack {
-                            Text("Task Alerts")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
+                            sectionTitle("Task Alerts")
                             Spacer()
                             Toggle("", isOn: $settings.isTaskAlertEnabled)
-                                .toggleStyle(SwitchToggleStyle(tint: toggleTint))
+                                .toggleStyle(SwitchToggleStyle(tint: t.accent))
                                 .labelsHidden()
                         }
                         
@@ -182,7 +192,8 @@ struct EmbeddedSettingsView: View {
                                 // Interval Selector
                                 HStack {
                                     Text("Interval")
-                                        .foregroundColor(.primary)
+                                        .font(.inter(size: 13))
+                                        .foregroundStyle(t.ink)
                                     Spacer()
                                     
                                     Menu {
@@ -194,14 +205,14 @@ struct EmbeddedSettingsView: View {
                                     } label: {
                                         HStack {
                                             Text(formatDuration(settings.taskAlertInterval))
-                                                .foregroundColor(menuTextColor)
-                                                .fontWeight(.medium)
+                                                .font(.inter(size: 13, weight: .medium))
+                                                .foregroundStyle(t.ink)
                                             Spacer()
                                         }
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 8)
                                         .frame(width: 120)
-                                        .background(GlassyBackground(theme: settings.appTheme))
+                                        .background(HelpyChipBackground(palette: t))
                                     }
                                     .menuStyle(.borderlessButton)
                                 }
@@ -209,8 +220,8 @@ struct EmbeddedSettingsView: View {
                                 // Sound Info
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Sound")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                        .font(.inter(size: 12, weight: .medium))
+                                        .foregroundStyle(t.muted)
                                     
                                     HStack(spacing: 12) {
                                         // Sound Picker
@@ -228,14 +239,14 @@ struct EmbeddedSettingsView: View {
                                         } label: {
                                             HStack {
                                                 Text(settings.taskAlertSound)
-                                                    .foregroundColor(menuTextColor)
-                                                    .fontWeight(.medium)
+                                                    .font(.inter(size: 13, weight: .medium))
+                                                    .foregroundStyle(t.ink)
                                                 Spacer()
                                             }
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 8)
                                             .frame(width: 140)
-                                            .background(GlassyBackground(theme: settings.appTheme))
+                                            .background(HelpyChipBackground(palette: t))
                                         }
                                         .menuStyle(.borderlessButton)
                                         
@@ -246,10 +257,10 @@ struct EmbeddedSettingsView: View {
                                             playSound(named: settings.taskAlertSound, volume: settings.taskAlertVolume)
                                         }) {
                                             Image(systemName: "play.fill")
-                                                .font(.system(size: 14))
-                                                .foregroundColor(menuTextColor)
+                                                .font(.system(size: 12, weight: .semibold))
+                                                .foregroundStyle(t.ink)
                                                 .frame(width: 32, height: 32)
-                                                .background(GlassyBackground(theme: settings.appTheme))
+                                                .background(HelpyChipBackground(palette: t))
                                         }
                                         .buttonStyle(.plain)
                                     }
@@ -258,37 +269,30 @@ struct EmbeddedSettingsView: View {
                                 // Volume Slider
                                 HStack(spacing: 12) {
                                     Image(systemName: "speaker.fill")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(t.muted)
                                     
                                     Slider(value: $settings.taskAlertVolume, in: 0...1)
-                                        .accentColor(sliderAccentColor)
-                                        .background(
-                                            Capsule()
-                                                .fill(sliderTrackColor)
-                                                .frame(height: 4)
-                                        )
+                                        .tint(t.accent)
                                     
                                     Image(systemName: "speaker.wave.3.fill")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(t.muted)
                                 }
                             }
                             .padding(.leading, 4)
                         }
                     }
                     
-                    Divider().background(dividerColor)
+                    Rectangle().fill(t.line).frame(height: 1)
                     
                     // ALERT SETTINGS
                     VStack(alignment: .leading, spacing: 20) {
                         HStack {
-                            Text("Alerts")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
+                            sectionTitle("Alerts")
                             Spacer()
                             Toggle("", isOn: $settings.isAlertEnabled)
-                                .toggleStyle(SwitchToggleStyle(tint: toggleTint))
+                                .toggleStyle(SwitchToggleStyle(tint: t.accent))
                                 .labelsHidden()
                         }
                         
@@ -297,8 +301,8 @@ struct EmbeddedSettingsView: View {
                                 // Sound Info
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Sound")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                        .font(.inter(size: 12, weight: .medium))
+                                        .foregroundStyle(t.muted)
                                     
                                     HStack(spacing: 12) {
                                         // Sound Picker
@@ -316,14 +320,14 @@ struct EmbeddedSettingsView: View {
                                         } label: {
                                             HStack {
                                                 Text(settings.alertSound)
-                                                    .foregroundColor(menuTextColor)
-                                                    .fontWeight(.medium)
+                                                    .font(.inter(size: 13, weight: .medium))
+                                                    .foregroundStyle(t.ink)
                                                 Spacer()
                                             }
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 8)
                                             .frame(width: 140) // Fixed width for consistency
-                                            .background(GlassyBackground(theme: settings.appTheme))
+                                            .background(HelpyChipBackground(palette: t))
                                         }
                                         .menuStyle(.borderlessButton)
                                         
@@ -334,10 +338,10 @@ struct EmbeddedSettingsView: View {
                                             playSound(named: settings.alertSound, volume: settings.alertVolume)
                                         }) {
                                             Image(systemName: "play.fill")
-                                                .font(.system(size: 14))
-                                                .foregroundColor(menuTextColor)
+                                                .font(.system(size: 12, weight: .semibold))
+                                                .foregroundStyle(t.ink)
                                                 .frame(width: 32, height: 32)
-                                                .background(GlassyBackground(theme: settings.appTheme))
+                                                .background(HelpyChipBackground(palette: t))
                                         }
                                         .buttonStyle(.plain)
                                     }
@@ -346,20 +350,15 @@ struct EmbeddedSettingsView: View {
                                 // Volume Slider
                                 HStack(spacing: 12) {
                                     Image(systemName: "speaker.fill")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(t.muted)
                                     
                                     Slider(value: $settings.alertVolume, in: 0...1)
-                                        .accentColor(sliderAccentColor)
-                                        .background(
-                                            Capsule()
-                                                .fill(sliderTrackColor)
-                                                .frame(height: 4)
-                                        )
+                                        .tint(t.accent)
                                     
                                     Image(systemName: "speaker.wave.3.fill")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(t.muted)
                                 }
                             }
                             .padding(.leading, 4)
@@ -371,11 +370,24 @@ struct EmbeddedSettingsView: View {
                 .padding(24)
             }
         }
-        .background(Color(nsColor: .windowBackgroundColor))
+        .background(t.canvas)
     }
-    
+
+    private func sectionTitle(_ text: String) -> some View {
+        Text(text)
+            .font(.inter(size: 10, weight: .semibold))
+            .textCase(.uppercase)
+            .tracking(1.0)
+            .foregroundStyle(t.muted2)
+    }
+
     func updatePosition(_ pos: PanelPosition) {
         settings.panelPosition = pos
+        NotificationCenter.default.post(name: NSNotification.Name("UpdatePanelPosition"), object: nil)
+    }
+
+    func updateHeight(_ mode: PanelHeightMode) {
+        settings.panelHeightMode = mode
         NotificationCenter.default.post(name: NSNotification.Name("UpdatePanelPosition"), object: nil)
     }
 
@@ -396,129 +408,67 @@ struct EmbeddedSettingsView: View {
 
 struct PositionPreviewCard: View {
     let position: PanelPosition
-    let theme: AppTheme
+    let palette: HelpyPalette
     let isSelected: Bool
     let action: () -> Void
-    
-    private var isWhiteTheme: Bool { theme == .white }
-    private var frameStrokeColor: Color { isWhiteTheme ? Color.black.opacity(0.1) : Color.white.opacity(0.1) }
-    private var panelColor: Color {
-        if isSelected {
-            return isWhiteTheme ? Color.blue.opacity(0.9) : Color.white
-        }
-        return Color.primary.opacity(0.5)
-    }
-    private var labelColor: Color {
-        if isSelected {
-            return isWhiteTheme ? .primary : .white
-        }
-        return .secondary
-    }
-    private var cardFillColor: Color {
-        if isWhiteTheme {
-            return isSelected ? Color.black.opacity(0.08) : Color.black.opacity(0.03)
-        }
-        return isSelected ? Color.white.opacity(0.1) : Color.white.opacity(0.05)
-    }
-    private var cardStrokeColor: Color {
-        if isWhiteTheme {
-            return isSelected ? Color.black.opacity(0.25) : Color.black.opacity(0.08)
-        }
-        return isSelected ? Color.white : .clear
-    }
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 12) {
                 // Desktop Visual
                 ZStack {
                     // Wallpaper / Screen
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(
-                            LinearGradient(gradient: Gradient(colors: [Color.purple.opacity(0.3), Color.blue.opacity(0.3)]), startPoint: .topLeading, endPoint: .bottomTrailing)
-                        )
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(palette.header.opacity(0.28))
                         .frame(height: 60)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(frameStrokeColor, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .strokeBorder(palette.line, lineWidth: 1)
                         )
-                    
+
                     // The App Panel
                     HStack {
                         if position == .right { Spacer() }
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(panelColor)
+                        RoundedRectangle(cornerRadius: 2, style: .continuous)
+                            .fill(isSelected ? palette.accent : palette.muted2)
                             .frame(width: 16, height: 48)
                             .padding(position == .left ? .leading : .trailing, 6)
-                            .shadow(radius: 2)
                         if position == .left { Spacer() }
                     }
                 }
-                
+
                 // Label
                 Text(position == .left ? "Screen Left" : "Screen Right")
-                    .font(.caption)
-                    .fontWeight(isSelected ? .semibold : .regular)
-                    .foregroundColor(labelColor)
+                    .font(.inter(size: 11, weight: isSelected ? .semibold : .medium))
+                    .foregroundStyle(isSelected ? palette.ink : palette.muted)
             }
             .padding(12)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(cardFillColor)
+                RoundedRectangle(cornerRadius: HelpyMetrics.cardCornerRadius, style: .continuous)
+                    .fill(isSelected ? palette.surfaceActive : palette.surface)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(cardStrokeColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: HelpyMetrics.cardCornerRadius, style: .continuous)
+                    .strokeBorder(isSelected ? palette.surfaceActiveBorder : palette.line, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
+        .animation(.easeOut(duration: 0.16), value: isSelected)
     }
 }
 
-struct GlassyBackground: View {
-    let theme: AppTheme
+/// The small inset surface behind settings menus and chips. Replaces the old
+/// GlassyBackground now that nothing in Helpy is translucent.
+struct HelpyChipBackground: View {
+    let palette: HelpyPalette
 
     var body: some View {
-        if theme == .glass {
-            liquidGlassBackground(cornerRadius: 8)
-        } else {
-            ZStack {
-                if theme == .white {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.white.opacity(0.95))
-                } else {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.black.opacity(0.4))
-
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(.thinMaterial)
-                        .opacity(0.5)
-                }
-            }
+        RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .fill(palette.fieldFill)
             .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(
-                    theme == .white
-                    ? LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.black.opacity(0.16),
-                            Color.black.opacity(0.06)
-                        ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    : LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.white.opacity(0.3),
-                            Color.white.opacity(0.05)
-                        ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(palette.fieldBorder, lineWidth: 1)
             )
-        }
     }
 }

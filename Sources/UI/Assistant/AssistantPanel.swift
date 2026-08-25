@@ -2,43 +2,16 @@ import SwiftUI
 
 struct AssistantPanel: View {
     @ObservedObject var coordinator: AssistantCoordinator
-    let theme: AppTheme
     let onClose: () -> Void
     let availableHeight: CGFloat
 
+    @Environment(\.colorScheme) private var colorScheme
     @State private var measuredPromptHeight: CGFloat = 44
 
     private let placeholderText = "Add tasks for today, reschedule something, or paste a transcript from Handy..."
 
-    private var panelFillColor: Color {
-        switch theme {
-        case .glass:
-            return Color.black.opacity(0.18)
-        case .dark:
-            return Color.black.opacity(0.35)
-        case .white:
-            return Color.white.opacity(0.98)
-        }
-    }
-
-    private var borderColor: Color {
-        theme == .white ? Color.black.opacity(0.1) : Color.white.opacity(0.08)
-    }
-
-    private var helperTextColor: Color {
-        theme == .white ? Color.black.opacity(0.6) : Color.white.opacity(0.7)
-    }
-
-    private var editorInsetColor: Color {
-        switch theme {
-        case .glass:
-            return Color.black.opacity(0.26)
-        case .dark:
-            return Color.black.opacity(0.3)
-        case .white:
-            return Color.black.opacity(0.04)
-        }
-    }
+    private var t: HelpyPalette { .forScheme(colorScheme) }
+    private var helperTextColor: Color { t.muted }
 
     private var reviewActionCount: Int {
         groupedReviewActions.reduce(0) { $0 + $1.actions.count }
@@ -87,20 +60,14 @@ struct AssistantPanel: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(panelFillColor)
-
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(.ultraThinMaterial)
-                    .opacity(theme == .white ? 0.45 : 0.9)
-            }
+            RoundedRectangle(cornerRadius: HelpyMetrics.panelCornerRadius, style: .continuous)
+                .fill(t.panelFill)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(borderColor, lineWidth: 1)
+            RoundedRectangle(cornerRadius: HelpyMetrics.panelCornerRadius, style: .continuous)
+                .stroke(t.panelBorder, lineWidth: 1)
         )
-        .shadow(color: theme == .white ? Color.black.opacity(0.08) : Color.black.opacity(0.28), radius: 20, x: 0, y: 8)
+        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.5 : 0.1), radius: 20, x: 0, y: 8)
         .frame(height: panelHeight, alignment: .bottom)
         .clipped()
     }
@@ -109,22 +76,25 @@ struct AssistantPanel: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("Assistant")
-                    .font(.headline)
+                    .font(.inter(size: 14, weight: .semibold))
+                    .foregroundColor(t.ink)
                 Spacer()
                 if coordinator.isBusy {
                     ProgressView()
                         .controlSize(.small)
                 }
                 Button(action: onClose) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(theme == .white ? Color.black.opacity(0.55) : Color.white.opacity(0.75))
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(t.muted)
+                        .frame(width: 24, height: 24)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
 
             Text("Describe what you want to add or change, then review the actions before applying.")
-                .font(.caption)
+                .font(.inter(size: 11))
                 .foregroundColor(helperTextColor)
         }
     }
@@ -133,21 +103,21 @@ struct AssistantPanel: View {
     private var inputArea: some View {
         VStack(alignment: .leading, spacing: 10) {
             ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(editorInsetColor)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(t.fieldFill)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .stroke(theme == .white ? Color.black.opacity(0.08) : Color.white.opacity(0.05), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(t.fieldBorder, lineWidth: 1)
                     )
 
-                AssistantPromptEditor(text: $coordinator.inputText, contentHeight: $measuredPromptHeight, theme: theme)
+                AssistantPromptEditor(text: $coordinator.inputText, contentHeight: $measuredPromptHeight)
                     .frame(height: promptEditorHeight)
                     .disabled(coordinator.isBusy)
 
                 if coordinator.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     Text(placeholderText)
-                        .font(.system(size: 13))
-                        .foregroundColor(helperTextColor.opacity(0.9))
+                        .font(.inter(size: 13))
+                        .foregroundColor(t.placeholder)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 12)
                         .allowsHitTesting(false)
@@ -157,7 +127,7 @@ struct AssistantPanel: View {
 
             HStack {
                 Text("Type directly here or paste a transcript from Handy.")
-                    .font(.caption2)
+                    .font(.inter(size: 10))
                     .foregroundColor(helperTextColor)
 
                 Spacer()
@@ -165,7 +135,7 @@ struct AssistantPanel: View {
                 Button("Generate") {
                     coordinator.submitTypedInput()
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(HelpyPrimaryButtonStyle(palette: t))
                 .disabled(coordinator.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || coordinator.isBusy)
             }
 
@@ -179,37 +149,37 @@ struct AssistantPanel: View {
             EmptyView()
         case .recording:
             Label("Voice input is currently disabled in Helpy.", systemImage: "mic.slash")
-                .font(.caption)
+                .font(.inter(size: 11))
                 .foregroundColor(helperTextColor)
         case .transcribing:
             Label("Voice input is currently disabled in Helpy.", systemImage: "mic.slash")
-                .font(.caption)
+                .font(.inter(size: 11))
                 .foregroundColor(helperTextColor)
         case .generating:
             Label("Generating reminder actions with Ollama…", systemImage: "sparkles")
-                .font(.caption)
+                .font(.inter(size: 11))
                 .foregroundColor(helperTextColor)
         case .error(let error):
             VStack(alignment: .leading, spacing: 8) {
                 Text(error.localizedDescription)
-                    .font(.caption)
-                    .foregroundColor(.red)
+                    .font(.inter(size: 11))
+                    .foregroundColor(t.hot)
                 HStack {
                     Button("Try Again") {
                         coordinator.retryLastInput()
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(HelpySecondaryButtonStyle(palette: t))
                     Button("Dismiss") {
                         coordinator.state = .idle
                     }
-                    .buttonStyle(.borderless)
+                    .buttonStyle(HelpyQuietButtonStyle(palette: t))
                 }
             }
         case .review(let batch):
             VStack(alignment: .leading, spacing: 10) {
                 Text("Review \(batch.actions.count) action\(batch.actions.count == 1 ? "" : "s")")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.inter(size: 11, weight: .medium))
+                    .foregroundColor(t.muted)
 
                 if reviewListHeight > 0 {
                     ScrollView {
@@ -217,8 +187,7 @@ struct AssistantPanel: View {
                             ForEach(groupedReviewActions, id: \.kind) { section in
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text(sectionTitle(for: section.kind, count: section.actions.count))
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
+                                        .font(.inter(size: 11, weight: .semibold))
                                         .foregroundColor(helperTextColor)
 
                                     ForEach(section.actions) { action in
@@ -241,19 +210,19 @@ struct AssistantPanel: View {
                     Button("Discard All") {
                         coordinator.discardAllActions()
                     }
-                    .buttonStyle(.borderless)
+                    .buttonStyle(HelpyQuietButtonStyle(palette: t))
 
                     Button("Try Again") {
                         coordinator.retryLastInput()
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(HelpySecondaryButtonStyle(palette: t))
 
                     Spacer()
 
                     Button("Apply All") {
                         coordinator.applyAllActions()
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(HelpyPrimaryButtonStyle(palette: t))
                 }
             }
         }

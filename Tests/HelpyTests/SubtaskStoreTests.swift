@@ -54,4 +54,31 @@ final class SubtaskStoreTests: XCTestCase {
         XCTAssertEqual(store2.subtasks(for: taskId).count, 1)
         XCTAssertEqual(store2.subtasks(for: taskId)[0].title, "Persisted")
     }
+
+    func testProgressCountsCompleted() {
+        store.addSubtask(title: "One", for: taskId)
+        store.addSubtask(title: "Two", for: taskId)
+        store.addSubtask(title: "Three", for: taskId)
+        let firstId = store.subtasks(for: taskId)[0].id
+        store.toggleSubtask(id: firstId, for: taskId)
+
+        let progress = store.progress(for: taskId)
+        XCTAssertEqual(progress.done, 1)
+        XCTAssertEqual(progress.total, 3)
+    }
+
+    func testProgressForUnknownTaskIsZero() {
+        let progress = store.progress(for: "no-such-task")
+        XCTAssertEqual(progress.done, 0)
+        XCTAssertEqual(progress.total, 0)
+    }
+
+    func testHasSubtasks() {
+        XCTAssertFalse(store.hasSubtasks(for: taskId))
+        store.addSubtask(title: "One", for: taskId)
+        XCTAssertTrue(store.hasSubtasks(for: taskId))
+        let id = store.subtasks(for: taskId)[0].id
+        store.deleteSubtask(id: id, for: taskId)
+        XCTAssertFalse(store.hasSubtasks(for: taskId))
+    }
 }

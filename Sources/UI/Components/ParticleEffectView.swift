@@ -1,67 +1,67 @@
 import SwiftUI
 
+/// The "task done" burst: one expanding ring plus eight dots fired along fixed
+/// spokes.
+///
+/// Deliberately monochrome — it takes the checkbox's own tint so it reads as
+/// the check landing rather than as confetti. The previous version threw twelve
+/// randomly coloured circles in random directions, which fought a design that
+/// spends its colour budget on a single accent.
+///
+/// Two independent drivers so position and opacity can have different curves:
+/// `spread` eases OUT (fast launch, gentle settle), `fade` eases IN (holds
+/// visible, then drops). Sharing one value made the dots vanish before they
+/// had travelled anywhere.
 struct ParticleEffectView: View {
     @Binding var trigger: Bool
-    
-    @State private var particles: [Particle] = []
-    
-    struct Particle: Hashable, Identifiable {
-        let id = UUID()
-        var x: CGFloat
-        var y: CGFloat
-        var angle: Double
-        var speed: Double
-        var scale: CGFloat
-        var color: Color
-        var opacity: Double = 1.0
-    }
-    
-    let colors: [Color] = [.red, .blue, .green, .yellow, .orange, .purple, .pink]
-    
+    var tint: Color = .accentColor
+
+    @State private var isFiring = false
+    @State private var spread: CGFloat = 0
+    @State private var fade: Double = 0
+
+    private static let spokes: [Double] = (0..<8).map { Double($0) * 45 }
+    private let travel: CGFloat = 16
+
     var body: some View {
         ZStack {
-            ForEach(particles) { particle in
+            if isFiring {
                 Circle()
-                    .fill(particle.color)
-                    .frame(width: 4, height: 4)
-                    .scaleEffect(particle.scale)
-                    .opacity(particle.opacity)
-                    .position(x: particle.x, y: particle.y)
+                    .strokeBorder(tint, lineWidth: 1.5)
+                    .frame(width: 20, height: 20)
+                    .scaleEffect(0.45 + spread * 1.15)
+                    .opacity(fade * 0.9)
+
+                ForEach(Array(Self.spokes.enumerated()), id: \.offset) { _, angle in
+                    let radians = angle * .pi / 180
+                    Circle()
+                        .fill(tint)
+                        .frame(width: 3, height: 3)
+                        .offset(
+                            x: cos(radians) * travel * spread,
+                            y: sin(radians) * travel * spread
+                        )
+                        .opacity(fade)
+                }
             }
         }
-        .frame(width: 50, height: 50) // Constrain the effect area slightly
-        .allowsHitTesting(false) // Let clicks pass through
-        .onChange(of: trigger) { _, newValue in
-            if newValue {
-                explode()
-            }
+        .frame(width: 46, height: 46)
+        .allowsHitTesting(false)
+        .onChange(of: trigger) { _, isTriggered in
+            if isTriggered { fire() }
         }
     }
-    
-    func explode() {
-        // Generate particles
-        for _ in 0..<12 {
-            let angle = Double.random(in: 0..<360)
-            let speed = Double.random(in: 20...50) // Distance they travel
-            let scale = CGFloat.random(in: 0.5...1.2)
-            let color = colors.randomElement()!
-            
-            particles.append(Particle(x: 25, y: 25, angle: angle, speed: speed, scale: scale, color: color)) // Start at center (25,25)
-        }
-        
-        // Animate
-        withAnimation(.easeOut(duration: 0.6)) {
-            for i in 0..<particles.count {
-                let radians = particles[i].angle * .pi / 180
-                particles[i].x += CGFloat(cos(radians) * particles[i].speed)
-                particles[i].y += CGFloat(sin(radians) * particles[i].speed)
-                particles[i].opacity = 0
-            }
-        }
-        
-        // Clean up
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            particles.removeAll()
+
+    private func fire() {
+        isFiring = true
+        spread = 0
+        fade = 1
+
+        withAnimation(.easeOut(duration: 0.5)) { spread = 1 }
+        withAnimation(.easeIn(duration: 0.45)) { fade = 0 }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
+            isFiring = false
         }
     }
 }

@@ -2,29 +2,6 @@ import SwiftUI
 import EventKit
 import AppKit
 
-/// Applies `.glassEffect(.regular, in: Rectangle())` to the sidebar container on macOS 26+.
-/// Applying to the container (not to a nested Color.clear) lets the glass propagate an adaptive
-/// colorScheme to all children based on sampled background brightness.
-private struct GlassSidebarModifier: ViewModifier {
-    let isGlass: Bool
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if isGlass {
-            if #available(macOS 26.0, *) {
-                content.glassEffect(.regular, in: Rectangle())
-            } else {
-                content.background(
-                    VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
-                        .ignoresSafeArea()
-                )
-            }
-        } else {
-            content
-        }
-    }
-}
-
 struct SideStripView: View {
     @EnvironmentObject var remindersService: RemindersService
     @EnvironmentObject var timerService: TimerService
@@ -44,82 +21,24 @@ struct SideStripView: View {
     // Quick Add State
     @State private var newTaskTitle = ""
     @State private var isPulsing = false // For task alert animation
-    @AppStorage("appTheme") private var appTheme: AppTheme = .glass
+    @State private var isHoveringGear = false
     @AppStorage("assistantEnabled") private var assistantEnabled: Bool = true
-    
+    @Environment(\.colorScheme) private var colorScheme
+
     private let completionCommitDelay: TimeInterval = 0.18
     private let completionAnimation = Animation.interactiveSpring(response: 0.22, dampingFraction: 0.8, blendDuration: 0.1)
-    private let accentBlue = Color(red: 67.0 / 255.0, green: 166.0 / 255.0, blue: 1.0)
-    
-    private var isWhiteTheme: Bool { appTheme == .white }
-    private var panelOverlayColor: Color {
-        switch appTheme {
-        case .glass: return .clear
-        case .dark: return Color.black.opacity(0.3)
-        case .white: return Color.black.opacity(0.05)
-        }
-    }
-    private var sessionCardFillColor: Color {
-        switch appTheme {
-        case .glass:
-            return Color.primary.opacity(0.06)
-        case .dark:
-            return Color(red: 0.11, green: 0.11, blue: 0.12)
-        case .white:
-            return Color.white.opacity(0.95)
-        }
-    }
-    private var cardBorderColor: Color { isWhiteTheme ? Color.black.opacity(0.12) : Color.white.opacity(0.1) }
-    private var progressTrackColor: Color { isWhiteTheme ? Color.black.opacity(0.1) : Color.white.opacity(0.1) }
-    private var controlDividerColor: Color { isWhiteTheme ? Color.black.opacity(0.2) : Color.white.opacity(0.2) }
-    private var quickAddFillColor: Color {
-        switch appTheme {
-        case .glass: return Color.white.opacity(0.06)
-        case .dark: return Color.black.opacity(0.3)
-        case .white: return Color.white.opacity(0.94)
-        }
-    }
-    private var quickAddMaterialOpacity: Double {
-        switch appTheme {
-        case .glass: return 0.0
-        case .dark: return 0.3
-        case .white: return 0.2
-        }
-    }
-    private var quickAddBorderColor: Color { isWhiteTheme ? Color.black.opacity(0.14) : Color.white.opacity(0.1) }
-    private var focusForegroundColor: Color { .white }
-    private var focusFillColor: Color {
-        if isWhiteTheme {
-            return accentBlue
-        }
-        return appTheme == .dark ? Color.black.opacity(0.4) : Color.black.opacity(0.22)
-    }
-    private var focusGlowColor: Color { isWhiteTheme ? accentBlue.opacity(0.45) : Color.white.opacity(0.4) }
-    private var focusStrokeGradient: [Color] { [Color.white.opacity(0.3), Color.white.opacity(0.05)] }
-    private var listTitleColor: Color { isWhiteTheme ? accentBlue : .primary }
+
+    private var t: HelpyPalette { .forScheme(colorScheme) }
     
     var body: some View {
         GeometryReader { proxy in
             ZStack {
-                if appTheme == .glass {
-                    if #available(macOS 26.0, *) {
-                        Color.clear
-                            .glassEffect(.regular, in: Rectangle())
-                            .ignoresSafeArea()
-                    } else {
-                        VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
-                            .ignoresSafeArea()
-                    }
-                } else {
-                    (isWhiteTheme ? Color.white : Color(nsColor: .windowBackgroundColor))
-                        .ignoresSafeArea()
-                }
-                
+                t.canvas.ignoresSafeArea()
+
                 VStack(spacing: 0) {
                     // Header
                     if !isSettingsOpen {
                         headerView
-                            .background(panelOverlayColor)
                             .zIndex(1)
                     }
                     
@@ -144,7 +63,6 @@ struct SideStripView: View {
                             
                             // Footer
                             footerView
-                                 .background(panelOverlayColor)
                         }
                         .transition(.opacity) // Smoother fade transition for content
                     }
@@ -155,7 +73,6 @@ struct SideStripView: View {
                         Spacer()
                         AssistantPanel(
                             coordinator: assistantCoordinator,
-                            theme: appTheme,
                             onClose: {
                                 withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) {
                                     assistantCoordinator.isPanelPresented = false
@@ -171,7 +88,6 @@ struct SideStripView: View {
                 }
             }
             .background(MainWindowAccessor(windowCoordinator: windowCoordinator))
-            .preferredColorScheme(isWhiteTheme ? .light : appTheme == .dark ? .dark : nil)
             .frame(minWidth: 300, maxWidth: 350, maxHeight: .infinity)
             .onAppear {
                 assistantCoordinator.remindersService = remindersService
@@ -179,6 +95,25 @@ struct SideStripView: View {
             }
             .onChange(of: timerService.isFocusMode) { _, isFocus in
                 if isFocus {
+                    // Menu bar icon mode: the timer lives in the status bar — just fade
+                    // out the app windows instead of raising an empty pill window.
+                    if SettingsStore().pillDisplayMode == .menuBarIcon {
+                        let windowsToHide = NSApp.windows.filter {
+                            $0.isVisible && $0.identifier != AppWindowCoordinator.pillWindowIdentifier
+                        }
+                        windowsToHide.forEach { window in
+                            NSAnimationContext.runAnimationGroup { context in
+                                context.duration = 0.2
+                                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                                window.animator().alphaValue = 0
+                            } completionHandler: {
+                                window.orderOut(nil)
+                                window.alphaValue = 1
+                            }
+                        }
+                        return
+                    }
+
                     // Enter Focus: show/reuse pill first, then hide main window.
                     if windowCoordinator.pillWindow == nil,
                        let existingPill = NSApp.windows.first(where: { $0.identifier == AppWindowCoordinator.pillWindowIdentifier }) {
@@ -194,17 +129,8 @@ struct SideStripView: View {
                         Task { @MainActor in
                             if let pillWindow = windowCoordinator.pillWindow {
                                 // Ensure window chrome is stripped before first visible frame.
-                                pillWindow.isOpaque = false
-                                pillWindow.backgroundColor = .clear
+                                PillWindowStyle.apply(to: pillWindow)
                                 pillWindow.identifier = AppWindowCoordinator.pillWindowIdentifier
-                                pillWindow.titleVisibility = .hidden
-                                pillWindow.titlebarAppearsTransparent = true
-                                pillWindow.styleMask = [.borderless, .fullSizeContentView]
-                                pillWindow.standardWindowButton(.closeButton)?.isHidden = true
-                                pillWindow.standardWindowButton(.miniaturizeButton)?.isHidden = true
-                                pillWindow.standardWindowButton(.zoomButton)?.isHidden = true
-                                pillWindow.level = .floating
-                                pillWindow.isMovableByWindowBackground = true
                                 
                                 pillWindow.alphaValue = 0
                                 pillWindow.makeKeyAndOrderFront(nil)
@@ -278,12 +204,26 @@ struct SideStripView: View {
     private func prewarmPillWindowIfNeeded() {
         guard !windowCoordinator.hasPrewarmedPillWindow else { return }
         windowCoordinator.hasPrewarmedPillWindow = true
-        
+
         openWindow(id: "timer-pill")
-        
+
         func waitForPillWindow(attempts: Int = 0) {
             Task { @MainActor in
-                if let pillWindow = windowCoordinator.pillWindow {
+                // FloatingPillView only renders (and registers the window) in
+                // floating-pill focus mode — in every other state the scene content
+                // is empty, so find the window by its SwiftUI identity instead.
+                // Without this, menu bar mode left an unstyled zero-size window
+                // open on screen for the app's whole lifetime.
+                let pillWindow = windowCoordinator.pillWindow
+                    ?? NSApp.windows.first(where: {
+                        $0.identifier == AppWindowCoordinator.pillWindowIdentifier ||
+                        $0.identifier?.rawValue == "timer-pill" ||
+                        $0.frameAutosaveName == "timer-pill"
+                    })
+
+                if let pillWindow {
+                    pillWindow.identifier = AppWindowCoordinator.pillWindowIdentifier
+                    windowCoordinator.pillWindow = pillWindow
                     // Keep the prewarmed instance hidden until focus mode is enabled.
                     if !timerService.isFocusMode {
                         pillWindow.orderOut(nil)
@@ -295,13 +235,18 @@ struct SideStripView: View {
                 }
             }
         }
-        
+
         waitForPillWindow()
     }
     
+    /// Version B header: the gradient runs full-bleed to the window edges and
+    /// sweeps into rounded BOTTOM corners. Everything on it is white, which is
+    /// also why the mark is the white cat.
     var headerView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
+            HStack(spacing: 10) {
+                HelpyMark(size: 24)
+
                 // List Selection Menu
                 Menu {
                     // Option: Today
@@ -313,9 +258,9 @@ struct SideStripView: View {
                             Text("Today")
                         }
                     }
-                    
+
                     Divider()
-                    
+
                     // Option: Specific Lists
                     ForEach(remindersService.lists, id: \.calendarIdentifier) { list in
                         Button(action: {
@@ -330,99 +275,115 @@ struct SideStripView: View {
                         }
                     }
                 } label: {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 5) {
                         Text(remindersService.activeListId == nil ? "Today" : (remindersService.lists.first(where: { $0.calendarIdentifier == remindersService.activeListId })?.title ?? "List"))
-                            .font(.custom("Times New Roman", size: 28))
-                            .italic()
-                            .foregroundColor(listTitleColor)
+                            .font(.inter(size: 19, weight: .bold))
+                            .foregroundStyle(t.onAccent)
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(t.onAccent.opacity(0.7))
                     }
                 }
                 .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden)
+                .fixedSize()
                 .onChange(of: remindersService.activeListId) { _, _ in
                     remindersService.fetchReminders()
                 }
 
                 Spacer()
-                HStack(spacing: 12) {
-                    Button(action: {
-                        withAnimation {
-                            isSettingsOpen.toggle()
-                        }
-                    }) {
-                        Image(systemName: "gearshape")
-                            .foregroundColor(isSettingsOpen ? .primary : .secondary)
-                    }
-                    .buttonStyle(.plain)
+
+                Button(action: {
+                    withAnimation { isSettingsOpen.toggle() }
+                }) {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(t.onAccent)
+                        .frame(width: 28, height: 28)
+                        .background(
+                            Circle().fill(Color.white.opacity(isHoveringGear || isSettingsOpen ? 0.22 : 0.12))
+                        )
+                        .contentShape(Circle())
                 }
-                .foregroundColor(.secondary)
-                .font(.system(size: 14))
+                .buttonStyle(.plain)
+                .onHover { hover in
+                    withAnimation(.easeOut(duration: 0.13)) { isHoveringGear = hover }
+                }
             }
-            
+
             // Stats line
-                // Computed Stats
-                let activeCount = remindersService.reminders.count
-                let completedCount = remindersService.recentCompletedReminders.count
-                let totalCount = activeCount + completedCount
-                let progress = totalCount > 0 ? Double(completedCount) / Double(totalCount) : 0.0
-                
-                let totalSeconds = remindersService.reminders.reduce(0.0) { result, reminder in
-                    result + (estimateStore.getMetadata(for: reminder.calendarItemIdentifier)?.estimatedDuration ?? 0)
-                }
-                let hours = Int(totalSeconds) / 3600
-                let minutes = (Int(totalSeconds) % 3600) / 60
-                
+            let activeCount = remindersService.reminders.count
+            let completedCount = remindersService.recentCompletedReminders.count
+            let totalCount = activeCount + completedCount
+            let progress = totalCount > 0 ? Double(completedCount) / Double(totalCount) : 0.0
+
+            let totalSeconds = remindersService.reminders.reduce(0.0) { result, reminder in
+                result + (estimateStore.getMetadata(for: reminder.calendarItemIdentifier)?.estimatedDuration ?? 0)
+            }
+            let hours = Int(totalSeconds) / 3600
+            let minutes = (Int(totalSeconds) % 3600) / 60
+
+            VStack(alignment: .leading, spacing: 7) {
                 HStack {
                     if hours > 0 {
                         Text("Est: \(hours)h \(minutes)m")
                     } else if minutes > 0 {
                         Text("Est: \(minutes)m")
                     } else {
-                         Text("Est: 0m")
+                        Text("Est: 0m")
                     }
-                    
+
                     Spacer()
                     Text("\(completedCount)/\(totalCount) Done")
                 }
-                .font(.caption)
-                .foregroundColor(.secondary)
-                
-                // Progress bar
-                Capsule()
-                    .fill(Color.secondary.opacity(0.3))
-                    .frame(height: 4)
-                    .overlay(
-                        GeometryReader { geo in
-                            Capsule()
-                                .fill(isWhiteTheme ? accentBlue : Color.primary)
-                                .frame(width: geo.size.width * CGFloat(progress)) // Real Progress
-                        }
-                    )
-        }
-        .padding(.horizontal, 15)
-        .padding(.top, 8)
-        .padding(.bottom, 12)
+                .font(.inter(size: 11, weight: .medium))
+                .foregroundStyle(t.onAccent.opacity(0.82))
 
+                // Progress bar
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(Color.white.opacity(0.28))
+                        Capsule()
+                            .fill(t.onAccent)
+                            .frame(width: max(0, geo.size.width * CGFloat(progress)))
+                    }
+                }
+                .frame(height: 4)
+                .animation(.easeOut(duration: 0.25), value: progress)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 13)
+        .padding(.bottom, 15)
+        // The window draws its own title bar area, so the gradient is told to
+        // bleed upward past it — and only upward. The bottom edge stays exactly
+        // where the header's frame ends, which is where the rounded sweep sits.
+        .background(
+            HelpyHeaderBackground(palette: t)
+                .ignoresSafeArea(edges: .top)
+        )
     }
     
     var accessDeniedView: some View {
         VStack(spacing: 20) {
             Spacer()
             Image(systemName: "lock.shield")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
+                .font(.system(size: 44))
+                .foregroundStyle(t.muted)
             Text("Access Required")
-                .font(.headline)
+                .font(.inter(size: 16, weight: .semibold))
+                .foregroundStyle(t.ink)
             Text("Please grant access to Reminders to use this app.")
                 .multilineTextAlignment(.center)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.inter(size: 12))
+                .foregroundStyle(t.muted)
                 .padding(.horizontal)
-            
+
             Button("Open System Settings") {
                 // In a real app we might deep link or just prompt again
                 remindersService.requestAccess()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(HelpyPrimaryButtonStyle(palette: t))
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -440,10 +401,28 @@ struct SideStripView: View {
                 
                 standardListSection
             }
-            .padding(.vertical)
-            .scrollIndicators(.hidden)
+            .padding(.top, 14)
+            .padding(.bottom, 10)
+            // Has to be applied to the CONTENT: from outside the ScrollView,
+            // `enclosingScrollView` is nil and the config silently no-ops.
             .configureScrollView()
         }
+        // `.scrollIndicators` has to sit on the ScrollView itself — applied to
+        // the content it did nothing and the overlay scroller kept painting over
+        // the cards' right edge.
+        .scrollIndicators(.hidden)
+        // The list runs straight into the quick-add field, so the last row used
+        // to be sliced off mid-card. Fade the final few points instead.
+        .mask(
+            LinearGradient(
+                stops: [
+                    .init(color: .black, location: 0.0),
+                    .init(color: .black, location: 0.955),
+                    .init(color: .clear, location: 1.0)
+                ],
+                startPoint: .top, endPoint: .bottom
+            )
+        )
     }
     
     var breakModeSection: some View {
@@ -453,13 +432,16 @@ struct SideStripView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     // 1. Top Label
                     Text("Current Session")
-                        .font(.system(size: 11, weight: .regular))
-                        .foregroundColor(.secondary)
+                        .font(.inter(size: 10, weight: .semibold))
+                        .textCase(.uppercase)
+                        .tracking(1.0)
+                        .foregroundStyle(t.muted2)
                     
                     // 2. Content Row
                     HStack(alignment: .center, spacing: 0) {
                         Text("☕️ Break")
-                            .font(.system(size: 15, weight: .medium))
+                            .font(.inter(size: 15, weight: .medium))
+                            .foregroundStyle(t.ink)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         HStack(alignment: .center, spacing: 12) {
@@ -475,13 +457,9 @@ struct SideStripView: View {
                                 }
                             
                             // Skip Break Button
-                            Button(action: {
+                            PillControlButton(icon: "forward.end.fill", help: "Skip Break", palette: t) {
                                 timerService.endBreak()
-                            }) {
-                                Image(systemName: "forward.end.fill")
-                                    .foregroundColor(.secondary)
                             }
-                            .buttonStyle(.plain)
                         }
                     }
                     .frame(height: 32)
@@ -494,9 +472,9 @@ struct SideStripView: View {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         Rectangle()
-                            .fill(progressTrackColor)
+                            .fill(t.railTrack)
                             .frame(height: 3)
-                        
+
                         // Dynamic Progress Calculation for Break
                         let progress: Double = {
                             let total = timerService.initialDuration
@@ -504,24 +482,22 @@ struct SideStripView: View {
                             let elapsed = total - remaining
                             return total > 0 ? min(max(elapsed / total, 0.0), 1.0) : 0.0
                         }()
-                        
+
                         Rectangle()
-                            .fill(Color.orange)
+                            .fill(LinearGradient(colors: [t.warm, t.warm.opacity(0.7)], startPoint: .leading, endPoint: .trailing))
                             .frame(width: geo.size.width * CGFloat(progress), height: 3)
-                            .shadow(color: .orange.opacity(0.8), radius: 4, x: 0, y: 0) // Orange Glow
                     }
                 }
                 .frame(height: 3)
             }
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(sessionCardFillColor)
-                    .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 3)
+                RoundedRectangle(cornerRadius: HelpyMetrics.cardCornerRadius, style: .continuous)
+                    .fill(t.surface)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12)) // Clip content to rounded corners
+            .clipShape(RoundedRectangle(cornerRadius: HelpyMetrics.cardCornerRadius, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(cardBorderColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: HelpyMetrics.cardCornerRadius, style: .continuous)
+                    .strokeBorder(t.line, lineWidth: 1)
             )
             .padding(.horizontal, 8)
         }
@@ -537,124 +513,72 @@ struct SideStripView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     // 1. Top Label
                     Text("Active Task")
-                        .font(.system(size: 11, weight: .regular))
-                        .foregroundColor(.secondary)
+                        .font(.inter(size: 10, weight: .semibold))
+                        .textCase(.uppercase)
+                        .tracking(1.0)
+                        .foregroundStyle(t.muted2)
                         .opacity(isHoveringActiveTask ? 0 : 1)
                     
                     // 2. Content Row
                     HStack(alignment: .center, spacing: 0) {
                         if isHoveringActiveTask {
                             // HOVER STATE: Full Controls (Swapped in)
-                            HStack(alignment: .center, spacing: 16) {
-                                // Traffic Light Group
-                                HStack(spacing: 12) {
-                                    // 1. Close/Stop (Red Traffic Light)
-                                    Button(action: { timerService.stopTimer() }) {
-                                        Circle()
-                                            .fill(Color.red)
-                                            .frame(width: 14, height: 14)
-                                            .overlay(
-                                                Image(systemName: "xmark")
-                                                    .font(.system(size: 9, weight: .bold))
-                                                    .foregroundColor(.black.opacity(0.5))
-                                            )
-                                    }
-                                    .buttonStyle(.plain)
-                                    .help("Stop Timer")
-                                    
-                                    // 2. Pause/Resume (Yellow Traffic Light)
-                                    Button(action: { timerService.state == .running ? timerService.pauseTimer() : timerService.resumeTimer() }) {
-                                        Circle()
-                                            .fill(Color.yellow)
-                                            .frame(width: 14, height: 14)
-                                            .overlay(
-                                                Image(systemName: timerService.state == .running ? "pause.fill" : "play.fill")
-                                                    .font(.system(size: 8, weight: .bold))
-                                                    .foregroundColor(.black.opacity(0.5))
-                                            )
-                                    }
-                                    .buttonStyle(.plain)
-                                    .help(timerService.state == .running ? "Pause" : "Resume")
-                                    
-                                    // 3. Complete (Green Traffic Light)
-                                    Button(action: {
-                                        guard !isCompletingActive else { return }
-                                        withAnimation(completionAnimation) { isCompletingActive = true }
-                                        NSSound(named: "Glass")?.play()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + completionCommitDelay) {
-                                            remindersService.toggleComplete(activeTask)
-                                            timerService.stopTimer()
-                                            isCompletingActive = false
-                                        }
-                                    }) {
-                                        ZStack {
-                                            Circle()
-                                                .fill(Color.green)
-                                                .frame(width: 14, height: 14)
-                                                .overlay(
-                                                    Image(systemName: "checkmark")
-                                                        .font(.system(size: 9, weight: .bold))
-                                                        .foregroundColor(.black.opacity(0.5))
-                                                )
-                                            ParticleEffectView(trigger: $isCompletingActive)
-                                        }
-                                        .frame(width: 14, height: 14)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .help("Complete Task")
-                                    .scaleEffect(isCompletingActive ? 1.2 : 1.0)
+                            // Same monochrome control set as the floating pill and the
+                            // menu bar dropdown, so one hover language runs everywhere.
+                            HStack(alignment: .center, spacing: 2) {
+                                PillControlButton(icon: "xmark", help: "Stop Timer", tone: .danger, palette: t) {
+                                    timerService.stopTimer()
                                 }
-                                
-                                Divider()
-                                    .frame(height: 16)
-                                    .background(controlDividerColor)
-                                
-                                // Secondary Actions Group
-                                HStack(spacing: 12) {
-                                    // 4. Skip Task
-                                    Button(action: {
-                                        if let next = remindersService.getNextTask(after: activeTask.calendarItemIdentifier) {
-                                            let dur = estimateStore.getMetadata(for: next.calendarItemIdentifier)?.estimatedDuration ?? 0
-                                            timerService.startTimer(reminderId: next.calendarItemIdentifier, duration: dur)
-                                        } else {
-                                            timerService.stopTimer()
-                                        }
-                                    }) {
-                                        Image(systemName: "forward.end.fill")
-                                            .font(.system(size: 14))
-                                            .foregroundColor(.secondary)
+
+                                PillControlButton(
+                                    icon: timerService.state == .running ? "pause.fill" : "play.fill",
+                                    help: timerService.state == .running ? "Pause" : "Resume",
+                                    palette: t
+                                ) {
+                                    timerService.state == .running ? timerService.pauseTimer() : timerService.resumeTimer()
+                                }
+
+                                PillControlButton(icon: "checkmark", help: "Complete Task", tone: .go, palette: t) {
+                                    guard !isCompletingActive else { return }
+                                    withAnimation(completionAnimation) { isCompletingActive = true }
+                                    NSSound(named: "Glass")?.play()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + completionCommitDelay) {
+                                        remindersService.toggleComplete(activeTask)
+                                        timerService.stopTimer()
+                                        isCompletingActive = false
                                     }
-                                    .buttonStyle(.plain)
-                                    .help("Skip Task")
-                                    
-                                    // 5. Break
-                                    Button(action: { timerService.startBreak(duration: 600) }) {
-                                        Image(systemName: "cup.and.saucer.fill")
-                                            .font(.system(size: 14))
-                                            .foregroundColor(.secondary)
+                                }
+                                .scaleEffect(isCompletingActive ? 1.15 : 1.0)
+
+                                PillDivider(color: t.line)
+                                    .padding(.horizontal, 5)
+
+                                if timerService.timesUpTriggered {
+                                    PillControlButton(icon: "clock.arrow.circlepath", help: "Extend Time", isActive: true, palette: t) {
+                                        timerService.startOvertime()
                                     }
-                                    .buttonStyle(.plain)
-                                    .help("Take a Break")
-                                    
-                                    // 6. Extend (Conditional)
-                                    if timerService.timesUpTriggered {
-                                        Button(action: { timerService.startOvertime() }) {
-                                            Image(systemName: "clock.arrow.circlepath")
-                                                .font(.system(size: 14))
-                                                .foregroundColor(.orange)
-                                        }
-                                        .buttonStyle(.plain)
-                                        .help("Extend Time")
+                                }
+
+                                PillControlButton(icon: "forward.end.fill", help: "Skip Task", palette: t) {
+                                    if let next = remindersService.getNextTask(after: activeTask.calendarItemIdentifier) {
+                                        let dur = estimateStore.getMetadata(for: next.calendarItemIdentifier)?.estimatedDuration ?? 0
+                                        timerService.startTimer(reminderId: next.calendarItemIdentifier, duration: dur)
+                                    } else {
+                                        timerService.stopTimer()
                                     }
+                                }
+
+                                PillControlButton(icon: "cup.and.saucer.fill", help: "Take a Break", palette: t) {
+                                    timerService.startBreak()
                                 }
                             }
-                            .padding(.horizontal, 4)
                             .frame(maxWidth: .infinity)
                         } else {
                             // NORMAL STATE: Title & Timer
                             HStack(alignment: .center, spacing: 8) {
                                 Text(activeTask.title)
-                                    .font(.system(size: 15, weight: .medium))
+                                    .font(.inter(size: 15, weight: .medium))
+                                    .foregroundStyle(t.ink)
                                     .lineLimit(2)
                                     .fixedSize(horizontal: false, vertical: true)
                                     .multilineTextAlignment(.leading)
@@ -674,33 +598,31 @@ struct SideStripView: View {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         Rectangle()
-                            .fill(progressTrackColor)
+                            .fill(t.railTrack)
                             .frame(height: 3)
-                        
+
                         // Simple progress calculation (visual)
                         let progress: Double = {
                             let duration = estimateStore.getMetadata(for: activeTask.calendarItemIdentifier)?.estimatedDuration ?? 1800
                             let elapsed = estimateStore.getMetadata(for: activeTask.calendarItemIdentifier)?.timeSpent ?? 0
                             return duration > 0 ? min(elapsed / duration, 1.0) : 0.0
                         }()
-                        
+
                         Rectangle()
-                            .fill(Color.green)
+                            .fill(t.rail)
                             .frame(width: geo.size.width * CGFloat(progress), height: 3)
-                            .shadow(color: .green.opacity(0.8), radius: 4, x: 0, y: 0)
                     }
                 }
                 .frame(height: 3)
             }
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(sessionCardFillColor)
-                    .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 3)
+                RoundedRectangle(cornerRadius: HelpyMetrics.cardCornerRadius, style: .continuous)
+                    .fill(t.surface)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12)) // Clip content to rounded corners
+            .clipShape(RoundedRectangle(cornerRadius: HelpyMetrics.cardCornerRadius, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(cardBorderColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: HelpyMetrics.cardCornerRadius, style: .continuous)
+                    .strokeBorder(t.line, lineWidth: 1)
             )
             .overlay(ParticleEffectView(trigger: $isCompletingActive))
             .padding(.horizontal, 8) 
@@ -747,13 +669,17 @@ struct SideStripView: View {
     var completedListSection: some View {
         VStack(spacing: 0) {
             if !remindersService.recentCompletedReminders.isEmpty {
-                Divider()
-                    .padding(.vertical, 8)
-                
+                Rectangle()
+                    .fill(t.line)
+                    .frame(height: 1)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+
                 Text("Recently Completed")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.secondary)
+                    .font(.inter(size: 10, weight: .semibold))
+                    .textCase(.uppercase)
+                    .tracking(1.0)
+                    .foregroundStyle(t.muted2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
                     .padding(.bottom, 6)
@@ -771,9 +697,12 @@ struct SideStripView: View {
     var quickAddView: some View {
         HStack(spacing: 10) {
             Image(systemName: "plus")
-                .foregroundColor(.secondary)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(t.muted)
             TextField("Add task...", text: $newTaskTitle)
                 .textFieldStyle(.plain)
+                .font(.inter(size: 13))
+                .foregroundStyle(t.ink)
                 .onSubmit {
                     guard !newTaskTitle.isEmpty else { return }
                     let selectedCalendar = remindersService.lists.first(where: { $0.calendarIdentifier == remindersService.activeListId })
@@ -794,34 +723,30 @@ struct SideStripView: View {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             assistantCoordinator.togglePanel()
                         }
-                    },
-                    theme: appTheme
+                    }
                 )
             }
         }
-        .padding(12)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
         .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(quickAddFillColor)
-
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.thinMaterial)
-                    .opacity(quickAddMaterialOpacity)
-            }
+            RoundedRectangle(cornerRadius: HelpyMetrics.fieldCornerRadius, style: .continuous)
+                .fill(t.fieldFill)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(quickAddBorderColor, lineWidth: 1)
+            RoundedRectangle(cornerRadius: HelpyMetrics.fieldCornerRadius, style: .continuous)
+                .strokeBorder(t.fieldBorder, lineWidth: 1)
         )
-        .padding(.horizontal, 7)
+        .padding(.horizontal, 15)
         .padding(.top, 8)
         .padding(.bottom, 8)
     }
     
     var footerView: some View {
         VStack(spacing: 0) {
-            Divider()
+            Rectangle()
+                .fill(t.line)
+                .frame(height: 1)
             // FOOTER - Focus Mode Toggle
             HStack {
                 Button(action: {
@@ -837,64 +762,36 @@ struct SideStripView: View {
                         timerService.isFocusMode.toggle()
                     }
                 }) {
-                    HStack {
+                    HStack(spacing: 8) {
                         Image(systemName: timerService.isFocusMode ? "list.bullet" : "viewfinder")
+                            .font(.system(size: 13, weight: .semibold))
                         Text(timerService.isFocusMode ? "Exit Focus" : "Focus Mode")
-                            .fontWeight(.medium)
+                            .font(.inter(size: 14, weight: .semibold))
                     }
-                    .font(.system(size: 14))
-                    .foregroundColor(focusForegroundColor)
-                    .padding(.vertical, 12)
+                    .foregroundStyle(t.onAccent)
+                    .padding(.vertical, 13)
                     .frame(maxWidth: .infinity)
-                    .background(
-                        focusButtonBackground
-                    )
-                    .shadow(color: isHoveringFocusButton ? focusGlowColor : Color.clear, radius: 10, x: 0, y: 0)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(
-                                LinearGradient(
-                                    gradient: Gradient(colors: focusStrokeGradient),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1
-                            )
-                    )
+                    .background(focusButtonBackground)
                     .contentShape(Rectangle())
-                    .scaleEffect(timerService.isFocusMode ? 0.95 : 1.0) // Subtle press effect state
+                    .scaleEffect(isHoveringFocusButton ? 1.015 : 1.0)
                     .onHover { hover in
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(.easeInOut(duration: 0.18)) {
                             isHoveringFocusButton = hover
                         }
                     }
                 }
                 .buttonStyle(.plain)
-                .padding(.horizontal, 7)
+                .padding(.horizontal, 15)
             }
             .padding(.vertical, 12)
         }
     }
     
-    @ViewBuilder
     private var focusButtonBackground: some View {
-        if isWhiteTheme {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(focusFillColor)
-        } else {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.thinMaterial)
-                
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(focusFillColor)
-                
-                if appTheme == .glass {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white.opacity(0.08))
-                }
-            }
-        }
+        // The one saturated surface in the body — it wears the header's exact
+        // colour so the eye reads header and primary action as the same accent.
+        RoundedRectangle(cornerRadius: HelpyMetrics.buttonCornerRadius, style: .continuous)
+            .fill(timerService.isFocusMode ? t.warm : t.rail)
     }
 }
 
@@ -973,25 +870,20 @@ struct ReminderDropDelegate: DropDelegate {
 struct TimerDisplayView: View {
     @ObservedObject var ticker: TimeTicker
     @ObservedObject var service: TimerService // To access isOvertime/active state for formatting
-    @AppStorage("appTheme") private var appTheme: AppTheme = .glass
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var t: HelpyPalette { .forScheme(colorScheme) }
 
     var body: some View {
         // Optimization: Do not render/update if app is in Focus Mode (Pill is active) to save CPU
         if !service.isFocusMode {
             Text(service.formattedTime())
-                .font(.system(size: 18, weight: .semibold, design: .monospaced))
-                .fontWeight(.bold)
-                .foregroundColor(timerColor)
+                .font(.inter(size: 18, weight: .bold))
+                .monospacedDigit()
+                .foregroundStyle(service.isOvertime ? t.warm : t.ink)
                 .contentTransition(.numericText(countsDown: !service.isStopwatch && !service.isOvertime))
                 .animation(.snappy, value: service.formattedTime())
                 .fixedSize()
         }
-    }
-
-    private var timerColor: Color {
-        if service.isOvertime { return .orange }
-        if appTheme == .white { return Color.black.opacity(0.85) }
-        if appTheme == .dark { return .white }
-        return .primary  // glass: adapts to system appearance (dark mode = white, light mode = dark)
     }
 }

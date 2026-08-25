@@ -4,8 +4,25 @@ import AppKit
 private final class ResourceBundleProbe {}
 
 final class HelpyAppDelegate: NSObject, NSApplicationDelegate {
+    /// Helpy is menu-bar resident: focus mode intentionally hides every window,
+    /// so a stray window close (e.g. the menu bar dropdown panel being torn down)
+    /// must never take the app down with it. Quitting is explicit only:
+    /// closing the main window with quitOnClose enabled, the status item's
+    /// Quit menu, or Cmd-Q.
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        SettingsStore().quitOnClose
+        false
+    }
+
+    /// Clicking the Dock icon while all windows are hidden brings the sidebar back.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        guard !hasVisibleWindows else { return true }
+        if let main = NSApp.windows.first(where: { $0.identifier == NSUserInterfaceItemIdentifier("focus.main.window") }) {
+            main.setIsVisible(true)
+            main.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return false
+        }
+        return true
     }
 }
 
@@ -35,11 +52,13 @@ struct HelpyApp: App {
     @AppStorage("pillDisplayMode") private var pillDisplayMode: PillDisplayMode = .floatingPill
     
     init() {
-        // Link services
-        // We can't do this easily in init because of @StateObject lazy init order, 
-        // but we can do it in onAppear or by passing it.
-        // However, accessing the underlying objects of StateObject in init is tricky.
-        // Let's rely on .onAppear or a separate setup method.
+        // Inter ships in the bundle and must be registered before the first
+        // view is built, or every .custom("Inter-…") lookup this launch
+        // silently resolves to the system font.
+        HelpyFonts.register()
+
+        // Services are linked in .onAppear: reading a @StateObject's wrapped
+        // value from init is not safe.
     }
 
     var body: some Scene {
@@ -103,10 +122,6 @@ struct HelpyApp: App {
                 .onChange(of: pillDisplayMode) { _, mode in
                     windowCoordinator.applyDisplayMode(mode)
                 }
-                .onChange(of: timerService.ticker.remainingTime) { _, _ in
-                    guard pillDisplayMode == .menuBarIcon, timerService.isFocusMode else { return }
-                    windowCoordinator.updateMenuBarTitle(timerService.formattedTime())
-                }
                 .onDisappear {
                     if let observer = panelPositionObserver {
                         NotificationCenter.default.removeObserver(observer)
@@ -154,14 +169,18 @@ struct HelpyApp: App {
             let width = window.frame.width
             let margin: CGFloat = 15
             let x: CGFloat = settings.panelPosition == .left ? visibleFrame.minX + margin : visibleFrame.maxX - width - margin
-            
+
+            // Height preset: bottom-anchored, never below a usable minimum.
+            let fullHeight = visibleFrame.height - (margin * 2)
+            let height = max(fullHeight * settings.panelHeightMode.fraction, 380)
+
             let newFrame = NSRect(
                 x: x,
                 y: visibleFrame.minY + margin,
                 width: width,
-                height: visibleFrame.height - (margin * 2)
+                height: min(height, fullHeight)
             )
-            window.setFrame(newFrame, display: true)
+            window.setFrame(newFrame, display: true, animate: true)
         }
         
         // Visuals

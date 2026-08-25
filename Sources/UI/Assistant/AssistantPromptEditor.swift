@@ -4,7 +4,8 @@ import SwiftUI
 struct AssistantPromptEditor: NSViewRepresentable {
     @Binding var text: String
     @Binding var contentHeight: CGFloat
-    let theme: AppTheme
+
+    @Environment(\.colorScheme) private var colorScheme
 
     let fontSize: CGFloat = 13
     let horizontalInset: CGFloat = 14
@@ -55,9 +56,10 @@ struct AssistantPromptEditor: NSViewRepresentable {
     }
 
     private func update(textView: NSTextView) {
-        textView.font = .systemFont(ofSize: fontSize)
-        textView.textColor = theme == .white ? NSColor.labelColor : NSColor.white.withAlphaComponent(0.92)
-        textView.insertionPointColor = theme == .white ? NSColor.labelColor : NSColor.white
+        let palette = HelpyPalette.forScheme(colorScheme)
+        textView.font = .inter(size: fontSize)
+        textView.textColor = NSColor(palette.ink)
+        textView.insertionPointColor = NSColor(palette.accent)
     }
 
     final class Coordinator: NSObject, NSTextViewDelegate {

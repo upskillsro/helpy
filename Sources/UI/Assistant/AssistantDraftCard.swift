@@ -10,7 +10,7 @@ struct AssistantDraftCard: View {
     @State private var showDatePopover = false
     @State private var showTimePopover = false
     @State private var showPriorityPopover = false
-    @AppStorage("appTheme") private var appTheme: AppTheme = .glass
+    @Environment(\.colorScheme) private var colorScheme
 
     init(action: AssistantActionDraft, onChange: @escaping (AssistantActionDraft) -> Void, onApply: @escaping (AssistantActionDraft) -> Void, onDiscard: @escaping () -> Void) {
         self.action = action
@@ -20,27 +20,11 @@ struct AssistantDraftCard: View {
         _localAction = State(initialValue: action)
     }
 
-    private var isWhiteTheme: Bool { appTheme == .white }
+    private var t: HelpyPalette { .forScheme(colorScheme) }
     private var isEditableAction: Bool { localAction.kind == .create || localAction.kind == .update }
     private var hasDate: Bool { localAction.schedule?.hasDate ?? false }
     private var hasTime: Bool { localAction.schedule?.hasTime ?? false }
     private var currentPriority: Int { localAction.priority ?? 0 }
-    private var cardFillColor: Color {
-        switch appTheme {
-        case .glass:
-            return Color.black.opacity(0.14)
-        case .dark:
-            return Color.black.opacity(0.26)
-        case .white:
-            return Color.black.opacity(0.03)
-        }
-    }
-    private var cardStrokeColor: Color {
-        isWhiteTheme ? Color.black.opacity(0.07) : Color.white.opacity(0.07)
-    }
-    private var metaBackground: Color {
-        isWhiteTheme ? Color.black.opacity(0.04) : Color.white.opacity(0.04)
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -57,14 +41,7 @@ struct AssistantDraftCard: View {
             footerRow
         }
         .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(cardFillColor)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(cardStrokeColor, lineWidth: 1)
-        )
+        .helpyCard(t, fill: t.surface, border: t.line, cornerRadius: HelpyMetrics.rowCornerRadius)
         .onChange(of: action) { _, newAction in
             localAction = newAction
         }
@@ -74,8 +51,8 @@ struct AssistantDraftCard: View {
         VStack(alignment: .leading, spacing: 10) {
             if localAction.kind == .update, let target = localAction.targetReminderTitle, !target.isEmpty {
                 Text(target)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.inter(size: 11))
+                    .foregroundColor(t.muted)
                     .lineLimit(1)
             }
 
@@ -87,10 +64,11 @@ struct AssistantDraftCard: View {
                 }
             ))
             .textFieldStyle(.plain)
-            .font(.system(size: 14))
+            .font(.inter(size: 13, weight: .medium))
+            .foregroundColor(t.ink)
             .padding(.horizontal, 12)
             .padding(.vertical, 9)
-            .background(GlassyBackground(theme: appTheme))
+            .helpyCard(t, fill: t.fieldFill, border: t.fieldBorder, cornerRadius: 10)
 
             HStack(spacing: 8) {
                 dateButton
@@ -117,8 +95,8 @@ struct AssistantDraftCard: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
             .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(metaBackground)
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(t.fieldFill)
             )
         }
     }
@@ -131,7 +109,7 @@ struct AssistantDraftCard: View {
             assistantPopover {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Date")
-                        .font(.headline)
+                        .font(.inter(size: 13, weight: .semibold))
 
                     DatePicker(
                         "",
@@ -153,14 +131,14 @@ struct AssistantDraftCard: View {
                             localAction.schedule = .empty
                             onChange(localAction)
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(HelpySecondaryButtonStyle(palette: t))
 
                         Spacer()
 
                         Button("Done") {
                             showDatePopover = false
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(HelpyPrimaryButtonStyle(palette: t))
                     }
                 }
             }
@@ -179,7 +157,7 @@ struct AssistantDraftCard: View {
             assistantPopover {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Time")
-                        .font(.headline)
+                        .font(.inter(size: 13, weight: .semibold))
 
                     DatePicker(
                         "",
@@ -203,14 +181,14 @@ struct AssistantDraftCard: View {
                             localAction.schedule = existingDate.map { AssistantScheduleDraft(date: $0, time: nil) } ?? .empty
                             onChange(localAction)
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(HelpySecondaryButtonStyle(palette: t))
 
                         Spacer()
 
                         Button("Done") {
                             showTimePopover = false
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(HelpyPrimaryButtonStyle(palette: t))
                     }
                 }
             }
@@ -225,10 +203,9 @@ struct AssistantDraftCard: View {
             assistantPopover {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Priority")
-                        .font(.headline)
+                        .font(.inter(size: 13, weight: .semibold))
 
                     ReminderPriorityChips(
-                        theme: appTheme,
                         selectedPriority: Binding(
                             get: { currentPriority },
                             set: { newValue in
@@ -243,7 +220,7 @@ struct AssistantDraftCard: View {
                         Button("Done") {
                             showPriorityPopover = false
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(HelpyPrimaryButtonStyle(palette: t))
                     }
                 }
             }
@@ -253,7 +230,8 @@ struct AssistantDraftCard: View {
     private var reorderContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(localAction.targetReminderTitle ?? localAction.displayTitle)
-                .font(.system(size: 14, weight: .medium))
+                .font(.inter(size: 13, weight: .medium))
+                .foregroundColor(t.ink)
 
             Stepper(value: Binding(
                 get: { max(localAction.newPosition ?? 1, 1) },
@@ -263,7 +241,8 @@ struct AssistantDraftCard: View {
                 }
             ), in: 1...999) {
                 Text("Move to position \(localAction.newPosition ?? 1)")
-                    .font(.caption)
+                    .font(.inter(size: 11))
+                    .foregroundColor(t.muted)
             }
         }
     }
@@ -271,7 +250,8 @@ struct AssistantDraftCard: View {
     private var completionContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(localAction.targetReminderTitle ?? localAction.displayTitle)
-                .font(.system(size: 14, weight: .medium))
+                .font(.inter(size: 13, weight: .medium))
+                .foregroundColor(t.ink)
 
             Toggle(isOn: Binding(
                 get: { localAction.completed ?? true },
@@ -281,7 +261,8 @@ struct AssistantDraftCard: View {
                 }
             )) {
                 Text((localAction.completed ?? true) ? "Mark complete" : "Mark incomplete")
-                    .font(.caption)
+                    .font(.inter(size: 11))
+                    .foregroundColor(t.muted)
             }
             .toggleStyle(.switch)
         }
@@ -290,26 +271,25 @@ struct AssistantDraftCard: View {
     private var staticSummaryContent: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(localAction.targetReminderTitle ?? localAction.displayTitle)
-                .font(.system(size: 14, weight: .medium))
+                .font(.inter(size: 13, weight: .medium))
+                .foregroundColor(t.ink)
             Text(localAction.summaryText)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.inter(size: 11))
+                .foregroundColor(t.muted)
         }
     }
 
     private var footerRow: some View {
         HStack {
             Button("Discard", action: onDiscard)
-                .buttonStyle(.borderless)
-                .font(.caption)
+                .buttonStyle(HelpyQuietButtonStyle(palette: t))
 
             Spacer()
 
             Button(buttonTitle(for: localAction.kind)) {
                 onApply(localAction)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.small)
+            .buttonStyle(HelpyPrimaryButtonStyle(palette: t))
         }
     }
 
@@ -317,11 +297,11 @@ struct AssistantDraftCard: View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(isWhiteTheme ? .primary : .white.opacity(0.85))
+                .foregroundColor(t.controlIcon)
                 .frame(width: 28, height: 28)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(isWhiteTheme ? Color.black.opacity(0.05) : Color.white.opacity(0.06))
+                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        .fill(t.fieldFill)
                 )
         }
         .buttonStyle(.plain)
@@ -338,14 +318,11 @@ struct AssistantDraftCard: View {
             Image(systemName: systemImage)
             Text(text)
         }
-        .font(.caption)
-        .foregroundColor(tint ?? (isWhiteTheme ? .primary : .white.opacity(0.86)))
+        .font(.inter(size: 10.5, weight: .medium))
+        .foregroundColor(tint ?? t.chipText)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(
-            Capsule()
-                .fill((tint ?? (isWhiteTheme ? Color.black.opacity(0.05) : Color.white.opacity(0.08))).opacity(tint == nil ? 1 : 0.16))
-        )
+        .background(Capsule().fill(tint.map { $0.opacity(0.16) } ?? t.chipFill))
     }
 
     private func resolvedPopoverTimeDate() -> Date {
@@ -388,10 +365,10 @@ struct AssistantDraftCard: View {
 
     private func priorityColor(_ priority: Int) -> Color {
         switch priority {
-        case 1...4: return .red
-        case 5: return .orange
-        case 6...9: return .blue
-        default: return .secondary
+        case 1...4: return t.hot
+        case 5: return t.warm
+        case 6...9: return t.accent
+        default: return t.muted
         }
     }
 

@@ -2,19 +2,19 @@ import SwiftUI
 
 struct ReminderDateEditorField: View {
     let title: String
-    let theme: AppTheme
     @Binding var date: Date?
 
-    private var isWhiteTheme: Bool { theme == .white }
+    @Environment(\.colorScheme) private var colorScheme
+    private var t: HelpyPalette { .forScheme(colorScheme) }
 
     var body: some View {
         HStack(spacing: 10) {
             Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.inter(size: 11, weight: .medium))
+                .foregroundColor(t.muted)
                 .frame(width: 44, alignment: .leading)
 
-            if let _ = date {
+            if date != nil {
                 DatePicker(
                     "",
                     selection: Binding(
@@ -30,22 +30,20 @@ struct ReminderDateEditorField: View {
 
                 Spacer(minLength: 0)
 
-                Button("Clear") {
-                    date = nil
-                }
-                .buttonStyle(.plain)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                Button("Clear") { date = nil }
+                    .buttonStyle(.plain)
+                    .font(.inter(size: 11, weight: .medium))
+                    .foregroundColor(t.muted)
             } else {
                 Button {
                     date = Calendar.current.startOfDay(for: Date())
                 } label: {
                     Text("No date")
-                        .font(.caption)
-                        .foregroundColor(isWhiteTheme ? .primary : .white.opacity(0.86))
+                        .font(.inter(size: 11, weight: .medium))
+                        .foregroundColor(t.muted)
                         .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(GlassyBackground(theme: theme))
+                        .padding(.vertical, 7)
+                        .helpyCard(t, fill: t.fieldFill, border: t.fieldBorder, cornerRadius: 9)
                 }
                 .buttonStyle(.plain)
 
@@ -57,28 +55,27 @@ struct ReminderDateEditorField: View {
 
 struct ReminderTimeEditorField: View {
     let title: String
-    let theme: AppTheme
     let associatedDate: Date?
     @Binding var time: DateComponents?
 
+    @Environment(\.colorScheme) private var colorScheme
+    private var t: HelpyPalette { .forScheme(colorScheme) }
     private var isEnabled: Bool { associatedDate != nil }
-    private var isWhiteTheme: Bool { theme == .white }
 
     var body: some View {
         HStack(spacing: 10) {
             Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.inter(size: 11, weight: .medium))
+                .foregroundColor(t.muted)
                 .frame(width: 44, alignment: .leading)
 
-            if isEnabled, let _ = time {
+            if isEnabled, time != nil {
                 DatePicker(
                     "",
                     selection: Binding(
                         get: { displayDate },
                         set: { newValue in
-                            let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
-                            time = components
+                            time = Calendar.current.dateComponents([.hour, .minute], from: newValue)
                         }
                     ),
                     displayedComponents: [.hourAndMinute]
@@ -90,23 +87,21 @@ struct ReminderTimeEditorField: View {
 
                 Spacer(minLength: 0)
 
-                Button("Clear") {
-                    time = nil
-                }
-                .buttonStyle(.plain)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                Button("Clear") { time = nil }
+                    .buttonStyle(.plain)
+                    .font(.inter(size: 11, weight: .medium))
+                    .foregroundColor(t.muted)
             } else {
                 Button {
                     guard isEnabled else { return }
                     time = Calendar.current.dateComponents([.hour, .minute], from: Date())
                 } label: {
                     Text(isEnabled ? "No time" : "Date first")
-                        .font(.caption)
-                        .foregroundColor(isWhiteTheme ? .primary : .white.opacity(0.86))
+                        .font(.inter(size: 11, weight: .medium))
+                        .foregroundColor(t.muted)
                         .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(GlassyBackground(theme: theme))
+                        .padding(.vertical, 7)
+                        .helpyCard(t, fill: t.fieldFill, border: t.fieldBorder, cornerRadius: 9)
                         .opacity(isEnabled ? 1 : 0.6)
                 }
                 .buttonStyle(.plain)
@@ -127,15 +122,17 @@ struct ReminderTimeEditorField: View {
 }
 
 struct ReminderPriorityChips: View {
-    let theme: AppTheme
     @Binding var selectedPriority: Int
+
+    @Environment(\.colorScheme) private var colorScheme
+    private var t: HelpyPalette { .forScheme(colorScheme) }
 
     var body: some View {
         HStack(spacing: 8) {
-            priorityChip(title: "None", priority: 0, foreground: theme == .white ? .primary : .white.opacity(0.88), background: theme == .white ? Color.black.opacity(0.05) : Color.white.opacity(0.08))
-            priorityChip(title: "Low", priority: 9, foreground: .blue, background: .blue.opacity(0.16))
-            priorityChip(title: "Medium", priority: 5, foreground: .orange, background: .orange.opacity(0.18))
-            priorityChip(title: "High", priority: 1, foreground: .red, background: .red.opacity(0.18))
+            priorityChip(title: "None", priority: 0, foreground: t.chipText, background: t.chipFill)
+            priorityChip(title: "Low", priority: 9, foreground: t.accent, background: t.accent.opacity(0.14))
+            priorityChip(title: "Medium", priority: 5, foreground: t.warm, background: t.warm.opacity(0.16))
+            priorityChip(title: "High", priority: 1, foreground: t.hot, background: t.chipHotFill)
         }
     }
 
@@ -145,20 +142,16 @@ struct ReminderPriorityChips: View {
             selectedPriority = priority
         } label: {
             Text(title)
-                .font(.caption)
-                .fontWeight(isSelected ? .semibold : .medium)
+                .font(.inter(size: 11, weight: isSelected ? .semibold : .medium))
                 .foregroundColor(foreground.opacity(isSelected ? 1 : 0.78))
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(
-                    Capsule()
-                        .fill(isSelected ? background.opacity(1) : background.opacity(0.55))
-                )
+                .background(Capsule().fill(background.opacity(isSelected ? 1 : 0.55)))
                 .overlay(
-                    Capsule()
-                        .stroke(isSelected ? foreground.opacity(0.8) : Color.clear, lineWidth: 1)
+                    Capsule().stroke(isSelected ? foreground.opacity(0.75) : Color.clear, lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)
+        .animation(.easeOut(duration: 0.15), value: isSelected)
     }
 }

@@ -15,30 +15,33 @@ extension View {
 }
 
 struct ScrollViewIntrospector: NSViewRepresentable {
+    final class Coordinator {
+        var didConfigure = false
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
     func makeNSView(context: Context) -> NSView {
         let view = NSView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }
-    
+
     func updateNSView(_ nsView: NSView, context: Context) {
-        // Optimization: Only run if not already configured
-        // Check if we've found the scrollView and set its style already
-        if let scrollView = nsView.enclosingScrollView, scrollView.scrollerStyle == .overlay {
-            return
-        }
-        
-        // Fallback or Initial Setup
+        guard !context.coordinator.didConfigure else { return }
+
         DispatchQueue.main.async {
-            if let scrollView = nsView.enclosingScrollView {
-                // Apply ONLY if state doesn't match to avoid thrashing
-                if scrollView.scrollerStyle != .overlay {
-                    scrollView.scrollerStyle = .overlay
-                    scrollView.hasVerticalScroller = false
-                    scrollView.hasHorizontalScroller = false
-                    scrollView.drawsBackground = false
-                }
-            }
+            guard let scrollView = nsView.enclosingScrollView else { return }
+            context.coordinator.didConfigure = true
+
+            scrollView.scrollerStyle = .overlay
+            scrollView.hasVerticalScroller = false
+            scrollView.hasHorizontalScroller = false
+            scrollView.drawsBackground = false
+
+            // Deliberately does NOT touch contentInsets: SwiftUI hoists the
+            // content's own padding into them, and zeroing them here silently
+            // deletes that padding.
         }
     }
 }

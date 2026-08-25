@@ -9,93 +9,102 @@ struct MenuBarPanelView: View {
     @ObservedObject var subtaskStore: SubtaskStore
     let onClose: () -> Void
 
-    @AppStorage("appTheme") private var appTheme: AppTheme = .glass
     @Environment(\.colorScheme) private var colorScheme
     @State private var showSubtasks = false
     @State private var newSubtaskTitle = ""
     @FocusState private var isSubtaskInputFocused: Bool
+
+    private var t: HelpyPalette { .forScheme(colorScheme) }
 
     private var activeTask: EKReminder? {
         guard let id = timerService.activeReminderId else { return nil }
         return remindersService.reminders.first { $0.calendarItemIdentifier == id }
     }
 
-    private var dividerColor: Color {
-        colorScheme == .dark ? Color.white.opacity(0.12) : Color.black.opacity(0.08)
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             headerRow
-            Divider().background(dividerColor).padding(.horizontal, 12)
             controlsRow
 
             if showSubtasks, let id = timerService.activeReminderId {
-                Divider().background(dividerColor).padding(.horizontal, 12)
+                Rectangle().fill(t.line).frame(height: 1).padding(.horizontal, 14)
                 subtasksList(for: id)
             }
         }
         .frame(width: 300)
         .fixedSize(horizontal: false, vertical: true)
-        .modifier(MenuBarGlassModifier(appTheme: appTheme))
-        .preferredColorScheme(appTheme == .white ? .light : appTheme == .glass ? nil : .dark)
+        .background(t.canvas)
+        .clipShape(RoundedRectangle(cornerRadius: HelpyMetrics.panelCornerRadius, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: HelpyMetrics.panelCornerRadius, style: .continuous)
+                .strokeBorder(t.panelBorder, lineWidth: 1)
+                .allowsHitTesting(false)
+        }
     }
 
-    // MARK: - Header: task name + timer
+    // MARK: - Header: brand + task name + timer
 
+    /// Full-bleed gradient that sweeps into rounded BOTTOM corners; the panel's
+    /// own clip rounds the top two. Same shape language as the sidebar header.
     private var headerRow: some View {
         HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
+            HelpyMark(size: 26)
+
+            VStack(alignment: .leading, spacing: 1) {
                 if timerService.isOnBreak {
                     Text("Break")
-                        .font(.headline)
-                        .foregroundStyle(.primary)
+                        .font(.inter(size: 14, weight: .semibold))
+                        .foregroundStyle(t.onAccent)
                 } else if let task = activeTask {
                     Text(task.title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.primary)
+                        .font(.inter(size: 13, weight: .semibold))
+                        .foregroundStyle(t.onAccent)
                         .lineLimit(2)
                 } else {
                     Text("No Active Task")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(.inter(size: 13, weight: .medium))
+                        .foregroundStyle(t.onAccent.opacity(0.75))
                 }
             }
-            Spacer()
-            PillTimerDisplay(ticker: timerService.ticker, service: timerService)
+
+            Spacer(minLength: 8)
+
+            MenuBarTimerText(ticker: timerService.ticker, service: timerService, palette: t)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.top, 14)
+        .padding(.bottom, 15)
+        .background(HelpyHeaderBackground(palette: t))
     }
 
     // MARK: - Controls row
 
     private var controlsRow: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 3) {
             // Exit Focus
-            menuBarButton(icon: "xmark.circle.fill", color: .red, help: "Exit Focus") {
+            PillControlButton(icon: "xmark", help: "Exit Focus", tone: .danger, palette: t) {
                 timerService.isFocusMode = false
                 onClose()
             }
 
             // Pause / Resume
-            menuBarButton(
-                icon: timerService.state == .running ? "pause.circle.fill" : "play.circle.fill",
-                color: .yellow,
-                help: timerService.state == .running ? "Pause" : "Resume"
+            PillControlButton(
+                icon: timerService.state == .running ? "pause.fill" : "play.fill",
+                help: timerService.state == .running ? "Pause" : "Resume",
+                palette: t
             ) {
                 timerService.state == .running ? timerService.pauseTimer() : timerService.resumeTimer()
             }
 
             // Complete / End Break
             if let task = activeTask {
-                menuBarButton(icon: "checkmark.circle.fill", color: .green, help: "Complete Task") {
+                PillControlButton(icon: "checkmark", help: "Complete Task", tone: .go, palette: t) {
                     remindersService.toggleComplete(task)
                     timerService.stopTimer()
                     onClose()
                 }
             } else if timerService.isOnBreak {
-                menuBarButton(icon: "checkmark.circle.fill", color: .green, help: "End Break") {
+                PillControlButton(icon: "checkmark", help: "End Break", tone: .go, palette: t) {
                     timerService.endBreak()
                     timerService.isFocusMode = false
                     onClose()
@@ -104,21 +113,22 @@ struct MenuBarPanelView: View {
 
             // Break / Skip
             if !timerService.isOnBreak {
-                menuBarButton(icon: "cup.and.saucer.fill", color: .secondary, help: "Take a Break") {
-                    timerService.startBreak(duration: 600)
+                PillControlButton(icon: "cup.and.saucer.fill", help: "Take a Break", palette: t) {
+                    timerService.startBreak() // uses the Break Duration setting
                 }
             } else {
-                menuBarButton(icon: "forward.end.fill", color: .secondary, help: "Skip Break") {
+                PillControlButton(icon: "forward.end.fill", help: "Skip Break", palette: t) {
                     timerService.endBreak()
                 }
             }
 
             // Subtasks toggle
             if timerService.activeReminderId != nil, !timerService.isOnBreak {
-                menuBarButton(
+                PillControlButton(
                     icon: showSubtasks ? "checklist.checked" : "checklist",
-                    color: showSubtasks ? .primary : .secondary,
-                    help: showSubtasks ? "Hide Subtasks" : "Show Subtasks"
+                    help: showSubtasks ? "Hide Subtasks" : "Show Subtasks",
+                    isActive: showSubtasks,
+                    palette: t
                 ) {
                     withAnimation(.easeInOut(duration: 0.2)) { showSubtasks.toggle() }
                 }
@@ -135,126 +145,98 @@ struct MenuBarPanelView: View {
     @ViewBuilder
     private func subtasksList(for taskId: String) -> some View {
         let items = subtaskStore.subtasks(for: taskId)
-        VStack(alignment: .leading, spacing: 6) {
-            if !items.isEmpty {
-                ForEach(items) { item in
-                    HStack(spacing: 8) {
-                        Button {
-                            subtaskStore.toggleSubtask(id: item.id, for: taskId)
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .strokeBorder(item.isCompleted ? Color.green : Color.secondary.opacity(0.5), lineWidth: 1.5)
-                                    .frame(width: 14, height: 14)
-                                if item.isCompleted {
-                                    Circle().fill(Color.green).frame(width: 14, height: 14)
-                                    Image(systemName: "checkmark")
-                                        .font(.system(size: 7, weight: .bold))
-                                        .foregroundColor(.black.opacity(0.7))
-                                }
+        VStack(alignment: .leading, spacing: 7) {
+            ForEach(items) { item in
+                HStack(spacing: 9) {
+                    Button {
+                        subtaskStore.toggleSubtask(id: item.id, for: taskId)
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .strokeBorder(item.isCompleted ? t.accent : t.checkBorder, lineWidth: 1.5)
+                                .background(Circle().fill(item.isCompleted ? t.accent : .clear))
+                                .frame(width: 14, height: 14)
+                            if item.isCompleted {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 8, weight: .bold))
+                                    .foregroundStyle(t.onAccent)
                             }
                         }
-                        .buttonStyle(.plain)
-
-                        Text(item.title)
-                            .font(.system(size: 12))
-                            .foregroundStyle(item.isCompleted ? Color.secondary : Color.primary)
-                            .strikethrough(item.isCompleted)
-                            .lineLimit(1)
-
-                        Spacer()
-
-                        Button {
-                            subtaskStore.deleteSubtask(id: item.id, for: taskId)
-                        } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 9))
-                                .foregroundStyle(Color.secondary.opacity(0.5))
-                        }
-                        .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
+                    .animation(.easeOut(duration: 0.16), value: item.isCompleted)
+
+                    Text(item.title)
+                        .font(.inter(size: 12))
+                        .foregroundStyle(item.isCompleted ? t.muted : t.ink2)
+                        .strikethrough(item.isCompleted)
+                        .lineLimit(1)
+
+                    Spacer()
+
+                    Button {
+                        subtaskStore.deleteSubtask(id: item.id, for: taskId)
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(t.muted2)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
 
             // Add input
             HStack(spacing: 6) {
-                Text("+")
-                    .font(.system(size: 12))
-                    .foregroundStyle(Color.secondary.opacity(0.5))
+                Image(systemName: "plus")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(t.muted2)
                 TextField("Add subtask…", text: $newSubtaskTitle)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 12))
+                    .font(.inter(size: 12))
+                    .foregroundStyle(t.ink)
                     .focused($isSubtaskInputFocused)
                     .onSubmit {
-                        let t = newSubtaskTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-                        guard !t.isEmpty else { return }
-                        subtaskStore.addSubtask(title: t, for: taskId)
+                        let title = newSubtaskTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !title.isEmpty else { return }
+                        subtaskStore.addSubtask(title: title, for: taskId)
                         newSubtaskTitle = ""
                         isSubtaskInputFocused = true
                     }
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(RoundedRectangle(cornerRadius: 8).fill(Color.primary.opacity(0.06)))
+            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(t.fieldFill))
+            .overlay {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(t.fieldBorder, lineWidth: 1)
+                    .allowsHitTesting(false)
+            }
         }
         .padding(.horizontal, 16)
         .padding(.top, 10)
-        .padding(.bottom, 12)
-    }
-
-    // MARK: - Helpers
-
-    private func menuBarButton(icon: String, color: Color, help: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 22))
-                .foregroundStyle(color)
-                .frame(width: 36, height: 36)
-        }
-        .buttonStyle(.plain)
-        .help(help)
+        .padding(.bottom, 13)
     }
 }
 
-// MARK: - Glass modifier for the menu bar panel
+/// The dropdown's clock has to observe the TICKER, not TimerService.
+/// TimeTicker is deliberately decoupled so a per-second tick doesn't invalidate
+/// every TimerService observer — which also means a view that only observes
+/// TimerService never redraws on a tick. Reading `formattedTime()` from a view
+/// bound to `timerService` alone is why this label sat frozen at the value it
+/// happened to have when the panel opened.
+private struct MenuBarTimerText: View {
+    @ObservedObject var ticker: TimeTicker
+    @ObservedObject var service: TimerService
+    let palette: HelpyPalette
 
-private struct MenuBarGlassModifier: ViewModifier {
-    let appTheme: AppTheme
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if appTheme == .glass {
-            if #available(macOS 26.0, *) {
-                content.glassEffect(
-                    .regular.interactive(false),
-                    in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-                )
-            } else {
-                content.background(
-                    VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                )
-            }
-        } else if appTheme == .white {
-            content
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color.white.opacity(0.97))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.black.opacity(0.1), lineWidth: 1)
-                )
-        } else {
-            content
-                .background(
-                    VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                )
-        }
+    var body: some View {
+        Text(service.formattedTime())
+            .font(.inter(size: 17, weight: .bold))
+            .monospacedDigit()
+            .foregroundStyle(palette.onAccent)
+            .contentTransition(.numericText(countsDown: !service.isStopwatch && !service.isOvertime))
+            .animation(.snappy, value: service.formattedTime())
+            .fixedSize()
     }
 }

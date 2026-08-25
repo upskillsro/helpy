@@ -21,6 +21,16 @@ class SubtaskStore: ObservableObject {
         store[taskId] ?? []
     }
 
+    /// (completed, total) — (0, 0) when the task has no subtasks.
+    func progress(for taskId: String) -> (done: Int, total: Int) {
+        let items = store[taskId] ?? []
+        return (items.filter(\.isCompleted).count, items.count)
+    }
+
+    func hasSubtasks(for taskId: String) -> Bool {
+        !(store[taskId]?.isEmpty ?? true)
+    }
+
     func addSubtask(title: String, for taskId: String) {
         var items = store[taskId] ?? []
         items.append(SubtaskItem(title: title))

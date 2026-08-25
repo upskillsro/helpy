@@ -22,9 +22,11 @@ class SettingsStore: ObservableObject {
     @AppStorage("taskAlertVolume") var taskAlertVolume: Double = 0.5
     
     // Appearance
-    @AppStorage("appTheme") var appTheme: AppTheme = .glass
+    // Helpy has one design (see Theme.swift). It follows the system light/dark
+    // appearance, so there is no stored theme or accent preference.
     @AppStorage("pillDisplayMode") var pillDisplayMode: PillDisplayMode = .floatingPill
-    
+    @AppStorage("panelHeightMode") var panelHeightMode: PanelHeightMode = .full
+
     // App lifecycle
     @AppStorage("quitOnClose") var quitOnClose: Bool = true
 
@@ -62,13 +64,29 @@ class SettingsStore: ObservableObject {
     }
 }
 
-enum AppTheme: String, CaseIterable {
-    case glass
-    case dark
-    case white
-}
-
 enum PillDisplayMode: String, CaseIterable {
     case floatingPill
     case menuBarIcon
+}
+
+enum PanelHeightMode: String, CaseIterable {
+    case short
+    case medium
+    case full
+
+    var fraction: CGFloat {
+        switch self {
+        case .short: return 0.42
+        case .medium: return 0.65
+        case .full: return 1.0
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .short: return "Short"
+        case .medium: return "Medium"
+        case .full: return "Full"
+        }
+    }
 }

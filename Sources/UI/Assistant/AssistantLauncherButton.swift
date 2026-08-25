@@ -3,38 +3,28 @@ import SwiftUI
 struct AssistantLauncherButton: View {
     let isOpen: Bool
     let action: () -> Void
-    let theme: AppTheme
 
-    private var backgroundColor: Color {
-        switch theme {
-        case .glass:
-            return isOpen ? Color.white.opacity(0.18) : Color.white.opacity(0.08)
-        case .dark:
-            return isOpen ? Color.white.opacity(0.16) : Color.black.opacity(0.22)
-        case .white:
-            return isOpen ? Color.blue.opacity(0.16) : Color.black.opacity(0.05)
-        }
-    }
-
-    private var foregroundColor: Color {
-        if theme == .white {
-            return isOpen ? Color.blue : Color.black.opacity(0.8)
-        }
-        return .white.opacity(isOpen ? 1.0 : 0.9)
-    }
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var isHovering = false
+    private var t: HelpyPalette { .forScheme(colorScheme) }
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: isOpen ? "xmark.circle.fill" : "sparkles")
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundColor(foregroundColor)
-                .frame(width: 34, height: 34)
+            Image(systemName: isOpen ? "xmark" : "sparkles")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(isOpen ? t.accent : (isHovering ? t.ink : t.muted))
+                .frame(width: 30, height: 30)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(backgroundColor)
+                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        .fill(isOpen ? t.accent.opacity(0.12)
+                                     : (isHovering ? t.controlHoverFill : Color.clear))
                 )
+                .contentShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
         }
         .buttonStyle(.plain)
+        .onHover { hover in
+            withAnimation(.easeOut(duration: 0.14)) { isHovering = hover }
+        }
         .help(isOpen ? "Close Assistant" : "Open Assistant")
     }
 }

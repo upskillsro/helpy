@@ -57,7 +57,7 @@ struct GeneralSettingsView: View {
             }
 
             Section("Assistant") {
-                AssistantSettingsControls(settings: settings, theme: nil)
+                AssistantSettingsControls(settings: settings, isEmbedded: false)
             }
             
             // ALERT SETTINGS
