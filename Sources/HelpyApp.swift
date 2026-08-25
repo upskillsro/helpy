@@ -46,6 +46,9 @@ struct HelpyApp: App {
     @StateObject var timerService = TimerService()
     @StateObject var windowCoordinator = AppWindowCoordinator()
     @StateObject var subtaskStore = SubtaskStore()
+    @StateObject var navigation = AppNavigation()
+    @StateObject var planStore = WeeklyPlanStore()
+    @StateObject var iconStore = ListIconStore()
     @State private var panelPositionObserver: NSObjectProtocol?
     @State private var appearanceObserver: NSObjectProtocol?
     @State private var lastAppliedDarkIconState: Bool?
@@ -63,13 +66,15 @@ struct HelpyApp: App {
 
     var body: some Scene {
         WindowGroup("Helpy") {
-            SideStripView()
+            MainWindowView()
                 .environmentObject(remindersService)
                 .environmentObject(timerService)
                 .environmentObject(estimateStore)
                 .environmentObject(windowCoordinator)
                 .environmentObject(subtaskStore)
-                .frame(minWidth: 300, maxWidth: 350)
+                .environmentObject(navigation)
+                .environmentObject(planStore)
+                .environmentObject(iconStore)
                 .onAppear {
                     // Link Dependencies
                     timerService.estimateStore = estimateStore
@@ -91,14 +96,18 @@ struct HelpyApp: App {
                         applySystemAppearanceIcon()
                     }
                     
-                    // Position Main Window as Sidebar
+                    // Hand the window to the coordinator; it owns the chrome
+                    // for both the normal window and the side strip.
                     DispatchQueue.main.async {
                         if let window = NSApplication.shared.windows.first {
                             window.identifier = mainWindowIdentifier
                             window.delegate = mainWindowCloseDelegate
                             windowCoordinator.mainWindow = window
-                            setupWindowPosition(window)
-                            
+                            windowCoordinator.setMainWindowMode(
+                                navigation.isFocused ? .strip : .normal,
+                                animated: false
+                            )
+
                             // Observe position changes once per lifecycle
                             if panelPositionObserver == nil {
                                 panelPositionObserver = NotificationCenter.default.addObserver(
@@ -106,8 +115,10 @@ struct HelpyApp: App {
                                     object: nil,
                                     queue: .main
                                 ) { _ in
-                                    withAnimation {
-                                        setupWindowPosition(window)
+                                    Task { @MainActor in
+                                        withAnimation {
+                                            windowCoordinator.repinStripIfNeeded()
+                                        }
                                     }
                                 }
                             }
@@ -133,10 +144,12 @@ struct HelpyApp: App {
                     }
                 }
         }
-        .windowStyle(.hiddenTitleBar)
-        .windowResizability(.contentSize)
-        .defaultSize(width: 350, height: 800)
-        
+        // No .windowStyle here on purpose: MainWindowStyle owns the chrome for
+        // both modes, and a scene-level hiddenTitleBar would fight it — and take
+        // the toolbar (the Lists/Planning switcher) with it.
+        .windowResizability(.contentMinSize)
+        .defaultSize(width: 1100, height: 720)
+
         // Floating Pill - Single Instance Window
         Window("Timer", id: "timer-pill") {
             if timerService.isFocusMode &&
@@ -156,39 +169,6 @@ struct HelpyApp: App {
         Settings {
             SettingsView()
         }
-    }
-    
-    func setupWindowPosition(_ window: NSWindow) {
-        let settings = SettingsStore() // Read purely for positioning
-        
-        window.level = .floating // Stay on top
-        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        
-        if let screen = window.screen {
-            let visibleFrame = screen.visibleFrame
-            let width = window.frame.width
-            let margin: CGFloat = 15
-            let x: CGFloat = settings.panelPosition == .left ? visibleFrame.minX + margin : visibleFrame.maxX - width - margin
-
-            // Height preset: bottom-anchored, never below a usable minimum.
-            let fullHeight = visibleFrame.height - (margin * 2)
-            let height = max(fullHeight * settings.panelHeightMode.fraction, 380)
-
-            let newFrame = NSRect(
-                x: x,
-                y: visibleFrame.minY + margin,
-                width: width,
-                height: min(height, fullHeight)
-            )
-            window.setFrame(newFrame, display: true, animate: true)
-        }
-        
-        // Visuals
-        window.backgroundColor = .clear
-        window.isOpaque = false
-        window.titleVisibility = .hidden
-        window.titlebarAppearsTransparent = true
-        window.isMovable = false // Lock position
     }
     
     func applySystemAppearanceIcon() {

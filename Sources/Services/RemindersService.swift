@@ -38,12 +38,127 @@ class RemindersService: ObservableObject {
     
     @Published var recentCompletedReminders: [EKReminder] = []
 
+    // MARK: - All lists (grid + board)
+
+    /// Every incomplete task, grouped by list identifier. The grid peeks into it
+    /// and the board reads one list out of it.
+    @Published var remindersByList: [String: [EKReminder]] = [:]
+
+    private var allListsFetchToken = UUID()
+
+    /// Flips to true the first time the grid or a board asks for all lists, and
+    /// stays true for the launch. While it is set, every `fetchReminders()` also
+    /// repopulates `remindersByList`, so no view has to remember to refresh —
+    /// completing or dragging a task can never leave a stale board behind. The
+    /// strip-only path (before the window is ever opened) stays exactly as cheap
+    /// as it was.
+    private var tracksAllLists = false
+
     func fetchLists() {
         let calendars = store.calendars(for: .reminder)
         self.lists = calendars
     }
+
+    func reminders(in listId: String) -> [EKReminder] {
+        remindersByList[listId] ?? []
+    }
+
+    /// One predicate across every calendar, grouped locally. Cheaper and far
+    /// simpler than one fetch per list with a dispatch group, and it cannot
+    /// half-complete.
+    func fetchAllLists() {
+        tracksAllLists = true
+        fetchLists()
+
+        let token = UUID()
+        allListsFetchToken = token
+
+        let predicate = store.predicateForIncompleteReminders(
+            withDueDateStarting: nil, ending: nil, calendars: nil
+        )
+
+        store.fetchReminders(matching: predicate) { [weak self] fetched in
+            guard let self, let fetched else { return }
+
+            DispatchQueue.global(qos: .userInitiated).async {
+                var grouped: [String: [EKReminder]] = [:]
+                for reminder in fetched {
+                    guard let listId = reminder.calendar?.calendarIdentifier else { continue }
+                    grouped[listId, default: []].append(reminder)
+                }
+
+                // Per-list key, the same one the strip already writes, so a task
+                // never sits in a different place depending on which screen is
+                // showing it.
+                var sorted: [String: [EKReminder]] = [:]
+                for (listId, reminders) in grouped {
+                    sorted[listId] = Self.applySavedOrder(to: reminders, key: "sortOrder_\(listId)")
+                }
+
+                Task { @MainActor in
+                    guard token == self.allListsFetchToken else { return }
+                    self.remindersByList = sorted
+                }
+            }
+        }
+    }
+
+    /// Creates a Reminders list in the store's default source.
+    /// Returns nil when no source can hold one, so the caller can hide the
+    /// affordance rather than fail on click.
+    @discardableResult
+    func createList(named title: String) -> EKCalendar? {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let source = defaultReminderSource() else { return nil }
+
+        let calendar = EKCalendar(for: .reminder, eventStore: store)
+        calendar.title = trimmed
+        calendar.source = source
+
+        do {
+            try store.saveCalendar(calendar, commit: true)
+            fetchAllLists()
+            return calendar
+        } catch {
+            AppLogger.reminders.error("Failed to create list: \(String(describing: error), privacy: .public)")
+            return nil
+        }
+    }
+
+    /// True when a new list can actually be created.
+    var canCreateLists: Bool { defaultReminderSource() != nil }
+
+    private func defaultReminderSource() -> EKSource? {
+        store.defaultCalendarForNewReminders()?.source
+            ?? store.sources.first(where: { !$0.calendars(for: .reminder).isEmpty })
+    }
+
+    /// The saved-order comparator, shared by the single-list and all-lists
+    /// fetches so a task never sits in a different place depending on which
+    /// screen is showing it.
+    private static func applySavedOrder(to reminders: [EKReminder], key: String) -> [EKReminder] {
+        let savedOrder = UserDefaults.standard.stringArray(forKey: key) ?? []
+        let idToIndex = Dictionary(uniqueKeysWithValues: savedOrder.enumerated().map { ($0.element, $0.offset) })
+
+        return reminders.sorted { r1, r2 in
+            let i1 = idToIndex[r1.calendarItemIdentifier]
+            let i2 = idToIndex[r2.calendarItemIdentifier]
+            if let i1, let i2 { return i1 < i2 }
+            if i1 != nil || i2 != nil {
+                let a = i1 ?? Int.max
+                let b = i2 ?? Int.max
+                if a != b { return a < b }
+            }
+            return (r1.dueDateComponents?.date ?? Date.distantFuture)
+                < (r2.dueDateComponents?.date ?? Date.distantFuture)
+        }
+    }
     
     func fetchReminders() {
+        // Keep the board and the grid honest: they were populated once, so they
+        // refresh with everything else rather than going stale behind a mutation.
+        if tracksAllLists { fetchAllLists() }
+
         let fetchToken = UUID()
         latestFetchToken = fetchToken
         

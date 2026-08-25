@@ -3,6 +3,13 @@ import EventKit
 import AppKit
 
 struct SideStripView: View {
+    /// Set when the strip is focus mode for one list. The strip then shows only
+    /// that list's Today bucket — the tier below the board, not a second copy
+    /// of it.
+    var focusedListId: String? = nil
+    /// Called by the back chevron; restores the normal window.
+    var onExitFocus: (() -> Void)? = nil
+
     @EnvironmentObject var remindersService: RemindersService
     @EnvironmentObject var timerService: TimerService
     @EnvironmentObject var estimateStore: EstimateStore
@@ -29,7 +36,20 @@ struct SideStripView: View {
     private let completionAnimation = Animation.interactiveSpring(response: 0.22, dampingFraction: 0.8, blendDuration: 0.1)
 
     private var t: HelpyPalette { .forScheme(colorScheme) }
-    
+
+    /// What the strip actually lists. In focus mode that is Today only; the
+    /// rest of the list stays on the board where it belongs.
+    var visibleReminders: [EKReminder] {
+        guard focusedListId != nil else { return remindersService.reminders }
+        let week = HelpyWeek()
+        return remindersService.reminders.filter { week.bucket(for: $0) == .today }
+    }
+
+    private var focusedList: EKCalendar? {
+        guard let focusedListId else { return nil }
+        return remindersService.lists.first { $0.calendarIdentifier == focusedListId }
+    }
+
     var body: some View {
         GeometryReader { proxy in
             ZStack {
@@ -247,49 +267,7 @@ struct SideStripView: View {
             HStack(spacing: 10) {
                 HelpyMark(size: 24)
 
-                // List Selection Menu
-                Menu {
-                    // Option: Today
-                    Button(action: {
-                        remindersService.activeListId = nil
-                    }) {
-                        HStack {
-                            if remindersService.activeListId == nil { Image(systemName: "checkmark") }
-                            Text("Today")
-                        }
-                    }
-
-                    Divider()
-
-                    // Option: Specific Lists
-                    ForEach(remindersService.lists, id: \.calendarIdentifier) { list in
-                        Button(action: {
-                            remindersService.activeListId = list.calendarIdentifier
-                        }) {
-                            HStack {
-                                if remindersService.activeListId == list.calendarIdentifier { Image(systemName: "checkmark") }
-                                Text(list.title)
-                                Image(systemName: "circle.fill")
-                                    .foregroundColor(Color(list.cgColor))
-                            }
-                        }
-                    }
-                } label: {
-                    HStack(spacing: 5) {
-                        Text(remindersService.activeListId == nil ? "Today" : (remindersService.lists.first(where: { $0.calendarIdentifier == remindersService.activeListId })?.title ?? "List"))
-                            .font(.inter(size: 19, weight: .bold))
-                            .foregroundStyle(t.onAccent)
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 9, weight: .bold))
-                            .foregroundStyle(t.onAccent.opacity(0.7))
-                    }
-                }
-                .menuStyle(.borderlessButton)
-                .menuIndicator(.hidden)
-                .fixedSize()
-                .onChange(of: remindersService.activeListId) { _, _ in
-                    remindersService.fetchReminders()
-                }
+                headerTitleControl
 
                 Spacer()
 
@@ -312,12 +290,12 @@ struct SideStripView: View {
             }
 
             // Stats line
-            let activeCount = remindersService.reminders.count
+            let activeCount = visibleReminders.count
             let completedCount = remindersService.recentCompletedReminders.count
             let totalCount = activeCount + completedCount
             let progress = totalCount > 0 ? Double(completedCount) / Double(totalCount) : 0.0
 
-            let totalSeconds = remindersService.reminders.reduce(0.0) { result, reminder in
+            let totalSeconds = visibleReminders.reduce(0.0) { result, reminder in
                 result + (estimateStore.getMetadata(for: reminder.calendarItemIdentifier)?.estimatedDuration ?? 0)
             }
             let hours = Int(totalSeconds) / 3600
@@ -364,6 +342,96 @@ struct SideStripView: View {
         )
     }
     
+    /// In focus mode the strip is scoped by where you came from, so the title is
+    /// the list you focused plus a way back to its board. Outside focus mode it
+    /// keeps the list picker.
+    @ViewBuilder
+    var headerTitleControl: some View {
+        if let focusedListId {
+            HStack(spacing: 8) {
+                Button {
+                    onExitFocus?()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(t.onAccent)
+                        .frame(width: 24, height: 24)
+                        .background(Circle().fill(Color.white.opacity(0.16)))
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .help("Back to the board")
+
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(focusedList?.title ?? "List")
+                        .font(.inter(size: 12, weight: .semibold))
+                        .foregroundStyle(t.onAccent.opacity(0.85))
+                        .lineLimit(1)
+                    Text("Today")
+                        .font(.inter(size: 19, weight: .bold))
+                        .foregroundStyle(t.onAccent)
+                }
+            }
+            .onAppear { scopeServiceToFocusedList(focusedListId) }
+            .onChange(of: focusedListId) { _, newValue in
+                scopeServiceToFocusedList(newValue)
+            }
+        } else {
+            Menu {
+                Button {
+                    remindersService.activeListId = nil
+                } label: {
+                    HStack {
+                        if remindersService.activeListId == nil { Image(systemName: "checkmark") }
+                        Text("Today")
+                    }
+                }
+
+                Divider()
+
+                ForEach(remindersService.lists, id: \.calendarIdentifier) { list in
+                    Button {
+                        remindersService.activeListId = list.calendarIdentifier
+                    } label: {
+                        HStack {
+                            if remindersService.activeListId == list.calendarIdentifier {
+                                Image(systemName: "checkmark")
+                            }
+                            Text(list.title)
+                            Image(systemName: "circle.fill")
+                                .foregroundColor(Color(list.cgColor))
+                        }
+                    }
+                }
+            } label: {
+                HStack(spacing: 5) {
+                    Text(remindersService.activeListId == nil
+                         ? "Today"
+                         : (remindersService.lists.first(where: { $0.calendarIdentifier == remindersService.activeListId })?.title ?? "List"))
+                        .font(.inter(size: 19, weight: .bold))
+                        .foregroundStyle(t.onAccent)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(t.onAccent.opacity(0.7))
+                }
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .onChange(of: remindersService.activeListId) { _, _ in
+                remindersService.fetchReminders()
+            }
+        }
+    }
+
+    /// Point the service at the focused list so the strip, the timer and the
+    /// pill all read the same set of tasks.
+    private func scopeServiceToFocusedList(_ listId: String?) {
+        guard let listId, remindersService.activeListId != listId else { return }
+        remindersService.activeListId = listId
+        remindersService.fetchReminders()
+    }
+
     var accessDeniedView: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -639,7 +707,7 @@ struct SideStripView: View {
     }
     
     var activeListSection: some View {
-        ForEach(remindersService.reminders) { reminder in
+        ForEach(visibleReminders) { reminder in
             if reminder.calendarItemIdentifier != timerService.activeReminderId {
                 ReminderRowView(
                     reminder: reminder,
@@ -663,7 +731,7 @@ struct SideStripView: View {
                 ))
             }
         }
-        .animation(.default, value: remindersService.reminders)
+        .animation(.default, value: visibleReminders)
     }
     
     var completedListSection: some View {
@@ -752,8 +820,10 @@ struct SideStripView: View {
                 Button(action: {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                         if !timerService.isFocusMode && timerService.activeReminderId == nil {
-                             // Auto-start first task if available
-                             if let firstTask = remindersService.reminders.first {
+                             // Auto-start the first visible task — in focus mode
+                             // that is the first thing due today, not the first
+                             // thing in the whole list.
+                             if let firstTask = visibleReminders.first {
                                  let metadata = estimateStore.getMetadata(for: firstTask.calendarItemIdentifier)
                                  let duration = metadata?.estimatedDuration ?? 0 // Default to 0 (stopwatch) if no estimate
                                  timerService.startTimer(reminderId: firstTask.calendarItemIdentifier, duration: duration)
@@ -763,9 +833,9 @@ struct SideStripView: View {
                     }
                 }) {
                     HStack(spacing: 8) {
-                        Image(systemName: timerService.isFocusMode ? "list.bullet" : "viewfinder")
+                        Image(systemName: timerService.isFocusMode ? "list.bullet" : "play.fill")
                             .font(.system(size: 13, weight: .semibold))
-                        Text(timerService.isFocusMode ? "Exit Focus" : "Focus Mode")
+                        Text(timerService.isFocusMode ? "Exit Timer" : "Start Timer")
                             .font(.inter(size: 14, weight: .semibold))
                     }
                     .foregroundStyle(t.onAccent)

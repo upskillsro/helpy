@@ -15,6 +15,102 @@ private class KeyableHostingView<Content: View>: NSHostingView<Content> {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }
 
+/// The two shapes the app's one window takes.
+///
+/// `.normal` is the app's home: resizable, standard title bar, Lists and
+/// Planning. `.strip` is the 350pt edge-pinned column that focus mode uses.
+enum MainWindowMode {
+    case normal
+    case strip
+}
+
+/// Everything about the main window's chrome, in one place.
+///
+/// Both modes are applied here rather than split across `HelpyApp` and the
+/// views, for the same reason `PillWindowStyle` exists: two places setting half
+/// a window's style is how a window ends up in a state neither of them intended.
+///
+/// Both masks keep `.titled`. `NSWindow.canBecomeKey` is read-only and returns
+/// false for a `.borderless` window, so a borderless main window would drop
+/// every keystroke aimed at the quick-add field.
+enum MainWindowStyle {
+    static let normalMinSize = NSSize(width: 900, height: 620)
+    static let stripWidth: CGFloat = 350
+
+    static func apply(_ mode: MainWindowMode, to window: NSWindow, settings: SettingsStore = SettingsStore()) {
+        switch mode {
+        case .normal:
+            window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+            window.titleVisibility = .visible
+            window.titlebarAppearsTransparent = false
+            window.isOpaque = true
+            window.backgroundColor = .windowBackgroundColor
+            window.level = .normal
+            window.collectionBehavior = [.fullScreenPrimary]
+            window.isMovable = true
+            window.isMovableByWindowBackground = false
+            window.minSize = normalMinSize
+            window.standardWindowButton(.closeButton)?.isHidden = false
+            window.standardWindowButton(.miniaturizeButton)?.isHidden = false
+            window.standardWindowButton(.zoomButton)?.isHidden = false
+
+        case .strip:
+            window.styleMask = [.titled, .closable, .fullSizeContentView]
+            window.titleVisibility = .hidden
+            window.titlebarAppearsTransparent = true
+            window.titlebarSeparatorStyle = .none
+            window.isOpaque = false
+            window.backgroundColor = .clear
+            window.level = .floating
+            window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+            window.isMovable = false
+            window.isMovableByWindowBackground = false
+            window.minSize = NSSize(width: stripWidth, height: 380)
+            window.standardWindowButton(.closeButton)?.isHidden = true
+            window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+            window.standardWindowButton(.zoomButton)?.isHidden = true
+            pinToEdge(window, settings: settings)
+        }
+    }
+
+    /// The strip's frame: bottom-anchored on the chosen side, inset by a margin.
+    static func pinToEdge(_ window: NSWindow, settings: SettingsStore = SettingsStore()) {
+        guard let screen = window.screen ?? NSScreen.main else { return }
+        let visible = screen.visibleFrame
+        let margin: CGFloat = 15
+        let fullHeight = visible.height - (margin * 2)
+        let height = min(max(fullHeight * settings.panelHeightMode.fraction, 380), fullHeight)
+        let x = settings.panelPosition == .left
+            ? visible.minX + margin
+            : visible.maxX - stripWidth - margin
+
+        window.setFrame(
+            NSRect(x: x, y: visible.minY + margin, width: stripWidth, height: height),
+            display: true,
+            animate: false
+        )
+    }
+
+    /// Centres a normal window at a comfortable default the first time it is
+    /// shown; a window the user has already sized keeps its frame.
+    static func restoreNormalFrame(_ window: NSWindow) {
+        guard let screen = window.screen ?? NSScreen.main else { return }
+        let visible = screen.visibleFrame
+        let width = min(max(normalMinSize.width, visible.width * 0.72), visible.width - 40)
+        let height = min(max(normalMinSize.height, visible.height * 0.78), visible.height - 40)
+        window.setFrame(
+            NSRect(
+                x: visible.midX - width / 2,
+                y: visible.midY - height / 2,
+                width: width,
+                height: height
+            ),
+            display: true,
+            animate: false
+        )
+    }
+}
+
 @MainActor
 final class AppWindowCoordinator: ObservableObject {
     static let mainWindowIdentifier = NSUserInterfaceItemIdentifier("focus.main.window")
@@ -23,6 +119,49 @@ final class AppWindowCoordinator: ObservableObject {
     weak var mainWindow: NSWindow?
     weak var pillWindow: NSWindow?
     var hasPrewarmedPillWindow = false
+
+    private(set) var mainWindowMode: MainWindowMode = .normal
+    /// The normal window's frame, kept across a trip into strip mode so coming
+    /// back does not throw away a window the user has sized and placed.
+    private var normalFrame: NSRect?
+    private var hasSizedNormalWindow = false
+
+    /// Switches the one main window between the app's home and the side strip.
+    func setMainWindowMode(_ mode: MainWindowMode, animated: Bool = true) {
+        guard let window = mainWindow
+            ?? NSApp.windows.first(where: { $0.identifier == Self.mainWindowIdentifier })
+        else { return }
+        mainWindow = window
+
+        if mode == mainWindowMode, mode == .normal, hasSizedNormalWindow { return }
+
+        if mode == .strip && mainWindowMode == .normal {
+            normalFrame = window.frame
+        }
+
+        mainWindowMode = mode
+        MainWindowStyle.apply(mode, to: window)
+
+        switch mode {
+        case .normal:
+            if let frame = normalFrame, hasSizedNormalWindow {
+                window.setFrame(frame, display: true, animate: animated)
+            } else {
+                MainWindowStyle.restoreNormalFrame(window)
+                hasSizedNormalWindow = true
+            }
+        case .strip:
+            MainWindowStyle.pinToEdge(window)
+        }
+
+        window.makeKeyAndOrderFront(nil)
+    }
+
+    /// Re-pins the strip after a settings change (side or height).
+    func repinStripIfNeeded() {
+        guard mainWindowMode == .strip, let window = mainWindow else { return }
+        MainWindowStyle.pinToEdge(window)
+    }
 
     // Service references set by HelpyApp — used for the menu bar panel.
     weak var timerService: TimerService? {
