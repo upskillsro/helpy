@@ -83,6 +83,7 @@ struct HelpyApp: App {
                     windowCoordinator.timerService = timerService
                     windowCoordinator.remindersService = remindersService
                     windowCoordinator.subtaskStore = subtaskStore
+                    windowCoordinator.estimateStore = estimateStore
 
                     // Always show the Helpy menu bar icon
                     windowCoordinator.setupStatusItem()
@@ -150,22 +151,9 @@ struct HelpyApp: App {
         .windowResizability(.contentMinSize)
         .defaultSize(width: 1100, height: 720)
 
-        // Floating Pill - Single Instance Window
-        Window("Timer", id: "timer-pill") {
-            if timerService.isFocusMode &&
-               (timerService.activeReminderId != nil || timerService.isOnBreak) &&
-               pillDisplayMode == .floatingPill {
-                FloatingPillView()
-                    .environmentObject(timerService)
-                    .environmentObject(remindersService)
-                    .environmentObject(estimateStore)
-                    .environmentObject(windowCoordinator)
-                    .environmentObject(subtaskStore)
-            }
-        }
-        .windowStyle(.hiddenTitleBar)
-        .windowResizability(.contentSize)
-        
+        // The floating pill is deliberately NOT a scene: AppWindowCoordinator
+        // creates and owns that panel. See the note on `pillPanel`.
+
         Settings {
             SettingsView()
         }

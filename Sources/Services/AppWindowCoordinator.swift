@@ -4,14 +4,14 @@ import Foundation
 import Combine
 
 // NSPanel subclass that can always become key (required for text input in borderless panels)
-private class KeyablePanel: NSPanel {
+class KeyablePanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 }
 
 // NSHostingView subclass that accepts the first mouse click even when the window is not key.
 // Without this, clicking a button in a non-key panel just activates the window; the action doesn't fire.
-private class KeyableHostingView<Content: View>: NSHostingView<Content> {
+class KeyableHostingView<Content: View>: NSHostingView<Content> {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }
 
@@ -117,8 +117,26 @@ final class AppWindowCoordinator: ObservableObject {
     static let pillWindowIdentifier = NSUserInterfaceItemIdentifier("focus.pill.window")
 
     weak var mainWindow: NSWindow?
-    weak var pillWindow: NSWindow?
-    var hasPrewarmedPillWindow = false
+
+    /// The pill is a panel this coordinator creates and owns — never a SwiftUI
+    /// `Window` scene. A scene window belongs to SwiftUI, which KVO-observes it;
+    /// reaching back in from the view to restyle it wrote to those observed
+    /// properties from inside SwiftUI's own update pass and segfaulted the app
+    /// every time focus mode started (`_NSSetBoolValueAndNotify`,
+    /// "os_unfair_lock is corrupt"). Owning the panel means its chrome is set
+    /// once, at creation, before anything observes it.
+    private(set) var pillPanel: NSPanel?
+    private var pillHosting: KeyableHostingView<AnyView>?
+    private let pillTopAnchor = PillWindowTopAnchor()
+
+    /// Whether the cursor is over the pill, which is what swaps its controls in.
+    ///
+    /// Tracked here, from mouse events, rather than by SwiftUI's `.onHover`:
+    /// hover tracking areas only fire while Helpy is the frontmost app, and
+    /// during a focus session it never is. The pill's controls were therefore
+    /// unreachable in exactly the situation the pill exists for.
+    @Published private(set) var isPillHovered = false
+    private var pillHoverMonitors: [Any] = []
 
     private(set) var mainWindowMode: MainWindowMode = .normal
     /// The normal window's frame, kept across a trip into strip mode so coming
@@ -169,6 +187,7 @@ final class AppWindowCoordinator: ObservableObject {
     }
     weak var remindersService: RemindersService?
     weak var subtaskStore: SubtaskStore?
+    weak var estimateStore: EstimateStore?
 
     private var statusItem: NSStatusItem?
     // Panel + hosting view are created once and reused: tearing the panel down
@@ -249,9 +268,177 @@ final class AppWindowCoordinator: ObservableObject {
         guard let timerService, timerService.isFocusMode else { return }
         switch mode {
         case .floatingPill:
-            pillWindow?.orderFront(nil)
+            showPill()
         case .menuBarIcon:
-            pillWindow?.orderOut(nil)
+            hidePill()
+        }
+    }
+
+    // MARK: - Floating Pill
+
+    /// Builds the pill panel. All of its chrome is set here, before the panel
+    /// has a content view and before anything can observe it — see the note on
+    /// `pillPanel`. Nothing outside this method may change the style mask,
+    /// opacity, or level of a live pill.
+    static func makePillPanel() -> NSPanel {
+        let panel = KeyablePanel(
+            contentRect: NSRect(x: 0, y: 0, width: 300, height: 44),
+            styleMask: [.borderless, .fullSizeContentView, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.level = .floating
+        // Depth comes from the window-server shadow: it traces the RENDERED
+        // shape of this transparent panel, outside its bounds, so it can never
+        // be clipped into a rectangle the way an in-window shadow was.
+        panel.hasShadow = true
+        panel.isReleasedWhenClosed = false
+        panel.isMovable = true
+        panel.isMovableByWindowBackground = true
+        panel.hidesOnDeactivate = false
+        panel.acceptsMouseMovedEvents = true
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        panel.identifier = pillWindowIdentifier
+        return panel
+    }
+
+    /// Shows the pill, creating it on first use. Safe to call repeatedly.
+    func showPill() {
+        guard displayMode == .floatingPill else { return }
+        guard let timerService, let remindersService, let subtaskStore, let estimateStore else { return }
+
+        let content = AnyView(
+            FloatingPillView()
+                .environmentObject(timerService)
+                .environmentObject(remindersService)
+                .environmentObject(estimateStore)
+                .environmentObject(self)
+                .environmentObject(subtaskStore)
+        )
+
+        let panel: NSPanel
+        if let existing = pillPanel, let hosting = pillHosting {
+            panel = existing
+            hosting.rootView = content
+        } else {
+            panel = Self.makePillPanel()
+            let hosting = KeyableHostingView(rootView: content)
+            // Without this the panel is sized once, at open, and the subtasks
+            // section unfolds into a window that never grew to hold it.
+            hosting.sizingOptions = [.preferredContentSize]
+            panel.contentView = hosting
+            panel.setFrameAutosaveName("HelpyFloatingPill")
+            if panel.frame.origin == .zero { centerPillNearBottom(panel) }
+            pillPanel = panel
+            pillHosting = hosting
+        }
+
+        pillTopAnchor.attach(to: panel)
+        panel.orderFront(nil)
+        startPillHoverTracking(panel)
+    }
+
+    func hidePill() {
+        stopPillHoverTracking()
+        pillPanel?.orderOut(nil)
+    }
+
+    private func startPillHoverTracking(_ panel: NSPanel) {
+        stopPillHoverTracking()
+
+        // Global catches the cursor while another app is frontmost; local
+        // catches it while Helpy is. A global monitor never sees this app's
+        // own events, so both are needed to cover the whole screen.
+        let matching: NSEvent.EventTypeMask = [.mouseMoved, .leftMouseDragged]
+        if let global = NSEvent.addGlobalMonitorForEvents(matching: matching) { [weak self] _ in
+            Task { @MainActor in self?.updatePillHover() }
+        } {
+            pillHoverMonitors.append(global)
+        }
+        if let local = NSEvent.addLocalMonitorForEvents(matching: matching) { [weak self] event in
+            Task { @MainActor in self?.updatePillHover() }
+            return event
+        } {
+            pillHoverMonitors.append(local)
+        }
+        _ = panel
+        updatePillHover()
+    }
+
+    private func stopPillHoverTracking() {
+        pillHoverMonitors.forEach(NSEvent.removeMonitor)
+        pillHoverMonitors.removeAll()
+        isPillHovered = false
+    }
+
+    private func updatePillHover() {
+        guard let panel = pillPanel, panel.isVisible else {
+            if isPillHovered { isPillHovered = false }
+            return
+        }
+        // Both are bottom-left screen coordinates, so they compare directly.
+        let inside = panel.frame.contains(NSEvent.mouseLocation)
+        if inside != isPillHovered { isPillHovered = inside }
+    }
+
+    private func centerPillNearBottom(_ panel: NSPanel) {
+        guard let visible = (NSScreen.main ?? NSScreen.screens.first)?.visibleFrame else { return }
+        var frame = panel.frame
+        frame.origin.x = visible.midX - frame.width / 2
+        frame.origin.y = visible.minY + 120
+        panel.setFrame(frame, display: false)
+    }
+
+    // MARK: - Focus Mode Presentation
+
+    /// Focus mode: the pill takes over and the app's windows fade away.
+    ///
+    /// Both directions live here so no view can hide a window the coordinator
+    /// then tries to raise. Menu-bar mode has no pill — the timer lives in the
+    /// status item — so it only fades the windows out.
+    func enterFocusPresentation() {
+        if displayMode == .floatingPill { showPill() }
+        let pill = pillPanel
+        let toHide = NSApp.windows.filter { $0 !== pill && $0.isVisible }
+        fadeOut(toHide)
+    }
+
+    func exitFocusPresentation() {
+        let main = mainWindow ?? NSApp.windows.first(where: { $0.identifier == Self.mainWindowIdentifier })
+        if let main {
+            mainWindow = main
+            main.alphaValue = 0
+            main.setIsVisible(true)
+            main.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+        }
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.28
+            context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            pillPanel?.animator().alphaValue = 0
+            main?.animator().alphaValue = 1
+        } completionHandler: { [weak self] in
+            Task { @MainActor in
+                // orderOut, never close: the panel instance is reused, and
+                // closing the last visible window reads as "quit" to AppKit.
+                self?.pillPanel?.orderOut(nil)
+                self?.pillPanel?.alphaValue = 1
+            }
+        }
+    }
+
+    private func fadeOut(_ windows: [NSWindow]) {
+        for window in windows {
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.2
+                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                window.animator().alphaValue = 0
+            } completionHandler: {
+                window.orderOut(nil)
+                window.alphaValue = 1
+            }
         }
     }
 

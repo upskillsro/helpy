@@ -1,65 +1,6 @@
 import SwiftUI
 import AppKit
 
-// Helper to get NSWindow securely
-struct WindowAccessor: NSViewRepresentable {
-    @Binding var window: NSWindow?
-
-    func makeNSView(context: Context) -> NSView {
-        let view = NSView()
-        DispatchQueue.main.async {
-            self.window = view.window
-        }
-        return view
-    }
-
-    func updateNSView(_ nsView: NSView, context: Context) {}
-}
-
-/// The pill window's chrome, in one place.
-///
-/// Both the pill itself and the focus-mode transition in `SideStripView`
-/// configure this window; keeping the settings here stops the two from
-/// drifting apart and fighting over the style mask.
-///
-/// The mask keeps `.titled`. It must: `NSWindow.canBecomeKey` is read-only and
-/// returns false for a `.borderless` window (with or without `.resizable`), so
-/// a borderless pill drops every keystroke aimed at the "Add subtask…" field.
-/// `.fullSizeContentView` plus a transparent, hidden titlebar makes a titled
-/// window look borderless and still hit-test its content right up to the top
-/// edge, so the hover controls stay clickable.
-///
-/// Do NOT go back to making a borderless window key-able by `object_setClass`.
-/// SwiftUI has already KVO-observed this window by the time it can be styled,
-/// so that subclasses KVO's own `NSKVONotifying_*` class and corrupts KVO's
-/// bookkeeping; the next write to any observed property dies inside
-/// `_NSSetBoolValueAndNotify` and takes the app down with it.
-enum PillWindowStyle {
-    static let styleMask: NSWindow.StyleMask = [.titled, .fullSizeContentView]
-
-    static func apply(to window: NSWindow) {
-        window.styleMask = styleMask
-        window.isReleasedWhenClosed = false
-        window.isOpaque = false
-        window.backgroundColor = .clear
-        window.titleVisibility = .hidden
-        window.titlebarAppearsTransparent = true
-        // No toolbar, no separator: the titlebar must leave no mark on the pill.
-        window.titlebarSeparatorStyle = .none
-        window.standardWindowButton(.closeButton)?.isHidden = true
-        window.standardWindowButton(.miniaturizeButton)?.isHidden = true
-        window.standardWindowButton(.zoomButton)?.isHidden = true
-        window.level = .floating
-        window.isMovableByWindowBackground = true
-        window.isMovable = true
-        // Depth comes from the window-server shadow: it traces the RENDERED
-        // shape of this transparent window (rounded pill + panel), is drawn
-        // outside the window bounds so it can never be clipped into a
-        // rectangle.
-        window.hasShadow = true
-    }
-}
-
 /// Keeps the pill window's TOP edge fixed while it auto-resizes to content
 /// (subtasks panel opening/closing). AppKit anchors a resizing window at its
 /// bottom-left origin, which visually shoved the whole pill up/down; re-pinning
@@ -141,14 +82,16 @@ struct FloatingPillView: View {
     @EnvironmentObject var subtaskStore: SubtaskStore
     @Environment(\.colorScheme) private var colorScheme
 
-    @State private var isHovering = false
     @State private var showSubtasks = false
-    @State private var window: NSWindow?
     @State private var isPulsing = false
-    @State private var topAnchor = PillWindowTopAnchor()
 
     private var t: HelpyPalette { .forScheme(colorScheme) }
     private var radius: CGFloat { HelpyMetrics.pillCornerRadius }
+
+    /// Hover is tracked by the coordinator, not by `.onHover`: SwiftUI's hover
+    /// only fires while Helpy is the frontmost app, and during focus mode it
+    /// never is — the pill floats over whatever you are actually working in.
+    private var isHovering: Bool { windowCoordinator.isPillHovered }
 
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
@@ -168,19 +111,7 @@ struct FloatingPillView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showSubtasks)
-        .onAppear {
-            if let window { styleWindow(window) }
-        }
-        .onChange(of: window) { _, newWindow in
-            if let win = newWindow { styleWindow(win) }
-        }
-        .onDisappear {
-            if windowCoordinator.pillWindow === window {
-                windowCoordinator.pillWindow = nil
-            }
-            showSubtasks = false
-            topAnchor.detach()
-        }
+        .onDisappear { showSubtasks = false }
     }
 
     @ViewBuilder
@@ -190,7 +121,6 @@ struct FloatingPillView: View {
         // flip hover off/on in a loop (visible as flicker at the pill's edge).
         ZStack {
             PillControlsView(
-                isHovering: $isHovering,
                 showSubtasks: $showSubtasks,
                 timerService: timerService,
                 remindersService: remindersService,
@@ -219,8 +149,6 @@ struct FloatingPillView: View {
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .fill(t.pillFill)
 
-                WindowAccessor(window: $window)
-
                 // Bottom progress rail
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
@@ -242,7 +170,7 @@ struct FloatingPillView: View {
         // window and is clipped at the rectangular window edge — a faint gray
         // RECTANGLE behind the pill (pixel-proved: full-bleed low-alpha wash
         // in the window's own rendering). Depth comes from the AppKit window
-        // shadow instead (hasShadow = true in styleWindow), which the window
+        // shadow instead (hasShadow = true on the panel), which the window
         // server draws around the rendered shape, outside the bounds.
         .overlay {
             // strokeBorder insets the line, so the full width survives the clip.
@@ -261,19 +189,6 @@ struct FloatingPillView: View {
             isPulsing = !quiet
         }
         .onAppear { isPulsing = alertRingColor != nil }
-        .onHover { hover in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isHovering = hover
-            }
-        }
-    }
-
-    private func styleWindow(_ window: NSWindow) {
-        PillWindowStyle.apply(to: window)
-        window.identifier = AppWindowCoordinator.pillWindowIdentifier
-        windowCoordinator.pillWindow = window
-        // Only the subtask section should move when the panel opens/closes.
-        topAnchor.attach(to: window)
     }
 
     // Logic for Progress Bar
@@ -311,7 +226,6 @@ struct FloatingPillView: View {
 // MARK: - Subviews
 
 struct PillControlsView: View {
-    @Binding var isHovering: Bool
     @Binding var showSubtasks: Bool
     @ObservedObject var timerService: TimerService
     @ObservedObject var remindersService: RemindersService

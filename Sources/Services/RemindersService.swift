@@ -80,25 +80,23 @@ class RemindersService: ObservableObject {
         store.fetchReminders(matching: predicate) { [weak self] fetched in
             guard let self, let fetched else { return }
 
-            DispatchQueue.global(qos: .userInitiated).async {
-                var grouped: [String: [EKReminder]] = [:]
-                for reminder in fetched {
-                    guard let listId = reminder.calendar?.calendarIdentifier else { continue }
-                    grouped[listId, default: []].append(reminder)
-                }
+            var grouped: [String: [EKReminder]] = [:]
+            for reminder in fetched {
+                guard let listId = reminder.calendar?.calendarIdentifier else { continue }
+                grouped[listId, default: []].append(reminder)
+            }
 
-                // Per-list key, the same one the strip already writes, so a task
-                // never sits in a different place depending on which screen is
-                // showing it.
+            Task { @MainActor in
+                guard token == self.allListsFetchToken else { return }
+                // Per-list key, the same one the strip already writes, so a
+                // task never sits in a different place depending on which
+                // screen is showing it. Ordering reads UserDefaults, so it
+                // belongs on the main actor with the rest of the store.
                 var sorted: [String: [EKReminder]] = [:]
                 for (listId, reminders) in grouped {
                     sorted[listId] = Self.applySavedOrder(to: reminders, key: "sortOrder_\(listId)")
                 }
-
-                Task { @MainActor in
-                    guard token == self.allListsFetchToken else { return }
-                    self.remindersByList = sorted
-                }
+                self.remindersByList = sorted
             }
         }
     }

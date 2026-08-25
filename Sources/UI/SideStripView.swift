@@ -14,7 +14,6 @@ struct SideStripView: View {
     @EnvironmentObject var timerService: TimerService
     @EnvironmentObject var estimateStore: EstimateStore
     @EnvironmentObject var windowCoordinator: AppWindowCoordinator
-    @Environment(\.openWindow) var openWindow
     
     @State private var isHoveringActiveTask: Bool = false
     @State private var draggedReminder: EKReminder? // Track visually dragged item
@@ -111,105 +110,16 @@ struct SideStripView: View {
             .frame(minWidth: 300, maxWidth: 350, maxHeight: .infinity)
             .onAppear {
                 assistantCoordinator.remindersService = remindersService
-                prewarmPillWindowIfNeeded()
             }
             .onChange(of: timerService.isFocusMode) { _, isFocus in
+                // The coordinator owns every window in the app, the pill
+                // included, so the transition is its call to make — a view
+                // that hides windows the coordinator later raises is how the
+                // two ended up fighting over the pill in the first place.
                 if isFocus {
-                    // Menu bar icon mode: the timer lives in the status bar — just fade
-                    // out the app windows instead of raising an empty pill window.
-                    if SettingsStore().pillDisplayMode == .menuBarIcon {
-                        let windowsToHide = NSApp.windows.filter {
-                            $0.isVisible && $0.identifier != AppWindowCoordinator.pillWindowIdentifier
-                        }
-                        windowsToHide.forEach { window in
-                            NSAnimationContext.runAnimationGroup { context in
-                                context.duration = 0.2
-                                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                                window.animator().alphaValue = 0
-                            } completionHandler: {
-                                window.orderOut(nil)
-                                window.alphaValue = 1
-                            }
-                        }
-                        return
-                    }
-
-                    // Enter Focus: show/reuse pill first, then hide main window.
-                    if windowCoordinator.pillWindow == nil,
-                       let existingPill = NSApp.windows.first(where: { $0.identifier == AppWindowCoordinator.pillWindowIdentifier }) {
-                        windowCoordinator.pillWindow = existingPill
-                    }
-                    
-                    if windowCoordinator.pillWindow == nil {
-                        openWindow(id: "timer-pill")
-                    }
-                    
-                    // Poll for Pill Window and animate the transition only when it is ready.
-                    func animatePillIn(attempts: Int = 0) {
-                        Task { @MainActor in
-                            if let pillWindow = windowCoordinator.pillWindow {
-                                // Ensure window chrome is stripped before first visible frame.
-                                PillWindowStyle.apply(to: pillWindow)
-                                pillWindow.identifier = AppWindowCoordinator.pillWindowIdentifier
-                                
-                                pillWindow.alphaValue = 0
-                                pillWindow.makeKeyAndOrderFront(nil)
-                                NSAnimationContext.runAnimationGroup { context in
-                                    context.duration = 0.3
-                                    context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                                    pillWindow.animator().alphaValue = 1
-                                }
-                                
-                                let windowsToHide = NSApp.windows.filter { $0 !== pillWindow && $0.isVisible }
-                                windowsToHide.forEach { window in
-                                    NSAnimationContext.runAnimationGroup { context in
-                                        context.duration = 0.2
-                                        context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                                        window.animator().alphaValue = 0
-                                    } completionHandler: {
-                                        window.orderOut(nil)
-                                        window.alphaValue = 1
-                                    }
-                                }
-                            } else if attempts < 20 {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                                    animatePillIn(attempts: attempts + 1)
-                                }
-                            }
-                        }
-                    }
-                    animatePillIn()
-                    
+                    windowCoordinator.enterFocusPresentation()
                 } else {
-                    // Exit Focus: Cross-fade (Pill OUT, Main IN)
-                    let pillWindow = windowCoordinator.pillWindow ?? NSApp.windows.first(where: { $0.identifier == AppWindowCoordinator.pillWindowIdentifier })
-                    let mainWindow = windowCoordinator.mainWindow ?? NSApp.windows.first(where: { $0.identifier == AppWindowCoordinator.mainWindowIdentifier })
-                    
-                    // Prepare Main Window
-                    if let main = mainWindow {
-                        windowCoordinator.mainWindow = main
-                        main.alphaValue = 0
-                        main.makeKeyAndOrderFront(nil)
-                        main.setIsVisible(true)
-                        NSApp.activate(ignoringOtherApps: true)
-                    }
-                    
-                    NSAnimationContext.runAnimationGroup { context in
-                        context.duration = 0.3
-                        context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                        
-                        // Animate Pill OUT
-                        pillWindow?.animator().alphaValue = 0
-                        
-                        // Animate Main IN
-                        mainWindow?.animator().alphaValue = 1
-                        
-                    } completionHandler: {
-                        // Keep the same pill window instance and just hide it; this avoids
-                        // titlebar/chrome glitches when a brand-new window is recreated.
-                        pillWindow?.orderOut(nil)
-                        pillWindow?.alphaValue = 1
-                    }
+                    windowCoordinator.exitFocusPresentation()
                 }
             }
             .onChange(of: timerService.activeReminderId) { _, newValue in
@@ -221,43 +131,6 @@ struct SideStripView: View {
         }
     }
     
-    private func prewarmPillWindowIfNeeded() {
-        guard !windowCoordinator.hasPrewarmedPillWindow else { return }
-        windowCoordinator.hasPrewarmedPillWindow = true
-
-        openWindow(id: "timer-pill")
-
-        func waitForPillWindow(attempts: Int = 0) {
-            Task { @MainActor in
-                // FloatingPillView only renders (and registers the window) in
-                // floating-pill focus mode — in every other state the scene content
-                // is empty, so find the window by its SwiftUI identity instead.
-                // Without this, menu bar mode left an unstyled zero-size window
-                // open on screen for the app's whole lifetime.
-                let pillWindow = windowCoordinator.pillWindow
-                    ?? NSApp.windows.first(where: {
-                        $0.identifier == AppWindowCoordinator.pillWindowIdentifier ||
-                        $0.identifier?.rawValue == "timer-pill" ||
-                        $0.frameAutosaveName == "timer-pill"
-                    })
-
-                if let pillWindow {
-                    pillWindow.identifier = AppWindowCoordinator.pillWindowIdentifier
-                    windowCoordinator.pillWindow = pillWindow
-                    // Keep the prewarmed instance hidden until focus mode is enabled.
-                    if !timerService.isFocusMode {
-                        pillWindow.orderOut(nil)
-                    }
-                } else if attempts < 30 {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        waitForPillWindow(attempts: attempts + 1)
-                    }
-                }
-            }
-        }
-
-        waitForPillWindow()
-    }
     
     /// Version B header: the gradient runs full-bleed to the window edges and
     /// sweeps into rounded BOTTOM corners. Everything on it is white, which is
