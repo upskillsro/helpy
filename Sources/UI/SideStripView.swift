@@ -27,7 +27,6 @@ struct SideStripView: View {
     // Quick Add State
     @State private var newTaskTitle = ""
     @State private var isPulsing = false // For task alert animation
-    @State private var isHoveringGear = false
     @AppStorage("assistantEnabled") private var assistantEnabled: Bool = true
     @Environment(\.colorScheme) private var colorScheme
 
@@ -47,6 +46,15 @@ struct SideStripView: View {
     private var focusedList: EKCalendar? {
         guard let focusedListId else { return nil }
         return remindersService.lists.first { $0.calendarIdentifier == focusedListId }
+    }
+
+    /// The window the header's minimise and close buttons act on. The
+    /// coordinator's reference is the one the accessor below installs; the
+    /// lookup by identifier is the fallback for the first frame, before that
+    /// accessor has run.
+    private var stripWindow: NSWindow? {
+        windowCoordinator.mainWindow
+            ?? NSApp.windows.first { $0.identifier == AppWindowCoordinator.mainWindowIdentifier }
     }
 
     var body: some View {
@@ -111,23 +119,10 @@ struct SideStripView: View {
             .onAppear {
                 assistantCoordinator.remindersService = remindersService
             }
-            .onChange(of: timerService.isFocusMode) { _, isFocus in
-                // The coordinator owns every window in the app, the pill
-                // included, so the transition is its call to make — a view
-                // that hides windows the coordinator later raises is how the
-                // two ended up fighting over the pill in the first place.
-                if isFocus {
-                    windowCoordinator.enterFocusPresentation()
-                } else {
-                    windowCoordinator.exitFocusPresentation()
-                }
-            }
-            .onChange(of: timerService.activeReminderId) { _, newValue in
-                // Only exit focus mode if we are NOT on a break
-                if newValue == nil && timerService.isFocusMode && !timerService.isOnBreak {
-                    timerService.isFocusMode = false
-                }
-            }
+            // Entering and leaving focus mode is handled by
+            // AppWindowCoordinator.bindTimerService(). It used to live here,
+            // which meant a session started from the list board — where this
+            // view is not mounted — never raised the pill.
         }
     }
     
@@ -144,21 +139,28 @@ struct SideStripView: View {
 
                 Spacer()
 
-                Button(action: {
-                    withAnimation { isSettingsOpen.toggle() }
-                }) {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(t.onAccent)
-                        .frame(width: 28, height: 28)
-                        .background(
-                            Circle().fill(Color.white.opacity(isHoveringGear || isSettingsOpen ? 0.22 : 0.12))
-                        )
-                        .contentShape(Circle())
-                }
-                .buttonStyle(.plain)
-                .onHover { hover in
-                    withAnimation(.easeOut(duration: 0.13)) { isHoveringGear = hover }
+                // The strip hides the real traffic lights — they would sit on
+                // top of the mark and the title — so minimise and close live
+                // here, in the header's own idiom.
+                HStack(spacing: 6) {
+                    HeaderCircleButton(icon: "minus", help: "Minimize", palette: t) {
+                        stripWindow?.miniaturize(nil)
+                    }
+
+                    HeaderCircleButton(icon: "xmark", help: "Close", palette: t) {
+                        // performClose, not close: it goes through the window's
+                        // delegate, which is what honours "quit when closed".
+                        stripWindow?.performClose(nil)
+                    }
+
+                    HeaderCircleButton(
+                        icon: "gearshape",
+                        help: "Settings",
+                        palette: t,
+                        isActive: isSettingsOpen
+                    ) {
+                        withAnimation { isSettingsOpen.toggle() }
+                    }
                 }
             }
 
@@ -635,6 +637,25 @@ struct SideStripView: View {
         }
     }
     
+    /// Quick add has to put the task where the strip can show it. The strip
+    /// lists Today only, and in focus mode a list is always active — so the old
+    /// "date it only when no list is active" rule stamped nothing, the task
+    /// landed in Backlog, and pressing Return looked like it did nothing.
+    private func submitQuickAdd() {
+        let title = newTaskTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else { return }
+
+        let selectedCalendar = remindersService.lists.first(where: { $0.calendarIdentifier == remindersService.activeListId })
+
+        var dueDate: DateComponents? = nil
+        if focusedListId != nil || remindersService.activeListId == nil {
+            dueDate = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        }
+
+        remindersService.createReminder(title: title, in: selectedCalendar, dueDate: dueDate)
+        newTaskTitle = ""
+    }
+
     var quickAddView: some View {
         HStack(spacing: 10) {
             Image(systemName: "plus")
@@ -644,18 +665,7 @@ struct SideStripView: View {
                 .textFieldStyle(.plain)
                 .font(.inter(size: 13))
                 .foregroundStyle(t.ink)
-                .onSubmit {
-                    guard !newTaskTitle.isEmpty else { return }
-                    let selectedCalendar = remindersService.lists.first(where: { $0.calendarIdentifier == remindersService.activeListId })
-
-                    var dueDate: DateComponents? = nil
-                    if remindersService.activeListId == nil {
-                         dueDate = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-                    }
-
-                    remindersService.createReminder(title: newTaskTitle, in: selectedCalendar, dueDate: dueDate)
-                    newTaskTitle = ""
-                }
+                .onSubmit { submitQuickAdd() }
 
             if assistantEnabled && !assistantCoordinator.isPanelPresented {
                 AssistantLauncherButton(
@@ -738,41 +748,61 @@ struct SideStripView: View {
     }
 }
 
+/// A control on the strip's gradient header: a white translucent disc that
+/// brightens on hover. One type for all three so minimise, close and settings
+/// read as one cluster rather than three separately-tuned buttons.
+private struct HeaderCircleButton: View {
+    let icon: String
+    let help: String
+    let palette: HelpyPalette
+    var isActive: Bool = false
+    let action: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(palette.onAccent)
+                .frame(width: 28, height: 28)
+                .background(
+                    Circle().fill(Color.white.opacity(isHovering || isActive ? 0.22 : 0.12))
+                )
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .help(help)
+        .onHover { hover in
+            withAnimation(.easeOut(duration: 0.13)) { isHovering = hover }
+        }
+    }
+}
+
 private struct MainWindowAccessor: NSViewRepresentable {
     let windowCoordinator: AppWindowCoordinator
     
-    final class Coordinator: NSObject, NSWindowDelegate {
-        func windowShouldClose(_ sender: NSWindow) -> Bool {
-            if SettingsStore().quitOnClose {
-                NSApp.terminate(nil)
-                return false
-            }
-            return true
-        }
-    }
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-    
-    private func configureWindow(_ window: NSWindow?, coordinator: Coordinator) {
+    /// Installs the app's own window delegate rather than one of its own.
+    /// This runs on every SwiftUI update, so a private delegate here quietly
+    /// displaced the app's — taking the strip's fixed width with it.
+    private func configureWindow(_ window: NSWindow?) {
         guard let window else { return }
         window.identifier = AppWindowCoordinator.mainWindowIdentifier
-        window.delegate = coordinator
+        window.delegate = MainWindowCloseDelegate.shared
         windowCoordinator.mainWindow = window
     }
-    
+
     func makeNSView(context: Context) -> NSView {
         let view = NSView()
         DispatchQueue.main.async {
-            configureWindow(view.window, coordinator: context.coordinator)
+            configureWindow(view.window)
         }
         return view
     }
-    
+
     func updateNSView(_ nsView: NSView, context: Context) {
         DispatchQueue.main.async {
-            configureWindow(nsView.window, coordinator: context.coordinator)
+            configureWindow(nsView.window)
         }
     }
 }

@@ -1,81 +1,31 @@
 import SwiftUI
+import AppKit
 
 // MARK: - Marquee
 
-private struct MarqueeWidthKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = max(value, nextValue())
-    }
-}
-
 /// Single-line text that slides back and forth when it doesn't fit.
 ///
-/// The scroll is ONE Core Animation-driven `.offset` (repeatForever +
-/// autoreverses), not a per-frame timer: the pill sits on screen for entire
-/// work sessions, so a ticking marquee would burn CPU the whole time. easeInOut
-/// supplies the pause at each end that a hold keyframe would.
+/// The scroll is one Core Animation on a layer whose glyphs were rasterised
+/// once (see `CAMarqueeText`). The earlier SwiftUI version — `repeatForever`
+/// on `.offset`, clipped and masked — looked equivalent but re-rasterised
+/// every glyph on every frame, ~8% CPU for as long as a task was active.
 struct MarqueeText: View {
     let text: String
     let width: CGFloat
-    var font: Font = .inter(size: 13, weight: .medium)
+    var font: NSFont = .inter(size: 13, weight: .medium)
     var color: Color = .primary
     /// Points per second — long titles take proportionally longer.
     var speed: CGFloat = 26
 
-    @State private var textWidth: CGFloat = 0
-    @State private var shifted = false
-
-    private var overflow: CGFloat { max(0, textWidth - width) }
-
     var body: some View {
-        Text(text)
-            .font(font)
-            .foregroundStyle(color)
-            .lineLimit(1)
-            .fixedSize(horizontal: true, vertical: false)
-            .background(
-                GeometryReader { geo in
-                    Color.clear.preference(key: MarqueeWidthKey.self, value: geo.size.width)
-                }
-            )
-            .offset(x: shifted ? -overflow : 0)
-            .frame(width: width, alignment: .leading)
-            .clipped()
-            .mask(edgeFade)
-            .onPreferenceChange(MarqueeWidthKey.self) { measured in
-                guard abs(measured - textWidth) > 0.5 else { return }
-                textWidth = measured
-                restartAnimation()
-            }
-            .onAppear { restartAnimation() }
-    }
-
-    /// Only fade the edge the text actually runs past; a static title that fits
-    /// shouldn't look clipped.
-    private var edgeFade: some View {
-        let needsFade = overflow > 0.5
-        return LinearGradient(
-            stops: [
-                .init(color: .black, location: 0),
-                .init(color: .black, location: needsFade ? 0.94 : 1),
-                .init(color: needsFade ? .clear : .black, location: 1)
-            ],
-            startPoint: .leading,
-            endPoint: .trailing
+        CAMarqueeText(
+            text: text,
+            width: width,
+            font: font,
+            color: NSColor(color),
+            speed: speed
         )
-    }
-
-    private func restartAnimation() {
-        let distance = overflow
-        guard distance > 0.5 else {
-            withAnimation(.easeOut(duration: 0.2)) { shifted = false }
-            return
-        }
-        let duration = Double(distance / speed) + 1.6   // +hold at each end
-        withAnimation(.easeInOut(duration: duration).repeatForever(autoreverses: true)) {
-            shifted = true
-        }
+        .frame(width: width)
     }
 }
 
@@ -169,12 +119,15 @@ struct PillTimerDisplay: View {
     let palette: HelpyPalette
 
     var body: some View {
-        Text(service.formattedTime())
-            .font(.inter(size: 17, weight: .bold))
-            .monospacedDigit()
-            .foregroundColor(service.isOvertime ? palette.warm : palette.ink)
-            .contentTransition(.numericText(countsDown: !service.isStopwatch && !service.isOvertime))
-            .animation(.snappy, value: service.formattedTime())
-            .fixedSize()
+        // The roll is Core Animation (see `RollingTimeText`). The previous
+        // `.contentTransition(.numericText)` + `.animation(.snappy)` fired a
+        // blurred per-frame glyph morph every second and cost ~13% CPU on a
+        // 120Hz display — the pill's single largest expense.
+        RollingTimeText(
+            text: service.formattedTime(),
+            font: .inter(size: 17, weight: .bold),
+            color: NSColor(service.isOvertime ? palette.warm : palette.ink)
+        )
+        .fixedSize()
     }
 }

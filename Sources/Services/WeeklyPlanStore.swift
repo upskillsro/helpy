@@ -3,38 +3,75 @@ import SwiftUI
 
 /// One scored item in a week's plan.
 ///
-/// These are Helpy's own records, not `EKReminder`s. They are not things to do
-/// at a time — they are the week's scoreboard — so pushing them into Apple
-/// Reminders would put untimed scoring rows into real lists and onto the phone.
+/// When the week is linked to a Reminders list, adding one of these also
+/// creates a real reminder due inside that week — that is what puts it in the
+/// list board's "This week" column — and `reminderId` is the thread back to it.
+/// Unlinked weeks keep working exactly as before, entirely inside Helpy.
 struct WeeklyPlanTask: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var title: String
     var points: Int = 1
     var isDone: Bool = false
+    /// `calendarItemIdentifier` of the mirrored reminder, if there is one.
+    var reminderId: String?
 }
 
 struct WeeklyPlan: Codable, Equatable {
     var goal: String = ""
-    var pointsTarget: Int = 0
     var reward: String = ""
+    /// Free text for the week. Not scored, not mirrored — the place for the
+    /// context a task title cannot carry.
+    var notes: String = ""
     var tasks: [WeeklyPlanTask] = []
+    /// Reminders list this week mirrors into. nil means "not chosen yet", so
+    /// the week follows whatever the default list is; `noList` means the user
+    /// switched mirroring off for this week specifically.
+    var linkedListId: String?
+
+    /// Stored in `linkedListId` to mean "off", as distinct from "unset".
+    static let noList = ""
 
     var earnedPoints: Int { tasks.filter(\.isDone).map(\.points).reduce(0, +) }
+
+    /// The target. There is no separate number to keep in sync: the week is
+    /// won when everything on it is done, so the target IS the total on the
+    /// board. A target the user could set independently of the tasks was just
+    /// a second place for the same fact to be wrong.
     var availablePoints: Int { tasks.map(\.points).reduce(0, +) }
+
+    var doneCount: Int { tasks.filter(\.isDone).count }
 
     /// A week the user has not touched. Nothing is written for it, so the store
     /// stays small and the rolling window needs no backfill.
     var isEmpty: Bool {
-        goal.isEmpty && reward.isEmpty && pointsTarget == 0 && tasks.isEmpty
+        goal.isEmpty && reward.isEmpty && notes.isEmpty && tasks.isEmpty && linkedListId == nil
     }
 
+    /// A week the user has switched off. Kept so the default cannot re-link it.
+    var isMirroringOff: Bool { linkedListId == Self.noList }
+
     var isRewardEarned: Bool {
-        pointsTarget > 0 && earnedPoints >= pointsTarget
+        availablePoints > 0 && earnedPoints >= availablePoints
     }
 
     var progress: Double {
-        guard pointsTarget > 0 else { return 0 }
-        return min(1, Double(earnedPoints) / Double(pointsTarget))
+        guard availablePoints > 0 else { return 0 }
+        return min(1, Double(earnedPoints) / Double(availablePoints))
+    }
+
+    init() {}
+
+    /// Every key is optional on the way in. Swift's synthesised decoder throws
+    /// `keyNotFound` for a property a stored plan predates — and the store
+    /// drops a week it cannot decode — so adding a field the synthesised way
+    /// would quietly delete every plan written before it.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        goal = try container.decodeIfPresent(String.self, forKey: .goal) ?? ""
+        reward = try container.decodeIfPresent(String.self, forKey: .reward) ?? ""
+        notes = try container.decodeIfPresent(String.self, forKey: .notes) ?? ""
+        tasks = try container.decodeIfPresent([WeeklyPlanTask].self, forKey: .tasks) ?? []
+        linkedListId = try container.decodeIfPresent(String.self, forKey: .linkedListId)
     }
 }
 
@@ -82,20 +119,43 @@ final class WeeklyPlanStore: ObservableObject {
         update(weekId) { $0.reward = reward }
     }
 
-    func setPointsTarget(_ target: Int, for weekId: String) {
-        update(weekId) { $0.pointsTarget = max(0, target) }
+    func setNotes(_ notes: String, for weekId: String) {
+        update(weekId) { $0.notes = notes }
     }
 
-    func addTask(title: String, points: Int, to weekId: String) {
+    func setLinkedList(_ listId: String?, for weekId: String) {
+        update(weekId) { $0.linkedListId = listId }
+    }
+
+    @discardableResult
+    func addTask(title: String, points: Int, reminderId: String? = nil, to weekId: String) -> WeeklyPlanTask? {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        update(weekId) { $0.tasks.append(WeeklyPlanTask(title: trimmed, points: max(0, points))) }
+        guard !trimmed.isEmpty else { return nil }
+        let task = WeeklyPlanTask(title: trimmed, points: max(0, points), reminderId: reminderId)
+        update(weekId) { $0.tasks.append(task) }
+        return task
     }
 
     func toggleTask(id: UUID, in weekId: String) {
         update(weekId) { plan in
             guard let index = plan.tasks.firstIndex(where: { $0.id == id }) else { return }
             plan.tasks[index].isDone.toggle()
+        }
+    }
+
+    /// Used by the Reminders mirror when the truth changed on the other side.
+    func setTaskDone(_ isDone: Bool, id: UUID, in weekId: String) {
+        update(weekId) { plan in
+            guard let index = plan.tasks.firstIndex(where: { $0.id == id }),
+                  plan.tasks[index].isDone != isDone else { return }
+            plan.tasks[index].isDone = isDone
+        }
+    }
+
+    func setReminderId(_ reminderId: String?, forTask id: UUID, in weekId: String) {
+        update(weekId) { plan in
+            guard let index = plan.tasks.firstIndex(where: { $0.id == id }) else { return }
+            plan.tasks[index].reminderId = reminderId
         }
     }
 

@@ -3,9 +3,9 @@ import SwiftUI
 
 /// The Lists tab: every Reminders list as a square cell.
 ///
-/// Seven fixed columns rather than a fluid count — the window's 900pt minimum
-/// keeps a cell around 115pt, which is the smallest size the peeked task lines
-/// stay readable at.
+/// Cells size themselves between 190 and 250pt. Below 190 the task cards inside
+/// stop reading as cards, and above 250 a square cell wastes half its height on
+/// nothing — so the count flexes with the window instead of being fixed.
 struct ListsGridView: View {
     @EnvironmentObject var remindersService: RemindersService
     @EnvironmentObject var iconStore: ListIconStore
@@ -13,11 +13,9 @@ struct ListsGridView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private var t: HelpyPalette { .forScheme(colorScheme) }
-    private static let columnCount = 7
+    @State private var isCreatingList = false
 
-    private var columns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 9), count: Self.columnCount)
-    }
+    private let columns = [GridItem(.adaptive(minimum: 228, maximum: 300), spacing: 14)]
 
     var body: some View {
         Group {
@@ -42,7 +40,7 @@ struct ListsGridView: View {
 
     private var grid: some View {
         ScrollView {
-            LazyVGrid(columns: columns, spacing: 9) {
+            LazyVGrid(columns: columns, spacing: 14) {
                 ForEach(remindersService.lists, id: \.calendarIdentifier) { list in
                     ListCellView(
                         list: list,
@@ -52,12 +50,22 @@ struct ListsGridView: View {
                 }
 
                 if remindersService.canCreateLists {
-                    NewListCell { name in
-                        remindersService.createList(named: name)
-                    }
+                    NewListCell { isCreatingList = true }
                 }
             }
             .padding(14)
+        }
+        .sheet(isPresented: $isCreatingList) {
+            NewListSheet(
+                onCreate: { name, color, icon in
+                    isCreatingList = false
+                    // The icon is keyed by the identifier the save hands back,
+                    // so it can only be written once the list exists.
+                    guard let created = remindersService.createList(named: name, color: color) else { return }
+                    if let icon { iconStore.setIcon(icon, for: created.calendarIdentifier) }
+                },
+                onCancel: { isCreatingList = false }
+            )
         }
     }
 

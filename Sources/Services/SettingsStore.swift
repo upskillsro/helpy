@@ -22,8 +22,19 @@ class SettingsStore: ObservableObject {
     @AppStorage("taskAlertVolume") var taskAlertVolume: Double = 0.5
     
     // Appearance
-    // Helpy has one design (see Theme.swift). It follows the system light/dark
-    // appearance, so there is no stored theme or accent preference.
+    // Helpy has one design (see Theme.swift) and follows the system light/dark
+    // appearance. The single exception is the accent: one colour, applied to
+    // every brand surface.
+    //
+    // Not @AppStorage: the setter has to keep `HelpyAccent.currentHex` in step,
+    // and property observers on a wrapped property are not dependable.
+    @Published var accentHex: UInt32 {
+        didSet {
+            UserDefaults.standard.set(Int(accentHex), forKey: HelpyAccent.key)
+            HelpyAccent.currentHex = accentHex
+        }
+    }
+
     @AppStorage("pillDisplayMode") var pillDisplayMode: PillDisplayMode = .floatingPill
     @AppStorage("panelHeightMode") var panelHeightMode: PanelHeightMode = .full
 
@@ -40,6 +51,8 @@ class SettingsStore: ObservableObject {
     @AppStorage("assistantMaxDrafts") var assistantMaxDrafts: Int = 5
 
     init() {
+        HelpyAccent.loadFromDefaults()
+        accentHex = HelpyAccent.currentHex
         applyRecommendedAssistantDefaultsIfNeeded()
     }
 

@@ -32,8 +32,8 @@ struct HelpyPalette {
     let canvas: Color
     let surface: Color
     let surfaceHover: Color
-    let surfaceActive: Color
-    let surfaceActiveBorder: Color
+    var surfaceActive: Color
+    var surfaceActiveBorder: Color
     let line: Color
 
     // Type
@@ -43,16 +43,16 @@ struct HelpyPalette {
     let muted2: Color
 
     // Brand
-    let accent: Color
+    var accent: Color
     /// The header block. Flat on purpose: a single opaque colour is easier to
     /// keep legible than a sweep (one contrast number instead of a range), and
     /// it matches the no-glass, no-translucency rule the rest of the theme follows.
-    let header: Color
+    var header: Color
     let onAccent: Color
 
     // Progress rails
     let railTrack: Color
-    let rail: Color
+    var rail: Color
 
     // Status
     let warm: Color        // break + overtime
@@ -176,7 +176,78 @@ struct HelpyPalette {
     )
 
     static func forScheme(_ scheme: ColorScheme) -> HelpyPalette {
-        scheme == .dark ? .dark : .light
+        (scheme == .dark ? dark : light).tinted(HelpyAccent.current, isDark: scheme == .dark)
+    }
+
+    /// Swaps the brand tokens for the user's accent. Everything else — inks,
+    /// surfaces, status colours — is left alone: those are legibility
+    /// decisions, not brand ones, and rederiving them from an arbitrary hue is
+    /// how themable apps end up with unreadable text.
+    private func tinted(_ color: Color, isDark: Bool) -> HelpyPalette {
+        var copy = self
+        copy.accent = color
+        copy.header = color
+        copy.rail = color
+        copy.surfaceActive = color.opacity(isDark ? 0.11 : 0.06)
+        copy.surfaceActiveBorder = color.opacity(isDark ? 0.34 : 0.30)
+        return copy
+    }
+}
+
+/// The one colour the user gets to choose.
+///
+/// Read through a static rather than an environment key on purpose: every view
+/// in Helpy already reaches its palette through `HelpyPalette.forScheme`, and
+/// threading a new environment value through all of them would touch far more
+/// code than this feature is worth. `SettingsStore` owns the stored value and
+/// keeps this in step; the main window carries `.id(accentHex)` so a change
+/// actually repaints rather than waiting for the next redraw.
+enum HelpyAccent {
+    /// Sky — the blue the rest of the palette was designed around.
+    static let defaultHex: UInt32 = 0x0086E8
+    static let key = "accentHex"
+
+    struct Preset: Identifiable {
+        let name: String
+        let hex: UInt32
+        var id: UInt32 { hex }
+        var color: Color { Color(hex: hex) }
+    }
+
+    static let presets: [Preset] = [
+        Preset(name: "Sky", hex: 0x0086E8),
+        Preset(name: "Indigo", hex: 0x4F46E5),
+        Preset(name: "Violet", hex: 0x8B5CF6),
+        Preset(name: "Magenta", hex: 0xD6357F),
+        Preset(name: "Coral", hex: 0xEE5B36),
+        Preset(name: "Amber", hex: 0xD98A00),
+        Preset(name: "Green", hex: 0x1E9E62),
+        Preset(name: "Graphite", hex: 0x50607A)
+    ]
+
+    static var currentHex: UInt32 = defaultHex
+    static var current: Color { Color(hex: currentHex) }
+
+    /// Called before the first view is built, so nothing renders in the wrong
+    /// colour for a frame.
+    static func loadFromDefaults(_ defaults: UserDefaults = .standard) {
+        guard defaults.object(forKey: key) != nil else { return }
+        let stored = defaults.integer(forKey: key)
+        guard (0...0xFFFFFF).contains(stored) else { return }
+        currentHex = UInt32(stored)
+    }
+}
+
+extension Color {
+    /// 0xRRGGBB for a colour that came back out of a `ColorPicker`. Anything
+    /// that will not convert to sRGB keeps the previous accent rather than
+    /// resolving to black.
+    var helpyHex: UInt32? {
+        guard let srgb = NSColor(self).usingColorSpace(.sRGB) else { return nil }
+        let channel = { (value: CGFloat) in UInt32(max(0, min(255, (value * 255).rounded()))) }
+        return channel(srgb.redComponent) << 16
+            | channel(srgb.greenComponent) << 8
+            | channel(srgb.blueComponent)
     }
 }
 

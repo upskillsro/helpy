@@ -37,6 +37,13 @@ enum MainWindowStyle {
     static let normalMinSize = NSSize(width: 900, height: 620)
     static let stripWidth: CGFloat = 350
 
+    /// The width the window is pinned to, or nil when it may be sized freely.
+    /// The window's delegate reads this to refuse a resize outright: the style
+    /// mask and minSize/maxSize are both reapplied by SwiftUI whenever the
+    /// scene's root view is rebuilt, so neither of them can hold the strip on
+    /// its own. A delegate that declines the new size cannot be overruled.
+    private(set) static var lockedWidth: CGFloat?
+
     static func apply(_ mode: MainWindowMode, to window: NSWindow, settings: SettingsStore = SettingsStore()) {
         switch mode {
         case .normal:
@@ -50,12 +57,17 @@ enum MainWindowStyle {
             window.isMovable = true
             window.isMovableByWindowBackground = false
             window.minSize = normalMinSize
+            window.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+            lockedWidth = nil
             window.standardWindowButton(.closeButton)?.isHidden = false
             window.standardWindowButton(.miniaturizeButton)?.isHidden = false
             window.standardWindowButton(.zoomButton)?.isHidden = false
 
         case .strip:
-            window.styleMask = [.titled, .closable, .fullSizeContentView]
+            // .miniaturizable is here for the strip header's own minimise
+            // button, not for chrome: the traffic lights stay hidden below, but
+            // `miniaturize(_:)` is a no-op on a window whose mask omits it.
+            window.styleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
             window.titleVisibility = .hidden
             window.titlebarAppearsTransparent = true
             window.titlebarSeparatorStyle = .none
@@ -66,6 +78,12 @@ enum MainWindowStyle {
             window.isMovable = false
             window.isMovableByWindowBackground = false
             window.minSize = NSSize(width: stripWidth, height: 380)
+            // Removing .resizable is not enough on its own: SwiftUI reapplies
+            // .windowResizability whenever the scene's root view is rebuilt —
+            // which changing the accent does — and hands the strip its resize
+            // handles back. A hard max width is the constraint it cannot undo.
+            window.maxSize = NSSize(width: stripWidth, height: CGFloat.greatestFiniteMagnitude)
+            lockedWidth = stripWidth
             window.standardWindowButton(.closeButton)?.isHidden = true
             window.standardWindowButton(.miniaturizeButton)?.isHidden = true
             window.standardWindowButton(.zoomButton)?.isHidden = true
@@ -80,6 +98,11 @@ enum MainWindowStyle {
         let margin: CGFloat = 15
         let fullHeight = visible.height - (margin * 2)
         let height = min(max(fullHeight * settings.panelHeightMode.fraction, 380), fullHeight)
+        // Re-asserted on every repin, not just on entering the mode: this runs
+        // after appearance and position changes, which is exactly when the
+        // clamp is most likely to have been overwritten.
+        window.maxSize = NSSize(width: stripWidth, height: CGFloat.greatestFiniteMagnitude)
+
         let x = settings.panelPosition == .left
             ? visible.minX + margin
             : visible.maxX - stripWidth - margin
@@ -231,6 +254,39 @@ final class AppWindowCoordinator: ObservableObject {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.refreshMenuBarTitle() }
             .store(in: &timerCancellables)
+
+        // The focus transition is driven from here, not from a view.
+        // A session can be started from the list board, where the side strip
+        // that used to own this onChange is not mounted at all — so the pill
+        // never appeared and play looked dead.
+        timerService.$isFocusMode
+            .dropFirst()
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isFocus in
+                guard let self else { return }
+                if isFocus {
+                    self.enterFocusPresentation()
+                } else {
+                    self.exitFocusPresentation()
+                }
+            }
+            .store(in: &timerCancellables)
+
+        // Completing or stopping the last task leaves focus mode wherever the
+        // session was started from. A break has no active task by design, so
+        // it keeps the pill up.
+        timerService.$activeReminderId
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let timerService = self?.timerService,
+                      timerService.activeReminderId == nil,
+                      timerService.isFocusMode,
+                      !timerService.isOnBreak else { return }
+                timerService.isFocusMode = false
+            }
+            .store(in: &timerCancellables)
     }
 
     func refreshMenuBarTitle() {
@@ -351,14 +407,19 @@ final class AppWindowCoordinator: ObservableObject {
         // Global catches the cursor while another app is frontmost; local
         // catches it while Helpy is. A global monitor never sees this app's
         // own events, so both are needed to cover the whole screen.
+        //
+        // These fire on every mouse move, hundreds of times a second while the
+        // cursor is travelling. AppKit already delivers them on the main
+        // thread, so assume the isolation rather than spawning a Task per
+        // event — that allocation and actor hop was pure overhead.
         let matching: NSEvent.EventTypeMask = [.mouseMoved, .leftMouseDragged]
         if let global = NSEvent.addGlobalMonitorForEvents(matching: matching) { [weak self] _ in
-            Task { @MainActor in self?.updatePillHover() }
+            MainActor.assumeIsolated { self?.updatePillHover() }
         } {
             pillHoverMonitors.append(global)
         }
         if let local = NSEvent.addLocalMonitorForEvents(matching: matching) { [weak self] event in
-            Task { @MainActor in self?.updatePillHover() }
+            MainActor.assumeIsolated { self?.updatePillHover() }
             return event
         } {
             pillHoverMonitors.append(local)

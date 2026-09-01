@@ -1,3 +1,4 @@
+import AppKit
 import EventKit
 import Foundation
 import SwiftUI
@@ -46,6 +47,13 @@ class RemindersService: ObservableObject {
 
     private var allListsFetchToken = UUID()
 
+    /// Tasks completed today, grouped by list, for the board's Completed
+    /// column. Today only on purpose: the column is there to show what this
+    /// session got done, and a running history would grow without limit.
+    @Published var completedByList: [String: [EKReminder]] = [:]
+
+    private var completedFetchToken = UUID()
+
     /// Flips to true the first time the grid or a board asks for all lists, and
     /// stays true for the launch. While it is set, every `fetchReminders()` also
     /// repopulates `remindersByList`, so no view has to remember to refresh —
@@ -63,12 +71,17 @@ class RemindersService: ObservableObject {
         remindersByList[listId] ?? []
     }
 
+    func completedReminders(in listId: String) -> [EKReminder] {
+        completedByList[listId] ?? []
+    }
+
     /// One predicate across every calendar, grouped locally. Cheaper and far
     /// simpler than one fetch per list with a dispatch group, and it cannot
     /// half-complete.
     func fetchAllLists() {
         tracksAllLists = true
         fetchLists()
+        fetchCompletedForAllLists()
 
         let token = UUID()
         allListsFetchToken = token
@@ -101,17 +114,59 @@ class RemindersService: ObservableObject {
         }
     }
 
+    /// The Completed column's source. Separate from `fetchAllLists` because
+    /// EventKit needs a different predicate for it, and because a completed
+    /// task has no due date to bucket by — it is sorted newest-first by when it
+    /// was actually ticked.
+    private func fetchCompletedForAllLists() {
+        let token = UUID()
+        completedFetchToken = token
+
+        // No end date: a task ticked a moment ago has to show up even if the
+        // clock has just rolled past an end-of-day boundary mid-fetch.
+        let since = Calendar.current.startOfDay(for: Date())
+        let predicate = store.predicateForCompletedReminders(
+            withCompletionDateStarting: since, ending: nil, calendars: nil
+        )
+
+        store.fetchReminders(matching: predicate) { [weak self] fetched in
+            guard let self, let fetched else { return }
+
+            var grouped: [String: [EKReminder]] = [:]
+            for reminder in fetched {
+                guard let listId = reminder.calendar?.calendarIdentifier else { continue }
+                grouped[listId, default: []].append(reminder)
+            }
+            for key in grouped.keys {
+                grouped[key]?.sort {
+                    ($0.completionDate ?? .distantPast) > ($1.completionDate ?? .distantPast)
+                }
+            }
+
+            Task { @MainActor in
+                guard token == self.completedFetchToken else { return }
+                self.completedByList = grouped
+            }
+        }
+    }
+
     /// Creates a Reminders list in the store's default source.
     /// Returns nil when no source can hold one, so the caller can hide the
     /// affordance rather than fail on click.
     @discardableResult
-    func createList(named title: String) -> EKCalendar? {
+    func createList(named title: String, color: NSColor? = nil) -> EKCalendar? {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, let source = defaultReminderSource() else { return nil }
 
         let calendar = EKCalendar(for: .reminder, eventStore: store)
         calendar.title = trimmed
         calendar.source = source
+        // Set the colour before saving: Reminders assigns one of its own to a
+        // list that arrives without it, and changing it afterwards is a second
+        // write that can fail on its own.
+        if let color, let srgb = color.usingColorSpace(.sRGB) {
+            calendar.cgColor = srgb.cgColor
+        }
 
         do {
             try store.saveCalendar(calendar, commit: true)
@@ -269,11 +324,23 @@ class RemindersService: ObservableObject {
         }
     }
     
+    /// Renames by identifier rather than by object, the way completion and
+    /// deletion already do. The in-memory caches only hold what some view has
+    /// asked for, so a caller working on a list nobody has opened — Planning
+    /// renaming a week's task — could not find the reminder to rename at all.
+    func updateTitle(forIdentifier id: String, newTitle: String) {
+        guard let reminder = store.calendarItem(withIdentifier: id) as? EKReminder else { return }
+        updateTitle(reminder, newTitle: newTitle)
+    }
+
     func updateTitle(_ reminder: EKReminder, newTitle: String) {
         guard reminder.title != newTitle else { return }
         reminder.title = newTitle
         do {
             try store.save(reminder, commit: true)
+            // Refetch: other views hold their own copies of this reminder, and
+            // a saved title they never hear about is a stale title on screen.
+            fetchReminders()
         } catch {
             AppLogger.reminders.error("Failed to update title: \(String(describing: error), privacy: .public)")
         }
@@ -291,6 +358,28 @@ class RemindersService: ObservableObject {
         }
     }
     
+    /// Sets a due date from components exactly as given.
+    ///
+    /// The Date-based version below derives hour and minute and adds an alarm
+    /// to match, which is right for a time the user picked and wrong for a
+    /// board column: a day-only task takes whatever all-day alert Reminders is
+    /// set to give it, rather than one of ours at nine in the morning.
+    func updateDueDate(_ reminder: EKReminder, components: DateComponents?) {
+        guard reminder.dueDateComponents != components else { return }
+        reminder.dueDateComponents = components
+        if let components, components.hour != nil, let date = components.date {
+            reminder.alarms = [EKAlarm(absoluteDate: date)]
+        } else {
+            reminder.alarms = []
+        }
+        do {
+            try store.save(reminder, commit: true)
+            fetchReminders()
+        } catch {
+            AppLogger.reminders.error("Failed to update due date: \(String(describing: error), privacy: .public)")
+        }
+    }
+
     func updateDueDate(_ reminder: EKReminder, date: Date?) {
         let newComponents: DateComponents?
         if let date = date {
@@ -394,6 +483,53 @@ class RemindersService: ObservableObject {
         }
     }
 
+    /// Creates a reminder in a specific list and hands back its identifier, so
+    /// the caller can hold a thread to it. The weekly planner needs this: the
+    /// plan task and the reminder it mirrors have to stay findable from each
+    /// other, and a fire-and-forget create gives you nothing to hold.
+    @discardableResult
+    func createReminder(title: String, inListId listId: String, dueDate: DateComponents?) -> String? {
+        guard let calendar = lists.first(where: { $0.calendarIdentifier == listId })
+            ?? store.calendar(withIdentifier: listId)
+        else { return nil }
+
+        let reminder = EKReminder(eventStore: store)
+        reminder.title = title
+        reminder.calendar = calendar
+        reminder.dueDateComponents = dueDate
+
+        do {
+            try store.save(reminder, commit: true)
+            fetchReminders()
+            return reminder.calendarItemIdentifier
+        } catch {
+            AppLogger.reminders.error("Failed to create reminder: \(String(describing: error), privacy: .public)")
+            return nil
+        }
+    }
+
+    /// Completion state of a reminder that may not be in the incomplete set.
+    /// nil means it no longer exists — the caller decides what that means.
+    func completionState(forIdentifier id: String) -> Bool? {
+        (store.calendarItem(withIdentifier: id) as? EKReminder)?.isCompleted
+    }
+
+    func setCompleted(_ completed: Bool, forIdentifier id: String) {
+        guard let reminder = store.calendarItem(withIdentifier: id) as? EKReminder else { return }
+        reminder.isCompleted = completed
+        do {
+            try store.save(reminder, commit: true)
+            fetchReminders()
+        } catch {
+            AppLogger.reminders.error("Failed to set completion: \(String(describing: error), privacy: .public)")
+        }
+    }
+
+    func deleteReminder(withIdentifier id: String) {
+        guard let reminder = store.calendarItem(withIdentifier: id) as? EKReminder else { return }
+        deleteReminder(reminder)
+    }
+
     func createReminder(from draft: TaskDraft, in calendar: EKCalendar? = nil) {
         createReminders(from: [draft], in: calendar)
     }
@@ -494,6 +630,59 @@ class RemindersService: ObservableObject {
         }
     }
     
+    // MARK: - Board ordering
+
+    /// Moves a task within one list's saved order so it lands at `index` of
+    /// `bucket`.
+    ///
+    /// The board shows a list split into columns, but the order behind it is a
+    /// single list. Placing a card is therefore expressed as "put it directly
+    /// before the card currently at that slot" — that keeps the column's own
+    /// order right without inventing a second, per-column ordering to keep in
+    /// sync with this one.
+    func placeReminder(
+        _ id: String,
+        atIndex index: Int,
+        of bucket: TaskBucket,
+        inListId listId: String,
+        week: HelpyWeek = HelpyWeek()
+    ) {
+        var all = reminders(in: listId)
+        guard let from = all.firstIndex(where: { $0.calendarItemIdentifier == id }) else { return }
+
+        // Slot numbers count the card itself while it is still in the column,
+        // so dragging one downwards inside its own column is off by one unless
+        // the slot is pulled back. A card arriving from another column was
+        // never in this count and needs no adjustment.
+        let columnBefore = all.filter { week.bucket(for: $0) == bucket }
+        var slot = index
+        if let old = columnBefore.firstIndex(where: { $0.calendarItemIdentifier == id }), old < index {
+            slot -= 1
+        }
+
+        let moved = all.remove(at: from)
+        let inBucket = all.filter { week.bucket(for: $0) == bucket }
+
+        let insertion: Int
+        if slot < inBucket.count {
+            let anchorId = inBucket[slot].calendarItemIdentifier
+            insertion = all.firstIndex { $0.calendarItemIdentifier == anchorId } ?? all.count
+        } else if let last = inBucket.last {
+            let lastIndex = all.firstIndex { $0.calendarItemIdentifier == last.calendarItemIdentifier }
+            insertion = (lastIndex ?? all.count - 1) + 1
+        } else {
+            // First card in an empty column: order within the list does not
+            // matter yet, so leaving it where the removal left a gap is fine.
+            insertion = min(from, all.count)
+        }
+
+        all.insert(moved, at: min(insertion, all.count))
+        remindersByList[listId] = all
+        UserDefaults.standard.set(
+            all.map(\.calendarItemIdentifier), forKey: "sortOrder_\(listId)"
+        )
+    }
+
     // MARK: - Sorting Logic
     
     private var currentSortOrderKey: String {

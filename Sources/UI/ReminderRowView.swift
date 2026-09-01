@@ -21,6 +21,7 @@ struct ReminderRowView: View, Equatable {
     @State private var showMoreActions = false // New state for hover menu
     @State private var isCompleting = false
     @State private var isLeaving = false
+    @State private var isStruck = false
     @State private var isTitleEditing = false
     @State private var titleDraft = ""
     @FocusState private var isTitleFieldFocused: Bool
@@ -29,13 +30,15 @@ struct ReminderRowView: View, Equatable {
     private var t: HelpyPalette { .forScheme(colorScheme) }
 
     // Completing a task runs in three beats instead of one hard cut:
-    //   0.00s  the check lands — circle fills, checkmark pops, burst fires
-    //   0.20s  the row leaves — fades, shrinks slightly, softens
-    //   0.42s  commit, animated, so the list closes the gap smoothly
-    // The old single 0.18s step snapped the row to opacity 0 and let the list
-    // jump, which is what read as janky.
-    private let completionCheckDelay: TimeInterval = 0.20
-    private let completionCommitDelay: TimeInterval = 0.42
+    //   0.00s  the check lands — circle fills, the checkmark pops
+    //   0.12s  the title strikes through and greys
+    //   0.34s  the row slides right and fades, heading for Completed
+    //   0.56s  commit, animated, so the list closes the gap smoothly
+    // The single hard step it replaced snapped the row to opacity 0 and let
+    // the list jump, which is what read as janky.
+    private let completionStrikeDelay: TimeInterval = 0.12
+    private let completionCheckDelay: TimeInterval = 0.34
+    private let completionCommitDelay: TimeInterval = 0.56
     private let completionAnimation = Animation.spring(response: 0.28, dampingFraction: 0.55)
     
     private var effectiveHover: Bool {
@@ -67,8 +70,13 @@ struct ReminderRowView: View, Equatable {
                         }
                         NSSound(named: "Glass")?.play()
 
+                        DispatchQueue.main.asyncAfter(deadline: .now() + completionStrikeDelay) {
+                            withAnimation(.easeOut(duration: 0.18)) { isStruck = true }
+                        }
+
                         DispatchQueue.main.asyncAfter(deadline: .now() + completionCheckDelay) {
                             withAnimation(.easeIn(duration: 0.22)) { isLeaving = true }
+                            
                         }
 
                         DispatchQueue.main.asyncAfter(deadline: .now() + completionCommitDelay) {
@@ -83,6 +91,7 @@ struct ReminderRowView: View, Equatable {
                                 withAnimation(.easeOut(duration: 0.2)) {
                                     isCompleting = false
                                     isLeaving = false
+                                    isStruck = false
                                 }
                             }
                         }
@@ -107,7 +116,6 @@ struct ReminderRowView: View, Equatable {
                                 .transition(.scale(scale: 0.3).combined(with: .opacity))
                         }
 
-                        ParticleEffectView(trigger: $isCompleting, tint: tint)
                     }
                     .frame(width: 18, height: 18) // Touch target
                     .scaleEffect(isCompleting ? 1.16 : 1.0)
@@ -126,10 +134,25 @@ struct ReminderRowView: View, Equatable {
                             .focused($isTitleFieldFocused)
                             .onSubmit { saveTitleEdit() }
                             .onExitCommand { cancelTitleEdit() }
+                            // Clicking away used to leave the row as a field
+                            // nobody was typing in. Commit instead.
+                            .onChange(of: isTitleFieldFocused) { _, focused in
+                                if !focused { saveTitleEdit() }
+                            }
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .fill(t.fieldFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .strokeBorder(t.accent.opacity(0.8), lineWidth: 1.5)
+                            )
                     } else {
                         Text(reminder.title)
-                            .strikethrough(reminder.isCompleted)
-                            .foregroundStyle(reminder.isCompleted ? t.muted : t.ink)
+                            .strikethrough(reminder.isCompleted || isStruck, color: t.muted2)
+                            .foregroundStyle(reminder.isCompleted || isStruck ? t.muted : t.ink)
                             .lineLimit(2)
                             .font(.inter(size: 13, weight: .medium))
                             .onTapGesture(count: 2) {
@@ -195,11 +218,10 @@ struct ReminderRowView: View, Equatable {
                             .foregroundStyle(t.muted2)
                     }
                     
-                    if reminder.priority > 0 {
-                        Image(systemName: "flag.fill")
-                            .font(.system(size: 11))
-                            .foregroundStyle(priorityColor(for: reminder.priority))
-                    }
+                    // No priority flag here on purpose: the leading colour bar
+                    // already carries priority, and EventKit exposes no separate
+                    // "flagged" field for reminders, so a flag icon would only
+                    // repeat the bar.
                 }
                 // The hover-actions overlay fades in over the row, so bright meta
                 // content — like a green subtask chip — used to bleed through
@@ -222,6 +244,12 @@ struct ReminderRowView: View, Equatable {
                             PillControlButton(icon: "play.fill", help: "Start Timer", tone: .go, palette: t) {
                                 let duration = estimateStore.getMetadata(for: reminder.calendarItemIdentifier)?.estimatedDuration ?? 0
                                 timerService.startTimer(reminderId: reminder.calendarItemIdentifier, duration: duration)
+                                // Play hands the session straight to the focus
+                                // surface. Starting a timer and then having to
+                                // press a second button to see it was the odd
+                                // step, and on the board there was nothing to
+                                // look at at all.
+                                timerService.isFocusMode = true
                             }
                             
                             // Time/Est Group
@@ -366,51 +394,38 @@ struct ReminderRowView: View, Equatable {
             
             if showCalendarEdit {
                 Rectangle().fill(t.line).frame(height: 1)
-                VStack(spacing: 12) {
-                    HStack {
-                        // Date Group
-                        HStack(spacing: 6) {
-                            Text("Date")
-                                .font(.inter(size: 11, weight: .medium))
-                                .foregroundStyle(t.muted)
-                            
+                // Labels sit above their fields rather than beside them. Inline
+                // labels plus two fixed-size date fields need more width than a
+                // board column has, and SwiftUI pays for the overflow by
+                // crushing whatever is flexible — which turned "Date" into a
+                // vertical stack of single letters and squeezed the task title
+                // in the row above down to nothing.
+                VStack(alignment: .leading, spacing: 11) {
+                    HStack(alignment: .bottom, spacing: 10) {
+                        scheduleField("Date") {
                             DatePicker("", selection: Binding(
                                 get: { reminder.dueDateComponents?.date ?? Date() },
                                 set: { remindersService.updateDueDate(reminder, date: $0) }
                             ), displayedComponents: [.date])
                             .labelsHidden()
                             .datePickerStyle(.field)
-                            .frame(minWidth: 100)
                             .fixedSize()
                         }
-                        
-                        TextFieldSpacer() // 12px Spacer
-                        
-                        // Time Group
-                        HStack(spacing: 6) {
-                            Text("Time")
-                                .font(.inter(size: 11, weight: .medium))
-                                .foregroundStyle(t.muted)
 
+                        scheduleField("Time") {
                             DatePicker("", selection: Binding(
                                 get: { reminder.dueDateComponents?.date ?? Date() },
                                 set: { remindersService.updateDueDate(reminder, date: $0) }
                             ), displayedComponents: [.hourAndMinute])
                             .labelsHidden()
                             .datePickerStyle(.field)
-                            .frame(minWidth: 70)
                             .fixedSize()
                         }
-                        
-                        Spacer()
+
+                        Spacer(minLength: 0)
                     }
-                    
-                    // Repeat Group
-                    HStack(spacing: 6) {
-                         Text("Repeat")
-                            .font(.inter(size: 11, weight: .medium))
-                            .foregroundStyle(t.muted)
-                        
+
+                    scheduleField("Repeat") {
                         Menu {
                             Button("Never") { remindersService.updateRecurrence(reminder, frequency: nil) }
                             Divider()
@@ -419,17 +434,13 @@ struct ReminderRowView: View, Equatable {
                             Button("Monthly") { remindersService.updateRecurrence(reminder, frequency: .monthly) }
                             Button("Yearly") { remindersService.updateRecurrence(reminder, frequency: .yearly) }
                         } label: {
-                            // Standard look
                             Text(formatRecurrence(reminder.recurrenceRules?.first))
                         }
                         .menuStyle(.borderedButton)
                         .fixedSize()
-                        
-                        Spacer()
                     }
-                    
-                    // Button Row (Done & Clear)
-                    HStack {
+
+                    HStack(spacing: 8) {
                         Button("Clear") {
                              remindersService.updateDueDate(reminder, date: nil)
                              remindersService.updateRecurrence(reminder, frequency: nil)
@@ -437,18 +448,19 @@ struct ReminderRowView: View, Equatable {
                         }
                         .buttonStyle(HelpyQuietButtonStyle(palette: t))
 
-                        Spacer()
+                        Spacer(minLength: 0)
 
                         Button("Done") {
                              withAnimation { showCalendarEdit = false }
                         }
                         .buttonStyle(HelpySecondaryButtonStyle(palette: t))
                     }
+                    .padding(.top, 1)
                 }
-                .padding(12)
+                .padding(14)
                 .background(t.fieldFill)
             }
-            
+
             if showNotesEdit {
                 Rectangle().fill(t.line).frame(height: 1)
                 VStack(alignment: .leading, spacing: 8) {
@@ -479,17 +491,21 @@ struct ReminderRowView: View, Equatable {
             RoundedRectangle(cornerRadius: HelpyMetrics.rowCornerRadius, style: .continuous)
                 .fill(rowFill)
         )
-        .clipShape(RoundedRectangle(cornerRadius: HelpyMetrics.rowCornerRadius, style: .continuous))
         // A priority task earns a 3pt colour bar on the leading edge — the one
-        // place colour enters the list.
+        // place colour enters the list. It is an inset capsule, not a
+        // full-bleed rectangle: a square-cornered bar overlaid on the rounded
+        // card poked out past the corner curve and read as a broken sliver.
         .overlay(alignment: .leading) {
             if reminder.priority > 0 && !reminder.isCompleted {
-                Rectangle()
+                Capsule(style: .continuous)
                     .fill(priorityColor(for: reminder.priority))
                     .frame(width: 3)
+                    .padding(.vertical, 9)
+                    .padding(.leading, 5)
                     .allowsHitTesting(false)
             }
         }
+        .clipShape(RoundedRectangle(cornerRadius: HelpyMetrics.rowCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: HelpyMetrics.rowCornerRadius, style: .continuous)
                 .strokeBorder(rowBorder, lineWidth: 1)
@@ -502,8 +518,9 @@ struct ReminderRowView: View, Equatable {
                 isHovering = hover
             }
         }
-        .scaleEffect(isLeaving ? 0.96 : 1.0)
-        .blur(radius: isLeaving ? 1.5 : 0)
+        // Out to the right, towards where the Completed column is.
+        .offset(x: isLeaving ? 44 : 0)
+        .scaleEffect(isLeaving ? 0.97 : 1.0)
         .onChange(of: isTitleEditing) { _, editing in
             if editing {
                 DispatchQueue.main.async {
@@ -512,9 +529,32 @@ struct ReminderRowView: View, Equatable {
             }
         }
         .opacity(isLeaving ? 0.0 : 1.0)
+        // The card being dragged stays where it was as a faint placeholder
+        // rather than vanishing: the column keeps its shape, so the slots do
+        // not jump around under the cursor mid-drag.
+        .opacity(isBeingDragged ? 0.32 : 1.0)
+        .saturation(isBeingDragged ? 0.2 : 1.0)
+        .animation(.easeOut(duration: 0.14), value: isBeingDragged)
         .animation(.easeOut(duration: 0.2), value: isCompleting)
     }
     
+    /// A small caps label sitting above its control. Every field in the
+    /// schedule editor is built this way so the block keeps one rhythm and
+    /// stays narrow enough for a board column.
+    @ViewBuilder
+    private func scheduleField<Content: View>(
+        _ title: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(title.uppercased())
+                .font(.inter(size: 9, weight: .bold))
+                .kerning(0.8)
+                .foregroundStyle(t.muted2)
+            content()
+        }
+    }
+
     private func beginTitleEditing() {
         guard !reminder.isCompleted else { return }
         titleDraft = reminder.title
@@ -524,6 +564,7 @@ struct ReminderRowView: View, Equatable {
     }
     
     private func saveTitleEdit() {
+        guard isTitleEditing else { return }
         let trimmed = titleDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         withAnimation {
             isTitleEditing = false

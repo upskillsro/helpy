@@ -27,6 +27,45 @@ final class HelpyAppDelegate: NSObject, NSApplicationDelegate {
 }
 
 final class MainWindowCloseDelegate: NSObject, NSWindowDelegate {
+    /// One instance, installed from two places. The strip's window accessor
+    /// used to bring a second delegate of its own, and whichever ran last won:
+    /// that is how the strip ended up with a window nobody was holding to
+    /// 350pt. A window has one delegate, so there is one object for it.
+    static let shared = MainWindowCloseDelegate()
+
+    /// Focus mode's strip is a fixed-width panel, and dragging it wider left a
+    /// pane of empty window beside content that stops at 350. Refusing the
+    /// resize here is the only place the lock holds: removing .resizable from
+    /// the style mask and setting maxSize are both undone by SwiftUI the next
+    /// time it reapplies .windowResizability.
+    func windowWillResize(_ sender: NSWindow, to frameSize: NSSize) -> NSSize {
+        guard let locked = MainWindowStyle.lockedWidth else { return frameSize }
+        return NSSize(width: locked, height: frameSize.height)
+    }
+
+    /// The backstop for a resize that never asked: SwiftUI sizes the window
+    /// itself when it rebuilds the scene's root view, and that path does not
+    /// go through windowWillResize.
+    ///
+    /// The correction is deferred to the next runloop turn, never applied
+    /// here. This notification arrives from inside AppKit's layout pass, and
+    /// setting a frame from within that pass throws — an uncaught exception,
+    /// not a warning, so the app dies rather than mislaying a window.
+    func windowDidResize(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow,
+              let locked = MainWindowStyle.lockedWidth,
+              abs(window.frame.width - locked) > 0.5 else { return }
+
+        DispatchQueue.main.async {
+            // Re-read the lock: the window may have left strip mode in between.
+            guard let locked = MainWindowStyle.lockedWidth,
+                  abs(window.frame.width - locked) > 0.5 else { return }
+            var frame = window.frame
+            frame.size.width = locked
+            window.setFrame(frame, display: true, animate: false)
+        }
+    }
+
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         if SettingsStore().quitOnClose {
             NSApp.terminate(nil)
@@ -40,7 +79,7 @@ final class MainWindowCloseDelegate: NSObject, NSWindowDelegate {
 struct HelpyApp: App {
     private let mainWindowIdentifier = NSUserInterfaceItemIdentifier("focus.main.window")
     @NSApplicationDelegateAdaptor(HelpyAppDelegate.self) private var appDelegate
-    private let mainWindowCloseDelegate = MainWindowCloseDelegate()
+    private let mainWindowCloseDelegate = MainWindowCloseDelegate.shared
     @StateObject var remindersService = RemindersService()
     @StateObject var estimateStore = EstimateStore()
     @StateObject var timerService = TimerService()
@@ -48,17 +87,24 @@ struct HelpyApp: App {
     @StateObject var subtaskStore = SubtaskStore()
     @StateObject var navigation = AppNavigation()
     @StateObject var planStore = WeeklyPlanStore()
+    @StateObject var roadmapStore = RoadmapStore()
     @StateObject var iconStore = ListIconStore()
     @State private var panelPositionObserver: NSObjectProtocol?
     @State private var appearanceObserver: NSObjectProtocol?
     @State private var lastAppliedDarkIconState: Bool?
     @AppStorage("pillDisplayMode") private var pillDisplayMode: PillDisplayMode = .floatingPill
+    // Palettes are read through a static, so changing the accent has to rebuild
+    // the window for the new colour to reach every view at once.
+    @AppStorage("accentHex") private var accentHex = Int(HelpyAccent.defaultHex)
     
     init() {
         // Inter ships in the bundle and must be registered before the first
         // view is built, or every .custom("Inter-…") lookup this launch
         // silently resolves to the system font.
         HelpyFonts.register()
+
+        // Same reason: the accent has to be in place before anything draws.
+        HelpyAccent.loadFromDefaults()
 
         // Services are linked in .onAppear: reading a @StateObject's wrapped
         // value from init is not safe.
@@ -67,6 +113,7 @@ struct HelpyApp: App {
     var body: some Scene {
         WindowGroup("Helpy") {
             MainWindowView()
+                .id(accentHex)
                 .environmentObject(remindersService)
                 .environmentObject(timerService)
                 .environmentObject(estimateStore)
@@ -74,6 +121,7 @@ struct HelpyApp: App {
                 .environmentObject(subtaskStore)
                 .environmentObject(navigation)
                 .environmentObject(planStore)
+                .environmentObject(roadmapStore)
                 .environmentObject(iconStore)
                 .onAppear {
                     // Link Dependencies
@@ -157,6 +205,10 @@ struct HelpyApp: App {
         Settings {
             SettingsView()
         }
+        // Helpy's own header sits at the top of the settings screen; a system
+        // title bar above it would be a second, emptier one.
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
     }
     
     func applySystemAppearanceIcon() {

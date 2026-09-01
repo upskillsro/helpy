@@ -39,6 +39,9 @@ struct MainWindowView: View {
         }
         .toolbar(navigation.isFocused ? .hidden : .visible, for: .windowToolbar)
         .toolbar { toolbarContent }
+        // No window title at all: the open list names itself in its own header
+        // above the board, as one object rather than an icon beside a title.
+        .navigationTitle("")
         .onAppear { applyWindowMode() }
         .onChange(of: navigation.focusedListId) { _, _ in applyWindowMode() }
     }
@@ -73,28 +76,14 @@ struct MainWindowView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        if navigation.tab == .lists, let openList {
+        if navigation.tab == .lists, navigation.openListId != nil {
             ToolbarItem(placement: .navigation) {
                 Button {
                     navigation.closeList()
                 } label: {
-                    Label("Lists", systemImage: "chevron.left")
+                    Image(systemName: "chevron.left")
                 }
                 .help("Back to all lists")
-            }
-
-            ToolbarItem(placement: .navigation) {
-                HStack(spacing: 6) {
-                    ListIconSquare(
-                        listId: openList.calendarIdentifier,
-                        title: openList.title,
-                        color: openList.helpyColor,
-                        side: 16,
-                        cornerRadius: 4
-                    )
-                    Text(openList.title)
-                        .font(.inter(size: 12, weight: .semibold))
-                }
             }
         }
 
