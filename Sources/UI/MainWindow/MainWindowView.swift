@@ -69,6 +69,8 @@ struct MainWindowView: View {
             }
         case .planning:
             PlanningView()
+        case .calendar:
+            CalendarTabView()
         }
     }
 
@@ -95,7 +97,7 @@ struct MainWindowView: View {
             }
             .pickerStyle(.segmented)
             .labelsHidden()
-            .frame(width: 180)
+            .frame(width: 250)
         }
 
         ToolbarItem(placement: .primaryAction) {

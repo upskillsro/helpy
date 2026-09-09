@@ -4,6 +4,7 @@ import SwiftUI
 enum MainTab: String, CaseIterable, Identifiable {
     case lists
     case planning
+    case calendar
 
     var id: String { rawValue }
 
@@ -11,6 +12,7 @@ enum MainTab: String, CaseIterable, Identifiable {
         switch self {
         case .lists: return "Lists"
         case .planning: return "Planning"
+        case .calendar: return "Calendar"
         }
     }
 }

@@ -1,0 +1,439 @@
+<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8">
+<title>Helpy — Calendar tab, three directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --canvas:#FFFFFF; --surface:#F8FAFE; --hover:#F1F6FE; --active:#F2F7FF; --activeBorder:#D9E6FF;
+  --line:#E4EBF7; --ink:#0B1424; --ink2:#14203A; --muted:#7387A8; --muted2:#94A3BC;
+  --accent:#0086E8; --header:#0086E8; --onAccent:#fff; --railTrack:#EDF2FA;
+  --warm:#E8760F; --hot:#E04422; --success:#1E8E5A;
+  --chipFill:#EAF1FD; --chipText:#7387A8; --chipHotFill:#FFEEE7; --chipHotText:#D9542B;
+  --check:#C1D0E8; --field:#F8FAFE; --fieldBorder:#E4EBF7;
+  --page:#EEF3FA; --pageInk:#0B1424;
+}
+:root{--pageMuted:#61748F}
+html[data-theme=dark]{
+  --canvas:#0A0E17; --surface:#111826; --hover:#151E2F; --active:#121A29; --activeBorder:#212C40;
+  --line:rgba(255,255,255,.11); --ink:#E9EFFA; --ink2:#DDE5F3; --muted:#8A99B4; --muted2:#5D6B87;
+  --accent:#4E9BFF; --header:#0086E8; --railTrack:#202A3D;
+  --warm:#FFA84D; --hot:#FF8A6B; --success:#5FD3A0;
+  --chipFill:#1A2334; --chipText:#7C8CA8; --chipHotFill:#33211C; --chipHotText:#F08A5F;
+  --check:#39465E; --field:#101724; --fieldBorder:#1E2839;
+  --page:#05070C; --pageInk:#E9EFFA; --pageMuted:#7C8CA8;
+}
+body{font-family:Inter,-apple-system,sans-serif;background:var(--page);color:var(--pageInk);
+  padding:38px 34px 90px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1420px;margin:0 auto}
+.top{display:flex;align-items:flex-start;gap:20px;margin-bottom:34px}
+.top h1{font-size:25px;font-weight:700;letter-spacing:-.5px}
+.top p{color:var(--pageMuted);font-size:13px;margin-top:8px;max-width:760px;line-height:1.62}
+.toggle{margin-left:auto;flex:none;display:flex;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.toggle button{font:inherit;font-size:11.5px;font-weight:600;padding:7px 13px;background:transparent;color:var(--pageMuted);border:0;cursor:pointer}
+.toggle button.on{background:var(--header);color:#fff}
+
+.opt{margin-bottom:52px}
+.opt > h2{font-size:15px;font-weight:700;letter-spacing:-.2px;display:flex;align-items:center;gap:10px}
+.tag{font-size:10px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:#fff;background:var(--header);
+  border-radius:6px;padding:4px 7px}
+.opt > p{color:var(--pageMuted);font-size:12.5px;line-height:1.62;margin:9px 0 6px;max-width:900px}
+.opt > p b{color:var(--pageInk);font-weight:600}
+.writes{font-size:11.5px;color:var(--pageMuted);margin-bottom:16px;padding-left:11px;border-left:2px solid var(--line)}
+.writes b{color:var(--pageInk);font-weight:600}
+
+/* ---- fake window ---- */
+.win{background:var(--canvas);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+html[data-theme=dark] .win{border-color:rgba(255,255,255,.09)}
+.chrome{display:flex;align-items:center;gap:14px;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--line)}
+.lights{display:flex;gap:6px}.lights i{width:11px;height:11px;border-radius:50%;background:#D6DEEB;display:block}
+html[data-theme=dark] .lights i{background:#2A3547}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:0 auto}
+.seg span{font-size:11.5px;font-weight:600;padding:5px 14px;color:var(--muted)}
+.seg span.on{background:var(--header);color:#fff}
+.gear{width:16px;height:16px;border-radius:50%;border:1.6px solid var(--muted2)}
+
+.body{display:flex;height:520px}
+.body.tall{height:560px}
+
+/* ---- unscheduled rail ---- */
+.rail{width:246px;flex:none;border-right:1px solid var(--line);display:flex;flex-direction:column;background:var(--canvas)}
+.rail-hd{padding:12px 12px 10px;border-bottom:1px solid var(--line)}
+.listpick{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:8px 10px}
+.lico{width:24px;height:24px;border-radius:7px;flex:none;display:grid;place-items:center;color:#fff;font-size:12px}
+.lname{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+.caret{margin-left:auto;color:var(--muted2);font-size:10px}
+.rail-sub{font-size:10.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);
+  padding:13px 13px 8px}
+.rail-list{flex:1;overflow:hidden;padding:0 11px;display:flex;flex-direction:column;gap:6px}
+.rail-ft{border-top:1px solid var(--line);padding:10px 13px;font-size:11.5px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.rail-ft b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:9px 10px 9px 12px;overflow:hidden}
+.card .bar{position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:3px}
+.card .t{font-size:12px;font-weight:500;color:var(--ink);line-height:1.35}
+.card .m{display:flex;gap:5px;margin-top:7px;align-items:center}
+.chip{font-size:10px;font-weight:600;color:var(--chipText);background:var(--chipFill);border-radius:20px;
+  padding:3px 7px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip.hot{color:var(--chipHotText);background:var(--chipHotFill)}
+.chip.acc{color:#fff;background:var(--header)}
+.ghost{border-style:dashed;background:transparent;color:var(--muted2)}
+
+/* ---- week grid ---- */
+.cal{flex:1;display:flex;flex-direction:column;min-width:0}
+.calbar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line)}
+.nav{display:flex;gap:5px}
+.nav i{width:26px;height:26px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;
+  font-style:normal;font-size:11px;color:var(--muted)}
+.calbar h3{font-size:13.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+.today{font-size:11px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:9px;padding:5px 10px}
+.capline{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.capline b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+.days{display:grid;grid-template-columns:52px repeat(7,1fr);border-bottom:1px solid var(--line)}
+.days .dh{padding:8px 6px 9px;text-align:center;border-left:1px solid var(--line)}
+.days .dh:first-child{border-left:0}
+.dh .dow{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2)}
+.dh .dnum{font-size:15px;font-weight:700;color:var(--ink);margin-top:2px;font-variant-numeric:tabular-nums}
+.dh .dcap{font-size:9.5px;font-weight:600;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.dh.is-today .dnum{color:#fff;background:var(--header);border-radius:8px;display:inline-block;padding:1px 7px}
+.dh.over .dcap{color:var(--chipHotText)}
+
+.grid{flex:1;overflow:hidden;position:relative;display:grid;grid-template-columns:52px repeat(7,1fr)}
+.gut{border-right:0}
+.gut .hr{height:52px;position:relative}
+.gut .hr span{position:absolute;top:-6px;right:8px;font-size:9.5px;font-weight:600;color:var(--muted2);
+  font-variant-numeric:tabular-nums}
+.col{border-left:1px solid var(--line);position:relative}
+.col .hr{height:52px;border-bottom:1px solid var(--line)}
+html[data-theme=dark] .col .hr{border-bottom-color:rgba(255,255,255,.055)}
+.col .hr.half{border-bottom-style:dotted}
+.col.wknd{background:var(--surface)}
+.nowline{position:absolute;left:0;right:0;height:1.5px;background:var(--hot);z-index:5}
+.nowline i{position:absolute;left:-3px;top:-3px;width:7px;height:7px;border-radius:50%;background:var(--hot)}
+
+.blk{position:absolute;left:3px;right:3px;border-radius:10px;padding:5px 7px 5px 9px;overflow:hidden;
+  background:var(--active);border:1px solid var(--activeBorder)}
+.blk .bar{position:absolute;left:0;top:0;bottom:0;width:3px}
+.blk .t{font-size:10.5px;font-weight:600;color:var(--ink);line-height:1.25;overflow:hidden}
+.blk .h{font-size:9.5px;font-weight:600;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.blk.done{opacity:.55}
+.blk.done .t{text-decoration:line-through}
+.blk.drop{background:transparent;border:1.5px dashed var(--header);}
+.blk.drop .t{color:var(--header)}
+
+/* ---- day view ---- */
+.dayhero{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px}
+.dayhero h3{font-size:17px;font-weight:700;letter-spacing:-.3px;color:var(--ink)}
+.dayhero .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.meter{margin-left:auto;width:290px}
+.meter .lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px}
+.meter .lbl b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.meter .track{height:6px;border-radius:6px;background:var(--railTrack);overflow:hidden;display:flex}
+.meter .track i{display:block;height:100%}
+.dgrid{flex:1;overflow:hidden;display:grid;grid-template-columns:60px 1fr}
+.dgut .hr{height:64px;position:relative}
+.dgut .hr span{position:absolute;top:-7px;right:10px;font-size:10px;font-weight:600;color:var(--muted2);font-variant-numeric:tabular-nums}
+.dcol{border-left:1px solid var(--line);position:relative}
+.dcol .hr{height:64px;border-bottom:1px solid var(--line)}
+html[data-theme=dark] .dcol .hr{border-bottom-color:rgba(255,255,255,.055)}
+.dblk{position:absolute;left:10px;right:14px;border-radius:12px;padding:9px 12px 9px 14px;overflow:hidden;
+  background:var(--active);border:1px solid var(--activeBorder);display:flex;align-items:flex-start;gap:9px}
+.dblk .bar{position:absolute;left:0;top:0;bottom:0;width:3.5px}
+.chk{width:14px;height:14px;border-radius:50%;border:1.6px solid var(--check);flex:none;margin-top:1px}
+.chk.on{background:var(--header);border-color:var(--header);position:relative}
+.chk.on:after{content:"";position:absolute;left:4px;top:1.5px;width:4px;height:7px;border:1.6px solid #fff;
+  border-top:0;border-left:0;transform:rotate(42deg)}
+.dblk .t{font-size:12.5px;font-weight:600;color:var(--ink)}
+.dblk .m{display:flex;gap:6px;margin-top:6px;align-items:center}
+.dblk .rt{margin-left:auto;text-align:right;font-size:10.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.dblk .grab{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:26px;height:3px;border-radius:3px;background:var(--activeBorder)}
+
+/* ---- capacity board ---- */
+.board{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:12px;overflow:hidden}
+.bcol{background:var(--surface);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.bcol.is-today{border-color:var(--activeBorder);background:var(--active)}
+.bhd{padding:10px 10px 9px;border-bottom:1px solid var(--line)}
+.bhd .r1{display:flex;align-items:baseline;gap:5px}
+.bhd .dow{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2)}
+.bhd .dnum{font-size:13px;font-weight:700;color:var(--ink);margin-left:auto;font-variant-numeric:tabular-nums}
+.bhd .cap{font-size:10px;font-weight:600;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between;
+  font-variant-numeric:tabular-nums}
+.bhd .cap.over{color:var(--chipHotText)}
+.bhd .track{height:4px;border-radius:4px;background:var(--railTrack);margin-top:5px;overflow:hidden}
+.bhd .track i{display:block;height:100%;background:var(--header)}
+.bhd .track i.over{background:var(--hot)}
+.bstack{flex:1;padding:8px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.bblk{position:relative;background:var(--canvas);border:1px solid var(--line);border-radius:10px;
+  padding:7px 8px 7px 10px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between}
+.bblk .bar{position:absolute;left:0;top:0;bottom:0;width:3px}
+.bblk .t{font-size:10.5px;font-weight:600;color:var(--ink);line-height:1.3}
+.bblk .h{font-size:9.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:4px}
+.bblk.done{opacity:.5}.bblk.done .t{text-decoration:line-through}
+.badd{border:1.5px dashed var(--line);border-radius:10px;height:26px;display:grid;place-items:center;color:var(--muted2);font-size:14px}
+.note{font-size:11px;color:var(--pageMuted);margin-top:11px;display:flex;gap:16px;flex-wrap:wrap}
+.note span{display:flex;align-items:center;gap:6px}
+.sw{width:9px;height:9px;border-radius:3px;display:block}
+</style></head><body>
+<div class="wrap">
+
+<div class="top">
+  <div>
+    <h1>Helpy — Calendar tab</h1>
+    <p>Three ways to build it, drawn with the real Sky / Midnight tokens, Inter, and the flat-surface rules from <b>DESIGN.md</b>. Same brief in all three: a third tab beside Lists and Planning, a list picker, and tasks you drag onto time. They differ in how precise the time is and what that writes back to Apple Reminders.</p>
+  </div>
+  <div class="toggle">
+    <button id="bl" class="on" onclick="setTheme('light')">Sky</button>
+    <button id="bd" onclick="setTheme('dark')">Midnight</button>
+  </div>
+</div>
+
+<!-- ============ A ============ -->
+<div class="opt">
+  <h2><span class="tag">A</span> Week grid + unscheduled rail</h2>
+  <p>The Google Calendar shape. Left rail is everything in the list that has no time yet, each card carrying its estimate. Drag one onto a slot and it becomes a block whose <b>height is its estimate</b>; drag the bottom edge to change the estimate. The day headers count how much you have allocated, and go warm when you have booked more than the day holds.</p>
+  <p class="writes"><b>Writes:</b> due date <em>with a time</em> on the reminder (syncs to iPhone), and the estimate in <code>EstimateStore</code>. A block is the same task the board shows — moving it here moves it there.</p>
+  <div class="win">
+    <div class="chrome"><div class="lights"><i></i><i></i><i></i></div>
+      <div class="seg"><span>Lists</span><span>Planning</span><span class="on">Calendar</span></div><div class="gear"></div></div>
+    <div class="body">
+      <div class="rail">
+        <div class="rail-hd"><div class="listpick"><div class="lico" style="background:#0086E8">◆</div>
+          <div class="lname">Faceless</div><div class="caret">▾</div></div></div>
+        <div class="rail-sub">Unscheduled · 9</div>
+        <div class="rail-list">
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Rewrite the hook gate for long-form</div>
+            <div class="m"><span class="chip">1h 30m</span></div></div>
+          <div class="card"><i class="bar" style="background:#E04422"></i><div class="t">Fix pack-skip on render resume</div>
+            <div class="m"><span class="chip">45m</span><span class="chip hot">Overdue</span></div></div>
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Contact sheet for scenes 9–16</div>
+            <div class="m"><span class="chip">30m</span><span class="chip">2/5</span></div></div>
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Chocotoff voice pass</div>
+            <div class="m"><span class="chip">1h</span></div></div>
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Review Zernio analytics pull</div>
+            <div class="m"><span class="chip">25m</span></div></div>
+          <div class="card ghost"><div class="t" style="color:var(--muted2)">Drag a block back here to unschedule it</div></div>
+        </div>
+        <div class="rail-ft">Unscheduled <b>6h 45m</b></div>
+      </div>
+
+      <div class="cal">
+        <div class="calbar">
+          <div class="nav"><i>‹</i><i>›</i></div>
+          <h3>8 – 14 September</h3>
+          <div class="today">Today</div>
+          <div class="capline">This week <b>21h 10m</b> of <b>35h</b></div>
+        </div>
+        <div class="days">
+          <div class="dh"></div>
+          <div class="dh"><div class="dow">Mon</div><div class="dnum">8</div><div class="dcap">4h 30m</div></div>
+          <div class="dh is-today"><div class="dow">Tue</div><div class="dnum">9</div><div class="dcap">5h 15m</div></div>
+          <div class="dh"><div class="dow">Wed</div><div class="dnum">10</div><div class="dcap">3h 45m</div></div>
+          <div class="dh over"><div class="dow">Thu</div><div class="dnum">11</div><div class="dcap">8h 30m</div></div>
+          <div class="dh"><div class="dow">Fri</div><div class="dnum">12</div><div class="dcap">2h</div></div>
+          <div class="dh"><div class="dow">Sat</div><div class="dnum">13</div><div class="dcap">—</div></div>
+          <div class="dh"><div class="dow">Sun</div><div class="dnum">14</div><div class="dcap">1h</div></div>
+        </div>
+        <div class="grid" id="gridA"></div>
+      </div>
+    </div>
+  </div>
+  <div class="note">
+    <span><i class="sw" style="background:#0086E8"></i> Faceless</span>
+    <span><i class="sw" style="background:#8B5CF6"></i> Kiko</span>
+    <span><i class="sw" style="background:#1E9E62"></i> Ultra+</span>
+    <span>Block colour is the list it came from, so an all-lists week still reads.</span>
+  </div>
+</div>
+
+<!-- ============ B ============ -->
+<div class="opt">
+  <h2><span class="tag">B</span> One day, big blocks</h2>
+  <p>Same idea, one day at a time. Blocks are wide enough to carry the real task card — checkbox, list, estimate versus time actually spent — so this doubles as the screen you work from, not just the one you plan on. The meter at the top is the day's capacity: booked, spent, still free.</p>
+  <p class="writes"><b>Writes:</b> identical to A. The week view can still exist as a zoom-out; this is about which one you land on.</p>
+  <div class="win">
+    <div class="chrome"><div class="lights"><i></i><i></i><i></i></div>
+      <div class="seg"><span>Lists</span><span>Planning</span><span class="on">Calendar</span></div><div class="gear"></div></div>
+    <div class="body tall">
+      <div class="rail">
+        <div class="rail-hd"><div class="listpick"><div class="lico" style="background:#0086E8">◆</div>
+          <div class="lname">Faceless</div><div class="caret">▾</div></div></div>
+        <div class="rail-sub">Unscheduled · 9</div>
+        <div class="rail-list">
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Rewrite the hook gate for long-form</div>
+            <div class="m"><span class="chip">1h 30m</span></div></div>
+          <div class="card"><i class="bar" style="background:#E04422"></i><div class="t">Fix pack-skip on render resume</div>
+            <div class="m"><span class="chip">45m</span><span class="chip hot">Overdue</span></div></div>
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Contact sheet for scenes 9–16</div>
+            <div class="m"><span class="chip">30m</span><span class="chip">2/5</span></div></div>
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Chocotoff voice pass</div>
+            <div class="m"><span class="chip">1h</span></div></div>
+        </div>
+        <div class="rail-ft">Unscheduled <b>6h 45m</b></div>
+      </div>
+      <div class="cal">
+        <div class="dayhero">
+          <div class="nav"><i>‹</i><i>›</i></div>
+          <div><h3>Tuesday 9 September</h3><div class="sub">5 tasks booked · 1 done</div></div>
+          <div class="meter">
+            <div class="lbl"><span>Booked <b>5h 15m</b></span><span>Free <b>2h 45m</b> of 8h</span></div>
+            <div class="track"><i style="width:22%;background:var(--success)"></i><i style="width:44%;background:var(--header)"></i></div>
+          </div>
+        </div>
+        <div class="dgrid" id="gridB"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ C ============ -->
+<div class="opt">
+  <h2><span class="tag">C</span> Week capacity board — no clock</h2>
+  <p>The half-step. Seven day columns, no hour ruler: you drop a task on a <b>day</b>, not at 10:15, and the block's height is still its estimate so the column fills up in front of you. The header bar is the honest bit — "6h 15m of 6h" turns red and tells you the day is oversold before you live it.</p>
+  <p class="writes"><b>Writes:</b> only a <b>due date, day components</b> — exactly what the board already writes today, so no times and no alarms land in Apple Reminders. Cheapest to build, and it never fights the Backlog / This week / Today columns.</p>
+  <div class="win">
+    <div class="chrome"><div class="lights"><i></i><i></i><i></i></div>
+      <div class="seg"><span>Lists</span><span>Planning</span><span class="on">Calendar</span></div><div class="gear"></div></div>
+    <div class="body">
+      <div class="rail">
+        <div class="rail-hd"><div class="listpick"><div class="lico" style="background:#0086E8">◆</div>
+          <div class="lname">All lists</div><div class="caret">▾</div></div></div>
+        <div class="rail-sub">Backlog · 9</div>
+        <div class="rail-list">
+          <div class="card"><i class="bar" style="background:#8B5CF6"></i><div class="t">Kiko analytics panel merge</div>
+            <div class="m"><span class="chip">2h</span></div></div>
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Rewrite the hook gate for long-form</div>
+            <div class="m"><span class="chip">1h 30m</span></div></div>
+          <div class="card"><i class="bar" style="background:#1E9E62"></i><div class="t">Ultra sitcom outline, ep 2</div>
+            <div class="m"><span class="chip">45m</span></div></div>
+          <div class="card"><i class="bar" style="background:#0086E8"></i><div class="t">Chocotoff voice pass</div>
+            <div class="m"><span class="chip">1h</span></div></div>
+          <div class="card ghost"><div class="t" style="color:var(--muted2)">Drop here to send back to backlog</div></div>
+        </div>
+        <div class="rail-ft">Unplanned <b>9h 20m</b></div>
+      </div>
+      <div class="cal">
+        <div class="calbar">
+          <div class="nav"><i>‹</i><i>›</i></div>
+          <h3>8 – 14 September</h3>
+          <div class="today">This week</div>
+          <div class="capline">Planned <b>21h 10m</b> · Capacity <b>30h</b></div>
+        </div>
+        <div class="board" id="boardC"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function setTheme(m){document.documentElement.dataset.theme=m;
+  bl.classList.toggle('on',m==='light');bd.classList.toggle('on',m==='dark')}
+
+const PX=52, START=8;           // A: 52px per hour, day starts 08:00
+const at=h=>(h-START)*PX;
+const C={fl:'#0086E8',ki:'#8B5CF6',ul:'#1E9E62',hot:'#E04422'};
+
+// ---------- A: week grid ----------
+(function(){
+  const hours=[8,9,10,11,12,13,14,15,16,17,18,19];
+  const g=document.getElementById('gridA');
+  let gut='<div class="gut">';
+  hours.forEach(h=>gut+=`<div class="hr"><span>${String(h).padStart(2,'0')}:00</span></div>`);
+  g.innerHTML=gut+'</div>';
+
+  const blocks=[
+    [], // Mon
+    [{s:8.5,e:10,t:'Script QC — 3 shorts',c:C.fl,h:'08:30 – 10:00'},
+     {s:10.25,e:11.25,t:'Chocotoff voice pass',c:C.fl,h:'10:15 – 11:15'},
+     {s:13,e:14.5,t:'Kiko analytics merge',c:C.ki,h:'13:00 – 14:30'},
+     {s:15,e:16,t:'Beats + visual QC',c:C.fl,h:'15:00 – 16:00'}],
+    [{s:9,e:10.5,t:'Rewrite hook gate',c:C.fl,h:'09:00 – 10:30'},
+     {s:11,e:11.75,t:'Zernio analytics pull',c:C.ul,h:'11:00 – 11:45'},
+     {s:14,e:15.5,t:'Ultra sitcom outline',c:C.ul,h:'14:00 – 15:30',drop:1}],
+    [{s:8,e:9,t:'Render resume fix',c:C.fl,h:'08:00 – 09:00',done:1},
+     {s:9.5,e:12.5,t:'Long-form pipeline pass',c:C.fl,h:'09:30 – 12:30'},
+     {s:13.5,e:17,t:'Kiko provider migration',c:C.ki,h:'13:30 – 17:00'}],
+    [{s:10,e:12,t:'Contact sheet review',c:C.fl,h:'10:00 – 12:00'}],
+    [],
+    [{s:11,e:12,t:'Weekly review',c:C.ul,h:'11:00 – 12:00'}]
+  ];
+  const mon=[1,2,3,4,5,6,0];
+  blocks.forEach((day,i)=>{
+    let col=`<div class="col${i>=5?' wknd':''}">`;
+    hours.forEach(()=>col+='<div class="hr"></div>');
+    if(i===1) col+=`<div class="nowline" style="top:${at(11.4)}px"><i></i></div>`;
+    day.forEach(b=>{
+      const hgt=(b.e-b.s)*PX-4;
+      col+=`<div class="blk${b.done?' done':''}${b.drop?' drop':''}" style="top:${at(b.s)+2}px;height:${hgt}px">
+        ${b.drop?'':`<i class="bar" style="background:${b.c}"></i>`}
+        <div class="t">${b.t}</div>${hgt>34?`<div class="h">${b.h}</div>`:''}</div>`;
+    });
+    g.insertAdjacentHTML('beforeend',col+'</div>');
+  });
+})();
+
+// ---------- B: day ----------
+(function(){
+  const P=64,S=8,hours=[8,9,10,11,12,13,14,15,16];
+  const g=document.getElementById('gridB');
+  let gut='<div class="dgut">';
+  hours.forEach(h=>gut+=`<div class="hr"><span>${String(h).padStart(2,'0')}:00</span></div>`);
+  g.innerHTML=gut+'</div>';
+  const bl=[
+    {s:8.5,e:10,t:'Script QC — 3 shorts',c:C.fl,l:'Faceless',est:'1h 30m',spent:'1h 30m',done:1},
+    {s:10.25,e:11.25,t:'Chocotoff voice pass',c:C.fl,l:'Faceless',est:'1h',spent:'22m'},
+    {s:11.5,e:12.25,t:'Fix pack-skip on render resume',c:C.hot,l:'Faceless',est:'45m',spent:'0m',pri:1},
+    {s:13,e:14.5,t:'Kiko analytics panel merge',c:C.ki,l:'Kiko',est:'1h 30m',spent:'0m'},
+    {s:15,e:16.5,t:'Ultra sitcom outline, ep 2',c:C.ul,l:'Ultra+',est:'1h 30m',spent:'0m'}
+  ];
+  let col='<div class="dcol">';
+  hours.forEach(()=>col+='<div class="hr"></div>');
+  bl.forEach(b=>{
+    col+=`<div class="dblk" style="top:${(b.s-S)*P+3}px;height:${(b.e-b.s)*P-6}px">
+      <i class="bar" style="background:${b.c}"></i>
+      <div class="chk${b.done?' on':''}"></div>
+      <div style="min-width:0;flex:1">
+        <div class="t">${b.t}</div>
+        <div class="m"><span class="chip">${b.l}</span>
+          ${b.pri?'<span class="chip hot">!!</span>':''}
+          <span class="chip">${b.spent} / ${b.est}</span></div>
+      </div>
+      <div class="rt">${String(Math.floor(b.s)).padStart(2,'0')}:${b.s%1?'30':'00'}</div>
+      <i class="grab"></i></div>`;
+  });
+  g.insertAdjacentHTML('beforeend',col+'</div>');
+})();
+
+// ---------- C: capacity board ----------
+(function(){
+  const days=[
+    {d:'Mon',n:8,cap:6,used:4.5,b:[{t:'Script QC — 3 shorts',h:1.5,c:C.fl},{t:'Chocotoff voice pass',h:1,c:C.fl},{t:'Kiko analytics merge',h:2,c:C.ki}]},
+    {d:'Tue',n:9,cap:6,used:5.25,today:1,b:[{t:'Rewrite hook gate',h:1.5,c:C.fl},{t:'Zernio analytics pull',h:0.75,c:C.ul},{t:'Ultra sitcom outline',h:1.5,c:C.ul},{t:'Beats + visual QC',h:1.5,c:C.fl}]},
+    {d:'Wed',n:10,cap:6,used:3.75,b:[{t:'Render resume fix',h:1,c:C.fl,done:1},{t:'Contact sheet 9–16',h:0.5,c:C.fl},{t:'Long-form pass',h:2.25,c:C.fl}]},
+    {d:'Thu',n:11,cap:6,used:8.5,over:1,b:[{t:'Kiko provider migration',h:3.5,c:C.ki},{t:'Voice studio wiring',h:2,c:C.ki},{t:'Publish sweep',h:3,c:C.ul}]},
+    {d:'Fri',n:12,cap:6,used:2,b:[{t:'Weekly review',h:1,c:C.ul},{t:'Inbox + ledger',h:1,c:C.ki}]},
+    {d:'Sat',n:13,cap:0,used:0,b:[]},
+    {d:'Sun',n:14,cap:3,used:1,b:[{t:'Roadmap pass',h:1,c:C.ul}]}
+  ];
+  const H=26; // px per hour of estimate
+  document.getElementById('boardC').innerHTML=days.map(d=>{
+    const pct=d.cap?Math.min(100,d.used/d.cap*100):0;
+    return `<div class="bcol${d.today?' is-today':''}">
+      <div class="bhd">
+        <div class="r1"><span class="dow">${d.d}</span><span class="dnum">${d.n}</span></div>
+        <div class="cap${d.over?' over':''}"><span>${d.used?d.used+'h':'—'}</span><span>${d.cap?'of '+d.cap+'h':'off'}</span></div>
+        <div class="track"><i class="${d.over?'over':''}" style="width:${pct}%"></i></div>
+      </div>
+      <div class="bstack">
+        ${d.b.map(b=>`<div class="bblk${b.done?' done':''}" style="height:${Math.max(34,b.h*H)}px">
+          <i class="bar" style="background:${b.c}"></i>
+          <div class="t">${b.t}</div><div class="h">${b.h<1?b.h*60+'m':b.h+'h'}</div></div>`).join('')}
+        <div class="badd">+</div>
+      </div></div>`;
+  }).join('');
+})();
+</script>
+</body></html>

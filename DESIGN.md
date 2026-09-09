@@ -103,6 +103,20 @@ its leading edge; that bar and the flag chip are the only colour in the list.
 Checkboxes are circles — filled `accent` (or the priority colour) with a white
 checkmark when done.
 
+## Calendar blocks
+
+The one place a card is tinted rather than flat. A block on the week grid takes
+its list's colour at 10% fill (17% in Midnight) with a 34% border. A row already
+sits in a column that names its list; a block does not, and on an all-lists week
+the colour is the only thing saying which project just ate the afternoon. The
+selected block keeps the same fill and goes to a 95% border at 1.8px. Everything
+else holds: radius 10, 1px border, no shadow.
+
+No leading colour bar. Rows have one; a block does not, because the fill and the
+border already carry the colour and the bar made every block read as a
+notification. Priority does not tint a block either, for the same reason: it
+would turn the whole surface hot rather than mark an edge of it.
+
 ## Motion
 
 Short and cheap. `.easeOut(duration: 0.12–0.18)` for hover and selection,

@@ -188,6 +188,84 @@ struct EmbeddedSettingsView: View {
                     }
                     
                     Rectangle().fill(t.line).frame(height: 1)
+
+                    // CALENDAR
+                    VStack(alignment: .leading, spacing: 16) {
+                        sectionTitle("Calendar")
+
+                        HStack {
+                            Text("Day runs from")
+                                .font(.inter(size: 13))
+                                .foregroundStyle(t.ink)
+                            Spacer()
+                            hourMenu(
+                                value: settings.calendarDayStartHour,
+                                range: 0...22,
+                                set: { hour in
+                                    settings.calendarDayStartHour = hour
+                                    if settings.calendarDayEndHour <= hour {
+                                        settings.calendarDayEndHour = min(24, hour + 1)
+                                    }
+                                }
+                            )
+                            Text("to")
+                                .font(.inter(size: 13))
+                                .foregroundStyle(t.muted)
+                            hourMenu(
+                                value: settings.calendarDayEndHour,
+                                range: 1...24,
+                                set: { hour in
+                                    settings.calendarDayEndHour = hour
+                                    if settings.calendarDayStartHour >= hour {
+                                        settings.calendarDayStartHour = max(0, hour - 1)
+                                    }
+                                }
+                            )
+                        }
+
+                        HStack {
+                            Text("A full day is")
+                                .font(.inter(size: 13))
+                                .foregroundStyle(t.ink)
+                            Spacer()
+                            Menu {
+                                ForEach([4, 5, 6, 7, 8, 9, 10, 12], id: \.self) { hours in
+                                    Button("\(hours)h") {
+                                        settings.calendarDailyCapacityHours = Double(hours)
+                                    }
+                                }
+                            } label: {
+                                HStack {
+                                    Text("\(Int(settings.calendarDailyCapacityHours))h")
+                                        .font(.inter(size: 13, weight: .medium))
+                                        .foregroundStyle(t.ink)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .frame(width: 120)
+                                .background(HelpyChipBackground(palette: t))
+                            }
+                            .menuStyle(.borderlessButton)
+                        }
+
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Alert when a block starts")
+                                    .font(.inter(size: 13))
+                                    .foregroundStyle(t.ink)
+                                Text("Adds a Reminders alert to every scheduled task")
+                                    .font(.inter(size: 11))
+                                    .foregroundStyle(t.muted)
+                            }
+                            Spacer()
+                            Toggle("", isOn: $settings.calendarBlockAlarms)
+                                .toggleStyle(SwitchToggleStyle(tint: t.accent))
+                                .labelsHidden()
+                        }
+                    }
+
+                    Rectangle().fill(t.line).frame(height: 1)
                     
                     // APP BEHAVIOR
                     VStack(alignment: .leading, spacing: 16) {
@@ -409,6 +487,30 @@ struct EmbeddedSettingsView: View {
             }
         }
         .background(t.canvas)
+    }
+
+    private func hourMenu(
+        value: Int, range: ClosedRange<Int>, set: @escaping (Int) -> Void
+    ) -> some View {
+        Menu {
+            ForEach(Array(range), id: \.self) { hour in
+                Button(String(format: "%02d:00", hour)) { set(hour) }
+            }
+        } label: {
+            HStack {
+                Text(String(format: "%02d:00", value))
+                    .font(.inter(size: 13, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundStyle(t.ink)
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .frame(width: 84)
+            .background(HelpyChipBackground(palette: t))
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize()
     }
 
     private func sectionTitle(_ text: String) -> some View {

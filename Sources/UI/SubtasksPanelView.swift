@@ -90,7 +90,8 @@ struct SubtasksPanelView: View {
     }
 }
 
-private struct SubtaskPanelRow: View {
+/// Shared with the calendar's task detail panel.
+struct SubtaskPanelRow: View {
     let item: SubtaskItem
     let palette: HelpyPalette
     let onToggle: () -> Void
@@ -134,7 +135,8 @@ private struct SubtaskPanelRow: View {
     }
 }
 
-private struct SubtaskInputRow: View {
+/// Shared with the calendar's task detail panel.
+struct SubtaskInputRow: View {
     @Binding var title: String
     let palette: HelpyPalette
     let cornerRadius: CGFloat

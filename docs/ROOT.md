@@ -10,6 +10,9 @@ Index of the durable notes. One line per doc.
   subtask panel and its glass container.
 - [pill-rendering.md](pill-rendering.md) — why the pill's scrolling title and
   rolling clock are Core Animation, and the measurements behind it.
+- [calendar.md](calendar.md) — the week grid and unscheduled rail: why a block
+  is just a due date with an hour, why its height is the estimate, and the two
+  different drags.
 - [planning.md](planning.md) — the roadmap column, the week grid and the week
   panel, plus why every free-text field there is an NSTextView.
 - apple_liquid_glass_page1-5.md — captured Apple reference on Liquid Glass.
@@ -32,6 +35,8 @@ local Whisper CLI back the assistant; both are optional.
 - `Sources/UI/FloatingPillView.swift`, `MenuBarPanelView.swift` — focus surfaces.
 - `Sources/UI/ReminderRowView.swift` — the task card, shared by strip and board.
 - `Sources/UI/Planning/` — the Planning tab: roadmap column, week grid, week panel.
+- `Sources/UI/Calendar/` — the Calendar tab: unscheduled rail, week grid, blocks,
+  task detail panel.
 - `Sources/UI/Components/` — small shared pieces. `HelpyTextView` is the
   multi-line text box that takes Return as a line break; `CAMarqueeText` and
   `RollingTimeText` are the pill's Core Animation title and clock.

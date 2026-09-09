@@ -364,7 +364,9 @@ private struct BoardDropSlot: View {
 }
 
 /// What you actually see under the cursor mid-drag: the task, small.
-private struct BoardDragPreview: View {
+/// Shared with the Calendar tab's rail: a card dragged out of a column and a
+/// card dragged out of the rail are the same gesture and must look the same.
+struct BoardDragPreview: View {
     let title: String
     let palette: HelpyPalette
 

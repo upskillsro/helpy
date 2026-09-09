@@ -364,10 +364,14 @@ class RemindersService: ObservableObject {
     /// to match, which is right for a time the user picked and wrong for a
     /// board column: a day-only task takes whatever all-day alert Reminders is
     /// set to give it, rather than one of ours at nine in the morning.
-    func updateDueDate(_ reminder: EKReminder, components: DateComponents?) {
+    /// `alarm: false` is what the Calendar tab schedules with. A time there
+    /// means "this is when I plan to do it", and a week of blocks would
+    /// otherwise be a week of notifications firing on the phone.
+    func updateDueDate(_ reminder: EKReminder, components: DateComponents?, alarm: Bool = true) {
         guard reminder.dueDateComponents != components else { return }
         reminder.dueDateComponents = components
-        if let components, components.hour != nil, let date = components.date {
+        if alarm, let components, components.hour != nil,
+           let date = TaskSchedule.dueDate(components) {
             reminder.alarms = [EKAlarm(absoluteDate: date)]
         } else {
             reminder.alarms = []
@@ -378,6 +382,24 @@ class RemindersService: ObservableObject {
         } catch {
             AppLogger.reminders.error("Failed to update due date: \(String(describing: error), privacy: .public)")
         }
+    }
+
+    // MARK: - Calendar tab
+
+    /// Puts a task on the grid: the day it was dropped on, the minute it was
+    /// dropped at. A due date carrying an hour is the only thing that marks a
+    /// task as scheduled, which is why nothing else is written here — see
+    /// `TaskSchedule`.
+    func schedule(_ reminder: EKReminder, day: Date, minuteOfDay: Int, alarm: Bool = false) {
+        let components = TaskSchedule.components(day: day, minuteOfDay: minuteOfDay)
+        updateDueDate(reminder, components: components, alarm: alarm)
+    }
+
+    /// Back to the rail. The day survives, so a task unscheduled from Thursday
+    /// is still due Thursday and still sits in the board column it was in.
+    func unschedule(_ reminder: EKReminder) {
+        let components = TaskSchedule.dayOnlyComponents(from: reminder.dueDateComponents)
+        updateDueDate(reminder, components: components, alarm: false)
     }
 
     func updateDueDate(_ reminder: EKReminder, date: Date?) {
@@ -563,11 +585,28 @@ class RemindersService: ObservableObject {
         }
     }
 
+    /// `reminders` is a scoped fetch — Today across every list, or one whole
+    /// list — so it cannot be the only place a task is looked up. The board and
+    /// the calendar work off `remindersByList`, and a backlog task from a list
+    /// that is not the active one lives only there.
     func reminder(withId id: String) -> EKReminder? {
         if let reminder = reminders.first(where: { $0.calendarItemIdentifier == id }) {
             return reminder
         }
-        return recentCompletedReminders.first(where: { $0.calendarItemIdentifier == id })
+        if let reminder = recentCompletedReminders.first(where: { $0.calendarItemIdentifier == id }) {
+            return reminder
+        }
+        for bucket in remindersByList.values {
+            if let reminder = bucket.first(where: { $0.calendarItemIdentifier == id }) {
+                return reminder
+            }
+        }
+        for bucket in completedByList.values {
+            if let reminder = bucket.first(where: { $0.calendarItemIdentifier == id }) {
+                return reminder
+            }
+        }
+        return nil
     }
 
     func buildAssistantContext() -> [AssistantReminderContext] {

@@ -38,6 +38,17 @@ class SettingsStore: ObservableObject {
     @AppStorage("pillDisplayMode") var pillDisplayMode: PillDisplayMode = .floatingPill
     @AppStorage("panelHeightMode") var panelHeightMode: PanelHeightMode = .full
 
+    // Calendar tab
+    // The window is a default, not a limit: `CalendarGrid.fitting` widens it
+    // for anything scheduled outside these hours so a 6:30 task cannot hide.
+    @AppStorage("calendarDayStartHour") var calendarDayStartHour: Int = 8
+    @AppStorage("calendarDayEndHour") var calendarDayEndHour: Int = 20
+    /// What a full day holds. The day headers turn warm past it.
+    @AppStorage("calendarDailyCapacityHours") var calendarDailyCapacityHours: Double = 8
+    /// Off by design: a block is when you plan to do the task, and a week of
+    /// blocks would otherwise be a week of Reminders alerts on the phone.
+    @AppStorage("calendarBlockAlarms") var calendarBlockAlarms: Bool = false
+
     // App lifecycle
     @AppStorage("quitOnClose") var quitOnClose: Bool = true
 

@@ -8,7 +8,7 @@ availability checks.
 ## Run, build, test
 
 - `swift build` — compile.
-- `swift test` — 98 XCTest cases, all should pass.
+- `swift test` — 114 XCTest cases, all should pass.
 - `./package_dmg.sh` — release build, `.app` bundle, icons, signing, DMG.
 
 **Changes are invisible until you repackage.** `swift build` alone does not

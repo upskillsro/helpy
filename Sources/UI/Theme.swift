@@ -27,7 +27,7 @@ extension Color {
 /// Views never branch on appearance themselves; they read a token:
 ///     @Environment(\.colorScheme) private var colorScheme
 ///     private var t: HelpyPalette { .forScheme(colorScheme) }
-struct HelpyPalette {
+struct HelpyPalette: Equatable {
     // Canvas & surfaces
     let canvas: Color
     let surface: Color
