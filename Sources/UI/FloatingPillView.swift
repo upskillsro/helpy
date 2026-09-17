@@ -61,6 +61,26 @@ final class PillWindowTopAnchor {
     }
 }
 
+/// Drag-to-move for the pill.
+///
+/// The pill is a borderless panel with no title bar, and
+/// `isMovableByWindowBackground` is dead on it: `NSHostingView` takes the
+/// mouse-down and tracks it in its own loop, so the window never sees the
+/// event and never starts a drag (pixel-proved against the real panel config —
+/// the same panel with a plain `NSView` content view drags fine).
+/// `WindowDragGesture` moves the panel from inside SwiftUI instead, and the
+/// hover controls keep their own clicks because a `Button` claims the gesture
+/// over its own area.
+private struct PillWindowDrag: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(macOS 15.0, *) {
+            content.gesture(WindowDragGesture())
+        } else {
+            content
+        }
+    }
+}
+
 /// Hairline separator between the pill's title and its clock. `Divider()`
 /// ignores `.background`, so this draws the rule directly.
 struct PillDivider: View {
@@ -189,6 +209,7 @@ struct FloatingPillView: View {
             isPulsing = !quiet
         }
         .onAppear { isPulsing = alertRingColor != nil }
+        .modifier(PillWindowDrag())
     }
 
     // Logic for Progress Bar

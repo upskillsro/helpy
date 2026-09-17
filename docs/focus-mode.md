@@ -38,6 +38,24 @@ on `willSet`; deferring lets the property settle before anything reads it back.
 The coordinator is the right owner because it owns every window, and because it
 is always alive — a view is not.
 
+### Moving the pill
+
+The pill panel is borderless, so there is no title bar to drag it by, and
+`isMovableByWindowBackground` does nothing on it: `NSHostingView` takes the
+mouse-down and tracks it in its own loop, so AppKit never gets the chance to
+start a window drag. Measured against the real panel settings — the identical
+panel with a plain `NSView` content view drags; with the SwiftUI content view
+it does not, and the mouse-down is swallowed. A drag-handling `NSView` behind
+the SwiftUI content does not fix it either: the background fill wins the hit
+test, and making the fill non-hit-testable stops the event reaching the app at
+all.
+
+`FloatingPillView.PillWindowDrag` applies `WindowDragGesture` (macOS 15+)
+instead, so the drag starts inside SwiftUI. The hover controls keep working
+because a `Button` claims the gesture over its own area. `PillWindowTopAnchor`
+treats a pure move as the new resting top edge, so a dragged pill still grows
+downwards when the subtask panel opens.
+
 ### Starting a session
 
 - Side strip footer "Start Timer" — starts the first visible task if none is
@@ -57,3 +75,9 @@ is always alive — a view is not.
   in the strip. It first shipped as board-only, on the reasoning that the strip
   already renders the countdown, but two behaviours behind one icon was the
   worse trade: start-then-press-a-second-button was the odd step everywhere.
+- 2026-09-17 — The pill moves with `WindowDragGesture`, not
+  `isMovableByWindowBackground`. The panel had been movable-by-background since
+  it was written, but nothing could ever drag it, because SwiftUI's hosting
+  view consumes the mouse-down before the window sees it. `WindowDragHandler`
+  (the `performDrag` NSView) stays unused — behind SwiftUI content it never
+  receives the click.
