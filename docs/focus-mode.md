@@ -56,6 +56,16 @@ because a `Button` claims the gesture over its own area. `PillWindowTopAnchor`
 treats a pure move as the new resting top edge, so a dragged pill still grows
 downwards when the subtask panel opens.
 
+### Sizing the pill window
+
+Nothing in AppKit resizes the pill window when the subtask panel unfolds, so
+`PillHostingView` does it: on every layout pass it sets the window's content
+size to the SwiftUI `fittingSize`. `sizingOptions = [.preferredContentSize]`
+looked like it covered this and does not — that value is only read by an
+`NSHostingController` presentation, and a plain hosting view as `contentView`
+leaves the window at its opening size. `PillWindowTopAnchor` then turns the
+growth downwards, so the pill holds its place and the panel unfolds beneath it.
+
 ### Starting a session
 
 - Side strip footer "Start Timer" — starts the first visible task if none is
@@ -81,3 +91,8 @@ downwards when the subtask panel opens.
   view consumes the mouse-down before the window sees it. `WindowDragHandler`
   (the `performDrag` NSView) stays unused — behind SwiftUI content it never
   receives the click.
+- 2026-09-17 — The pill window sizes itself from `fittingSize` in
+  `PillHostingView.layout()`. Before that the subtask panel unfolded into a
+  300x44 window and was clipped to the top of its own header, with the pill
+  pushed out of frame above it — measured on the commit before the drag fix
+  too, so the two are unrelated.

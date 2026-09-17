@@ -15,6 +15,28 @@ class KeyableHostingView<Content: View>: NSHostingView<Content> {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }
 
+/// The pill's hosting view, which also sizes the pill window to its content.
+///
+/// Nothing else does. `sizingOptions = [.preferredContentSize]` writes a value
+/// that only an `NSHostingController` presentation reads, so a plain hosting
+/// view as `contentView` leaves the window at whatever size it opened with —
+/// the subtasks panel unfolded into a 300x44 window and was clipped to the top
+/// of its own header, with the pill pushed out of frame above it.
+/// `PillWindowTopAnchor` then turns the growth downwards, so the pill stays put
+/// and the panel unfolds beneath it.
+class PillHostingView<Content: View>: KeyableHostingView<Content> {
+    override func layout() {
+        super.layout()
+        guard let window, window.contentView === self else { return }
+        let ideal = fittingSize
+        guard ideal.width > 0.5, ideal.height > 0.5 else { return }
+        let current = window.contentRect(forFrameRect: window.frame).size
+        guard abs(ideal.width - current.width) > 0.5
+                || abs(ideal.height - current.height) > 0.5 else { return }
+        window.setContentSize(ideal)
+    }
+}
+
 /// The two shapes the app's one window takes.
 ///
 /// `.normal` is the app's home: resizable, standard title bar, Lists and
@@ -149,7 +171,7 @@ final class AppWindowCoordinator: ObservableObject {
     /// "os_unfair_lock is corrupt"). Owning the panel means its chrome is set
     /// once, at creation, before anything observes it.
     private(set) var pillPanel: NSPanel?
-    private var pillHosting: KeyableHostingView<AnyView>?
+    private var pillHosting: PillHostingView<AnyView>?
     private let pillTopAnchor = PillWindowTopAnchor()
 
     /// Whether the cursor is over the pill, which is what swaps its controls in.
@@ -380,10 +402,10 @@ final class AppWindowCoordinator: ObservableObject {
             hosting.rootView = content
         } else {
             panel = Self.makePillPanel()
-            let hosting = KeyableHostingView(rootView: content)
-            // Without this the panel is sized once, at open, and the subtasks
-            // section unfolds into a window that never grew to hold it.
-            hosting.sizingOptions = [.preferredContentSize]
+            let hosting = PillHostingView(rootView: content)
+            // `standardBounds` keeps `fittingSize` meaningful, which is what
+            // `PillHostingView.layout()` resizes the window from.
+            hosting.sizingOptions = [.standardBounds]
             panel.contentView = hosting
             panel.setFrameAutosaveName("HelpyFloatingPill")
             if panel.frame.origin == .zero { centerPillNearBottom(panel) }
